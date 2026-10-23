@@ -1,6 +1,6 @@
 # NEON RAGE · 霓虹怒火
 
-**v0.2.1** · 原创 16-bit 风格横版清关动作游戏，致敬《怒之铁拳》的三人组、街头清版、武器与 Boss 战结构。所有角色、像素画面、关卡与音乐均为程序化原创，不使用原作素材。
+**v0.2.2** · 原创 16-bit 风格横版清关动作游戏，致敬《怒之铁拳》的三人组、街头清版、武器与 Boss 战结构。所有角色、像素画面、关卡与音乐均为程序化原创，不使用原作素材。
 
 ## 直接开玩
 
@@ -35,6 +35,9 @@ python3 -m http.server 8000
 
 ## 核心系统
 
+- **单屏封面与设置**：开始游戏旁打开设置页；操作、生存守则、关于与 BGM 均在游戏内设置中。
+- **三组 BGM**：NEON CLASSIC / MIDNIGHT DRIVE / STEEL PULSE，可随时切换并保存。
+- **斗士强化**：移动速度、攻击速度、防御各 3 级；每级吃 3 枚芯片，芯片藏在发光强化油桶里。
 - **封面与难度**：开屏封面主菜单进入 EASY / NORMAL / HARD；难度影响敌人 HP、玩家受伤和初始生命。
 - **Boss 出场对话**：五关 Boss 登场时冻结战斗并播放背景/叫嚣台词，可自动推进或跳过；双子各有一句。
 - **三名可选斗士**：REX（均衡）、LUNA（高速）、BRUNO（力量），属性、连击速度、必杀伤害均不同。
@@ -96,6 +99,10 @@ screenshots/        关卡、Boss、招式与移动端截图
 | 游戏封面 | 难度选择 |
 | --- | --- |
 | ![cover](screenshots/cover.png) | ![difficulty](screenshots/difficulty.png) |
+
+| 游戏设置 | 斗士强化油桶 |
+| --- | --- |
+| ![settings](screenshots/settings.png) | ![upgrade](screenshots/upgrade.png) |
 
 ![Boss 出场对话](screenshots/boss-talk.png)
 

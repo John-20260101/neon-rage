@@ -22,6 +22,10 @@
     hpMeter: document.querySelector('.hp-meter'),
     hudWeapon: $('hud-weapon'),
     hudSpecial: $('hud-special'),
+    hudUpgrades: $('hud-upgrades'),
+    upgSpeed: $('upg-speed'),
+    upgAttack: $('upg-attack'),
+    upgDefense: $('upg-defense'),
     hudStage: $('hud-stage'),
     hudGoal: $('hud-goal'),
     hudScore: $('hud-score'),
@@ -41,6 +45,10 @@
     bossTalkProgress: $('boss-talk-progress'),
     bossTalkSkip: $('boss-talk-skip'),
     title: $('title-screen'),
+    settings: $('settings-screen'),
+    settingsBody: $('settings-body'),
+    settingsMusicStatus: $('settings-music-status'),
+    musicOptions: document.querySelectorAll('.music-option'),
     difficulty: $('difficulty-screen'),
     difficultyGrid: $('difficulty-grid'),
     select: $('select-screen'),
@@ -73,6 +81,9 @@
     soundBtn: $('btn-sound'),
     charGrid: $('char-grid'),
     btnStart: $('btn-start'),
+    btnSettings: $('btn-settings'),
+    btnSettingsClose: $('btn-settings-close'),
+    btnSettingsBack: $('btn-settings-back'),
     btnConfirm: $('btn-select-confirm'),
     btnSelectBack: $('btn-select-back'),
     btnDifficultyBack: $('btn-difficulty-back'),
@@ -155,6 +166,68 @@
       desc: 'Boss 更硬，拳头更疼，只有两条命。给真正想拆掉 V 塔的人。'
     }
   };
+
+  const UPGRADE_STATS = {
+    speed: {
+      key: 'speed', name: '移动速度', short: '速', token: 'boostSpeed',
+      color: '#29e7ff', maxLevel: 3, perLevel: 3,
+      desc: '行走与跑动速度提升。'
+    },
+    attack: {
+      key: 'attack', name: '攻击速度', short: '攻', token: 'boostAttack',
+      color: '#ff5b6b', maxLevel: 3, perLevel: 3,
+      desc: '普通拳脚与武器攻击更快。'
+    },
+    defense: {
+      key: 'defense', name: '防御', short: '防', token: 'boostDefense',
+      color: '#57e389', maxLevel: 3, perLevel: 3,
+      desc: '减少受到的伤害。'
+    }
+  };
+  const UPGRADE_ORDER = ['speed', 'attack', 'defense'];
+  const UPGRADE_TOKEN_STAT = {
+    boostSpeed: 'speed', boostAttack: 'attack', boostDefense: 'defense'
+  };
+  const MUSIC_SETTINGS_KEY = 'neonRageMusicPack';
+  const MUSIC_PACK_LABELS = {
+    classic: 'NEON CLASSIC', midnight: 'MIDNIGHT DRIVE', steel: 'STEEL PULSE'
+  };
+
+  function makeUpgradeState() {
+    return {
+      speed: { level: 0, progress: 0 },
+      attack: { level: 0, progress: 0 },
+      defense: { level: 0, progress: 0 }
+    };
+  }
+
+  function currentUpgradeLevel(stat) {
+    const u = G.upgrades && G.upgrades[stat];
+    return u ? u.level : 0;
+  }
+
+  function moveSpeedMul() {
+    return 1 + currentUpgradeLevel('speed') * .07;
+  }
+
+  function attackTimeScale() {
+    return 1 - currentUpgradeLevel('attack') * .08;
+  }
+
+  function defenseDamageMul() {
+    return 1 - currentUpgradeLevel('defense') * .08;
+  }
+
+  function scaleAttackData(data) {
+    const scale = attackTimeScale();
+    if (scale >= .999 || !data) return data;
+    return {
+      ...data,
+      startup: data.startup * scale,
+      active: data.active * scale,
+      recovery: data.recovery * scale
+    };
+  }
 
   const BOSS_TALK = {
     razor: {
@@ -291,7 +364,9 @@
       props: [
         { type: 'crate', x: 475, y: 242 }, { type: 'barrel', x: 905, y: 224 },
         { type: 'crate', x: 1085, y: 244 }, { type: 'barrel', x: 1490, y: 220 },
-        { type: 'crate', x: 1670, y: 244 }, { type: 'crate', x: 1780, y: 208 }
+        { type: 'crate', x: 1670, y: 244 }, { type: 'crate', x: 1780, y: 208 },
+        { type: 'barrel', x: 690, y: 238, upgrade: 'speed', upgradeId: 's1-speed' },
+        { type: 'barrel', x: 1950, y: 226, upgrade: 'attack', upgradeId: 's1-attack' }
       ],
       pickups: [
         { type: 'burger', x: 640, y: 242 }, { type: 'knife', x: 1130, y: 238 },
@@ -312,7 +387,9 @@
       props: [
         { type: 'barrel', x: 430, y: 238 }, { type: 'crate', x: 970, y: 242 },
         { type: 'barrel', x: 1330, y: 218 }, { type: 'crate', x: 1700, y: 238 },
-        { type: 'crate', x: 1760, y: 208 }
+        { type: 'crate', x: 1760, y: 208 },
+        { type: 'barrel', x: 690, y: 238, upgrade: 'defense', upgradeId: 's2-defense' },
+        { type: 'barrel', x: 1900, y: 226, upgrade: 'speed', upgradeId: 's2-speed' }
       ],
       pickups: [
         { type: 'soda', x: 540, y: 240 }, { type: 'pistol', x: 1250, y: 236 },
@@ -332,7 +409,9 @@
       ],
       props: [
         { type: 'crate', x: 500, y: 236 }, { type: 'barrel', x: 1000, y: 218 },
-        { type: 'crate', x: 1450, y: 240 }, { type: 'crate', x: 1760, y: 208 }
+        { type: 'crate', x: 1450, y: 240 }, { type: 'crate', x: 1760, y: 208 },
+        { type: 'barrel', x: 760, y: 238, upgrade: 'attack', upgradeId: 's3-attack' },
+        { type: 'barrel', x: 1620, y: 226, upgrade: 'defense', upgradeId: 's3-defense' }
       ],
       pickups: [
         { type: 'medkit', x: 560, y: 240 }, { type: 'pistol', x: 1190, y: 238 },
@@ -353,7 +432,9 @@
       props: [
         { type: 'barrel', x: 480, y: 236 }, { type: 'crate', x: 980, y: 242 },
         { type: 'crate', x: 1500, y: 220 }, { type: 'barrel', x: 1960, y: 240 },
-        { type: 'crate', x: 2320, y: 208 }
+        { type: 'crate', x: 2320, y: 208 },
+        { type: 'barrel', x: 700, y: 238, upgrade: 'speed', upgradeId: 's4-speed' },
+        { type: 'barrel', x: 1860, y: 226, upgrade: 'attack', upgradeId: 's4-attack' }
       ],
       pickups: [
         { type: 'medkit', x: 620, y: 240 }, { type: 'pistol', x: 1280, y: 238 },
@@ -374,7 +455,8 @@
       props: [
         { type: 'crate', x: 460, y: 236 }, { type: 'barrel', x: 900, y: 218 },
         { type: 'barrel', x: 1380, y: 240 }, { type: 'crate', x: 1800, y: 208 },
-        { type: 'crate', x: 2080, y: 242 }
+        { type: 'crate', x: 2080, y: 242 },
+        { type: 'barrel', x: 1820, y: 226, upgrade: 'defense', upgradeId: 's5-defense' }
       ],
       pickups: [
         { type: 'medkit', x: 560, y: 240 }, { type: 'pistol', x: 1120, y: 238 },
@@ -425,6 +507,9 @@
     selectedDifficulty: 'normal',
     difficulty: DIFFICULTIES.normal,
     bossTalk: null,
+    upgrades: makeUpgradeState(),
+    collectedUpgrades: new Set(),
+    settingsTab: 'audio',
     charKey: 'rex',
     muted: false,
     finalVictory: false,
@@ -519,7 +604,7 @@
     if (dom.titleBest) dom.titleBest.textContent = `BEST ${pad(Math.max(G.score, getBest()), 6)}`;
   }
   function clearOverlays() {
-    [dom.title, dom.difficulty, dom.select, dom.stageCard, dom.pause, dom.result, dom.gameover, dom.bossTalk].forEach(el => show(el, false));
+    [dom.title, dom.settings, dom.difficulty, dom.select, dom.stageCard, dom.pause, dom.result, dom.gameover, dom.bossTalk].forEach(el => show(el, false));
   }
   function blurFocus() {
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
@@ -541,6 +626,20 @@
     else if (p.weapon === 'knife') dom.hudWeapon.textContent = `KNIFE ${Math.max(0, p.weaponDur)}/10`;
     else dom.hudWeapon.textContent = `PIPE ${Math.max(0, p.weaponDur)}/12`;
     dom.hudSpecial.textContent = `必杀 -${PLAYER_STATS[p.charKey].specialCost} HP`;
+    if (dom.hudUpgrades) {
+      const ups = G.upgrades || makeUpgradeState();
+      const any = UPGRADE_ORDER.some(k => ups[k].level > 0 || ups[k].progress > 0);
+      show(dom.hudUpgrades, any);
+      const set = (el, stat) => {
+        if (!el) return;
+        const u = ups[stat];
+        const def = UPGRADE_STATS[stat];
+        el.textContent = u.level >= def.maxLevel ? `Lv.${u.level} MAX` : `Lv.${u.level} ${u.progress}/${def.perLevel}`;
+      };
+      set(dom.upgSpeed, 'speed');
+      set(dom.upgAttack, 'attack');
+      set(dom.upgDefense, 'defense');
+    }
     const aliveBosses = [G.boss, G.boss2].filter(b => b && !b.dead);
     if (G.battle) {
       if (G.battle.boss) dom.hudGoal.textContent = aliveBosses.length ? (aliveBosses.length > 1 ? 'TWIN BOSS' : 'BOSS FIGHT') : 'TARGET DOWN';
@@ -766,6 +865,70 @@
     blurFocus();
   }
 
+  function loadMusicPack() {
+    let key = 'classic';
+    try {
+      const saved = localStorage.getItem(MUSIC_SETTINGS_KEY);
+      if (saved && MUSIC_PACK_LABELS[saved]) key = saved;
+    } catch (e) { /* storage unavailable */ }
+    Sound.setMusicPack(key);
+    return key;
+  }
+
+  function updateMusicOptions() {
+    const current = Sound.musicPackKey || 'classic';
+    if (dom.musicOptions) {
+      dom.musicOptions.forEach(option => {
+        const selected = option.dataset.pack === current;
+        option.classList.toggle('selected', selected);
+        option.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      });
+    }
+    if (dom.settingsMusicStatus) {
+      dom.settingsMusicStatus.textContent = `当前：${MUSIC_PACK_LABELS[current] || current}`;
+    }
+  }
+
+  function selectMusicPack(key) {
+    if (!MUSIC_PACK_LABELS[key]) return;
+    Sound.setMusicPack(key);
+    try { localStorage.setItem(MUSIC_SETTINGS_KEY, key); } catch (e) { /* ignore */ }
+    updateMusicOptions();
+    Sound.playTrack('title');
+    Sound.menu();
+  }
+
+  function setSettingsTab(tab) {
+    if (!['audio', 'controls', 'guide', 'about'].includes(tab)) return;
+    G.settingsTab = tab;
+    document.querySelectorAll('.settings-tab').forEach(btn => {
+      const active = btn.dataset.tab === tab;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    document.querySelectorAll('.settings-panel').forEach(panel => {
+      panel.classList.toggle('is-active', panel.dataset.panel === tab);
+    });
+    if (dom.settingsBody) dom.settingsBody.scrollTop = 0;
+    Sound.menu();
+  }
+
+  function openSettings(tab) {
+    setMode('settings');
+    clearOverlays();
+    show(dom.settings, true);
+    show(dom.title, false);
+    show(dom.hud, false);
+    show(dom.bossUI, false);
+    show(dom.touch, false);
+    G.settingsTab = tab || G.settingsTab || 'audio';
+    setSettingsTab(G.settingsTab);
+    updateMusicOptions();
+    Sound.playTrack('title');
+    Sound.menu();
+    blurFocus();
+  }
+
   function updateDifficultyCards() {
     document.querySelectorAll('.difficulty-card').forEach(card => {
       const selected = card.dataset.diff === G.selectedDifficulty;
@@ -820,6 +983,8 @@
     G.charKey = key || G.selectedChar || 'rex';
     G.score = 0;
     G.lives = (G.difficulty || DIFFICULTIES.normal).lives;
+    G.upgrades = makeUpgradeState();
+    G.collectedUpgrades = new Set();
     G.maxCombo = 0;
     G.combo = 0;
     G.finalVictory = false;
@@ -862,11 +1027,15 @@
     const startX = document.body.classList.contains('touch-mode') ? 132 : 82;
     G.player = createPlayer(G.charKey, startX, 230);
     G.player.invuln = 2;
+    if (!G.upgrades) G.upgrades = makeUpgradeState();
+    if (!G.collectedUpgrades) G.collectedUpgrades = new Set();
     // stage props
     stage.props.forEach(prop => {
+      if (prop.upgradeId && G.collectedUpgrades.has(prop.upgradeId)) return;
       G.crates.push({
         kind: 'crate', type: prop.type, x: prop.x, y: prop.y, hp: 10, maxHp: 10,
-        flash: 0, dead: false, anim: Math.random() * 10
+        flash: 0, dead: false, anim: Math.random() * 10,
+        upgrade: prop.upgrade || null, upgradeId: prop.upgradeId || null
       });
     });
     (stage.pickups || []).forEach(pickup => addItem(pickup.type, pickup.x, pickup.y));
@@ -1113,8 +1282,9 @@
     const moving = len > 0.01;
     p.state = moving ? 'walk' : 'idle';
     p.pose = p.state;
-    p.x += mx * p.speed * dt;
-    p.y += my * p.speed * .68 * dt;
+    const moveMul = moveSpeedMul();
+    p.x += mx * p.speed * moveMul * dt;
+    p.y += my * p.speed * .68 * moveMul * dt;
 
     if (p.dashReady > 0 && p.dashCooldown <= 0 && Input.consumeAttack()) { startDashAttack(); return; }
     if (Input.consumeAttack()) { startPlayerAttack(); return; }
@@ -1147,7 +1317,7 @@
       p.queuedAttack = false;
       p.attack = {
         timer: 0,
-        data: { ...w },
+        data: scaleAttackData(w),
         index: 2,
         struck: false,
         weapon: true,
@@ -1159,7 +1329,7 @@
       else Sound.whoosh();
       return;
     }
-    const data = PLAYER_STATS[p.charKey].combo[0];
+    const data = scaleAttackData(PLAYER_STATS[p.charKey].combo[0]);
     p.state = 'attack';
     p.stateTime = 0;
     p.comboStep = 0;
@@ -1173,7 +1343,7 @@
     const p = G.player;
     const combo = PLAYER_STATS[p.charKey].combo;
     const next = Math.min(combo.length - 1, p.attack.index + 1);
-    p.attack = { timer: 0, data: combo[next], index: next, struck: false, weapon: false };
+    p.attack = { timer: 0, data: scaleAttackData(combo[next]), index: next, struck: false, weapon: false };
     p.stateTime = 0;
     p.queuedAttack = false;
     if (next === 2) Sound.whoosh();
@@ -1338,7 +1508,7 @@
 
     // Ramp up over the first few frames so the run reads as acceleration.
     const ramp = Math.min(1, p.runTime / .16);
-    p.x += dir * st.runSpeed * (.55 + .45 * ramp) * dt;
+    p.x += dir * st.runSpeed * moveSpeedMul() * (.55 + .45 * ramp) * dt;
     p.y = clamp(p.y, FLOOR_TOP, FLOOR_BOTTOM);
     p.runTrailTimer -= dt;
     if (p.runTrailTimer <= 0) {
@@ -1536,7 +1706,7 @@
     p.stateTime = 0;
     p.vz = st.jump;
     p.z = 1;
-    p.vx = (Input.down('left') ? -1 : Input.down('right') ? 1 : 0) * p.speed * .55;
+    p.vx = (Input.down('left') ? -1 : Input.down('right') ? 1 : 0) * p.speed * .55 * moveSpeedMul();
     p.vy = 0;
     p.jumpHit = new Set();
     Sound.jump();
@@ -1970,7 +2140,7 @@
         holder.cooldown = rand(holder.def.coolMin, holder.def.coolMax);
       }
     }
-    const dmg = Math.max(1, Math.round(amount * ((G.difficulty || DIFFICULTIES.normal).damageTaken)));
+    const dmg = Math.max(1, Math.round(amount * ((G.difficulty || DIFFICULTIES.normal).damageTaken) * defenseDamageMul()));
     p.hp = Math.max(0, p.hp - dmg);
     p.invuln = comboHit ? (knockdown ? .42 : .1) : .88;
     p.hitFlash = .16;
@@ -2867,7 +3037,8 @@
   const ITEM_NAMES = {
     apple: '苹果', soda: '汽水', burger: '汉堡', medkit: '医疗包',
     cash: '现金', moneybag: '钱袋', gold: '金条',
-    pipe: '钢管', knife: '小刀', pistol: '手枪'
+    pipe: '钢管', knife: '小刀', pistol: '手枪',
+    boostSpeed: '疾风芯片', boostAttack: '狂暴芯片', boostDefense: '铁壁芯片'
   };
 
   function addItem(type, x, y, extra) {
@@ -2907,15 +3078,80 @@
       spawnBurst(c.x, c.y, 12, c.type === 'barrel' ? '#c75a42' : '#a77b54', 12, 70);
       Sound.break();
       shake(3.5);
-      const type = rollCrateLoot();
-      if (type) {
-        const extra = type === 'pistol' ? { ammo: 6 } : {};
-        addItem(type, c.x + rand(-5, 5), c.y + rand(-2, 3), extra);
+      if (c.upgrade) {
+        const def = UPGRADE_STATS[c.upgrade];
+        if (def) {
+          if (c.upgradeId) G.collectedUpgrades.add(c.upgradeId);
+          for (let i = 0; i < def.perLevel; i++) {
+            addItem(def.token, c.x + rand(-8, 8), c.y + rand(-3, 4));
+          }
+          spawnBurst(c.x, c.y, 26, def.color, 9, 55);
+          toast(`${def.name}芯片 ×${def.perLevel}。靠近自动拾取。`, 1.7);
+        }
+      } else {
+        const type = rollCrateLoot();
+        if (type) {
+          const extra = type === 'pistol' ? { ammo: 6 } : {};
+          addItem(type, c.x + rand(-5, 5), c.y + rand(-2, 3), extra);
+        }
       }
     }
   }
 
+  function updateUpgradePickups() {
+    const p = G.player;
+    if (!p || p.state === 'dead') return;
+    for (let i = G.items.length - 1; i >= 0; i--) {
+      const item = G.items[i];
+      const stat = UPGRADE_TOKEN_STAT[item.type];
+      if (!stat) continue;
+      if (Math.abs(item.x - p.x) < 15 && Math.abs(item.y - p.y) < 12) {
+        G.items.splice(i, 1);
+        collectUpgradeToken(stat, item);
+      }
+    }
+  }
+
+  function collectUpgradeToken(stat, item) {
+    const def = UPGRADE_STATS[stat];
+    const u = G.upgrades && G.upgrades[stat];
+    if (!def || !u) return;
+    const p = G.player;
+    if (u.level >= def.maxLevel) {
+      G.score += 300;
+      spawnFloater(p.x, p.y, 34, '+300', def.color);
+      Sound.coin();
+      updateHud();
+      return;
+    }
+    u.progress++;
+    let leveled = false;
+    if (u.progress >= def.perLevel) {
+      u.progress = 0;
+      u.level++;
+      leveled = true;
+    }
+    spawnFloater(p.x, p.y, 34, leveled ? `${def.short} Lv.${u.level}` : `${def.short} ${u.progress}/${def.perLevel}`, def.color);
+    spawnBurst(p.x, p.y, leveled ? 30 : 14, def.color, 7, leveled ? 60 : 38);
+    G.flash = Math.max(G.flash, leveled ? .22 : .06);
+    if (leveled) {
+      Sound.select();
+      toast(`${def.name}提升至 Lv.${u.level}${u.level >= def.maxLevel ? ' MAX' : ''}。`, 1.8);
+      announce('UPGRADE', `${def.name} // Lv.${u.level}`, def.color, 1.35);
+    } else {
+      Sound.pickup();
+      toast(`${def.name} ${u.progress}/${def.perLevel}`, 1.0);
+    }
+    updateHud();
+  }
+
   function pickupItem(item) {
+    if (UPGRADE_TOKEN_STAT[item.type]) {
+      const idx = G.items.indexOf(item);
+      if (idx >= 0) G.items.splice(idx, 1);
+      collectUpgradeToken(UPGRADE_TOKEN_STAT[item.type], item);
+      return;
+    }
     const p = G.player;
     const heal = HEAL_ITEMS[item.type];
     if (heal && p.hp >= p.maxHp) {
@@ -3213,6 +3449,7 @@
       return;
     }
     updatePlayer(dt);
+    updateUpgradePickups();
     for (const e of G.enemies) updateEnemy(e, dt);
     separateEnemies();
     updateProjectiles(dt);
@@ -3251,6 +3488,17 @@
     switch (G.mode) {
       case 'title':
         if (Input.pressed('confirm')) openDifficulty();
+        break;
+      case 'settings':
+        if (Input.pressed('pause')) openTitle(true);
+        if (Input.pressed('left')) {
+          const tabs = ['audio', 'controls', 'guide', 'about'];
+          setSettingsTab(tabs[(tabs.indexOf(G.settingsTab) + 3) % 4]);
+        }
+        if (Input.pressed('right')) {
+          const tabs = ['audio', 'controls', 'guide', 'about'];
+          setSettingsTab(tabs[(tabs.indexOf(G.settingsTab) + 1) % 4]);
+        }
         break;
       case 'difficulty':
         if (Input.pressed('left') || Input.pressed('up')) selectDifficulty(DIFFICULTY_ORDER[(DIFFICULTY_ORDER.indexOf(G.selectedDifficulty) + 2) % 3], true);
@@ -3418,7 +3666,7 @@
   function render(now) {
     const t = G.time;
     ctx.clearRect(0, 0, W, H);
-    if (G.mode === 'title' || G.mode === 'difficulty') {
+    if (G.mode === 'title' || G.mode === 'settings' || G.mode === 'difficulty') {
       renderTitle(t);
     } else if (G.mode === 'select') {
       renderSelect(t);
@@ -4122,7 +4370,7 @@
     const renderables = [];
     for (const c of G.crates) {
       if (c.dead) continue;
-      renderables.push({ y: c.y, draw: () => Art.drawCrate(ctx, c.x - G.camera.x, c.y, c.type, c.flash > 0, G.time) });
+      renderables.push({ y: c.y, draw: () => Art.drawCrate(ctx, c.x - G.camera.x, c.y, c.type, c.flash > 0, G.time, c.upgrade) });
     }
     for (const e of G.enemies) {
       renderables.push({ y: e.y, draw: () => drawEntity(e) });
@@ -4417,6 +4665,13 @@
 
   function bindEvents() {
     window.addEventListener('keydown', (e) => {
+      if (e.code === 'KeyS' && !e.repeat && G.mode === 'title') {
+        ensureAudio();
+        Sound.start();
+        openSettings('audio');
+        e.preventDefault();
+        return;
+      }
       if (e.code === 'KeyM' && !e.repeat) {
         toggleMute();
         e.preventDefault();
@@ -4433,6 +4688,22 @@
       Sound.start();
       openDifficulty();
     });
+    dom.btnSettings.addEventListener('click', () => {
+      ensureAudio();
+      Sound.start();
+      openSettings('audio');
+    });
+    dom.settings.querySelectorAll('.settings-tab').forEach(btn => {
+      btn.addEventListener('click', () => setSettingsTab(btn.dataset.tab));
+    });
+    dom.musicOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        ensureAudio();
+        selectMusicPack(option.dataset.pack);
+      });
+    });
+    dom.btnSettingsClose.addEventListener('click', () => { Sound.menu(); openTitle(true); });
+    dom.btnSettingsBack.addEventListener('click', () => { Sound.menu(); openTitle(true); });
     dom.difficultyGrid.addEventListener('click', (e) => {
       const card = e.target.closest('.difficulty-card');
       if (!card) return;
@@ -4547,6 +4818,7 @@
   // ————————————————————————————————————————————————
   function boot() {
     G.titleVisuals = Art.buildStage(0, 2460);
+    loadMusicPack();
     bindEvents();
     setMode('title');
     show(dom.title, true);
@@ -4581,7 +4853,7 @@
   }
 
   // Read-only debug handle (useful for testing; harmless in play).
-  window.__NEON_RAGE__ = { G, Input, STAGES, PLAYER_STATS, ENEMY_DATA, startStage, spawnEnemy, startRun, hurtPlayer, hitEnemy, killEnemy, clearBattle, showResult };
+  window.__NEON_RAGE__ = { G, Input, STAGES, PLAYER_STATS, ENEMY_DATA, startStage, spawnEnemy, startRun, hurtPlayer, hitEnemy, killEnemy, clearBattle, showResult, damageCrate };
 
   boot();
 })();

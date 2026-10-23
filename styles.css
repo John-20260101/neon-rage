@@ -68,8 +68,12 @@ button:focus-visible, [tabindex]:focus-visible {
 .page {
   position: relative; z-index: 1;
   width: min(1240px, calc(100% - 32px));
+  min-height: 100svh;
   margin: 0 auto;
-  padding: 22px 0 28px;
+  padding: 8px 0 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 /* ————— top bar ————— */
@@ -653,6 +657,118 @@ body.touch-mode .toast { bottom: 30%; }
 }
 
 
+
+/* ————— single-screen cover / settings ————— */
+.cover-actions {
+  display: flex; align-items: stretch; flex-wrap: wrap; gap: .65cqw;
+}
+.ghost-arcade {
+  display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center;
+  gap: .15cqw; min-width: 11.5cqw;
+  padding: 1cqw 1.5cqw;
+  border: 1px solid rgba(41,231,255,.42);
+  background: rgba(5,3,12,.62);
+  color: var(--paper); cursor: pointer;
+  font-family: var(--cn); font-weight: 900;
+  clip-path: polygon(0 0, 100% 0, calc(100% - .9cqw) 100%, 0 100%);
+  box-shadow: 0 .25cqw 0 rgba(41,231,255,.15), 0 .9cqw 2cqw rgba(0,0,0,.28);
+  transition: .16s ease;
+}
+.ghost-arcade:hover { border-color: var(--cyan); background: rgba(41,231,255,.1); transform: translateY(-1px); }
+.ghost-arcade .btn-main { font-size: 1.05cqw; letter-spacing: .1em; line-height: 1; }
+.ghost-arcade .btn-sub { color: #82e9f8; }
+.cover-next { margin-top: .65cqw; }
+
+.settings-screen {
+  display: flex; align-items: center; justify-content: center;
+  padding: 2.2cqw 3.4cqw;
+  background: radial-gradient(ellipse at 50% 20%, rgba(41,231,255,.08), transparent 55%), rgba(4,2,10,.82);
+  backdrop-filter: blur(4px);
+}
+.settings-card {
+  width: min(86cqw, 720px); max-height: 92%;
+  display: flex; flex-direction: column;
+  padding: 1.1cqw 1.3cqw .8cqw;
+  border: 1px solid rgba(255,210,63,.4);
+  background: linear-gradient(160deg, rgba(22,15,34,.98), rgba(6,4,13,.98));
+  box-shadow: 0 1cqw 4cqw rgba(0,0,0,.62), inset 0 0 2cqw rgba(255,46,99,.05);
+  overflow: hidden;
+}
+.settings-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1cqw; flex: 0 0 auto; }
+.settings-head h2 {
+  margin: .22cqw 0 .12cqw;
+  font-family: var(--display); font-size: 2.35cqw; line-height: 1;
+  letter-spacing: .04em; color: var(--paper);
+  text-shadow: .12cqw .12cqw 0 rgba(255,46,99,.42);
+}
+.settings-head p { margin: 0; font-family: var(--cn); font-size: max(8px, .62cqw); color: #91849f; }
+.settings-head .ghost-btn { padding: .5cqw .8cqw; font-size: max(8px, .58cqw); white-space: nowrap; }
+.settings-tabs { display: flex; gap: .35cqw; margin-top: .75cqw; padding-bottom: .5cqw; border-bottom: 1px solid rgba(255,255,255,.1); flex: 0 0 auto; }
+.settings-tab {
+  border: 1px solid transparent; background: transparent;
+  padding: .34cqw .72cqw; cursor: pointer;
+  font-family: var(--cn); font-size: max(8px, .64cqw); color: #91849f;
+  letter-spacing: .08em; transition: .15s ease;
+}
+.settings-tab:hover { color: var(--paper); }
+.settings-tab.is-active { color: #160a15; background: var(--yellow); border-color: var(--yellow); font-weight: 900; }
+.settings-body {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto;
+  padding: .65cqw .25cqw .5cqw; scrollbar-width: thin;
+  scrollbar-color: rgba(255,210,63,.55) rgba(255,255,255,.06);
+}
+.settings-body::-webkit-scrollbar { width: 5px; }
+.settings-body::-webkit-scrollbar-thumb { background: rgba(255,210,63,.55); }
+.settings-panel { display: none; }
+.settings-panel.is-active { display: block; }
+.settings-panel-title { display: flex; align-items: baseline; gap: .6cqw; margin-bottom: .5cqw; }
+.settings-panel-title b { font-family: var(--mono); font-size: max(8px, .6cqw); letter-spacing: .18em; color: var(--cyan); }
+.settings-panel-title span { font-family: var(--cn); font-size: max(8px, .58cqw); color: #8f829d; }
+.music-options { display: grid; gap: .4cqw; }
+.music-option {
+  display: flex; align-items: center; gap: .65cqw; width: 100%;
+  padding: .5cqw .65cqw; text-align: left; cursor: pointer;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.025); color: var(--paper);
+  transition: .15s ease;
+}
+.music-option:hover { border-color: rgba(41,231,255,.4); background: rgba(41,231,255,.045); }
+.music-option.selected { border-color: var(--yellow); background: rgba(255,210,63,.07); box-shadow: inset 2px 0 0 var(--yellow); }
+.music-radio { width: .72cqw; height: .72cqw; min-width: 7px; min-height: 7px; border: 1px solid #71647e; border-radius: 50%; flex: 0 0 auto; }
+.music-option.selected .music-radio { background: var(--yellow); border-color: var(--yellow); box-shadow: 0 0 6px rgba(255,210,63,.65); }
+.music-copy { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
+.music-copy b { font-family: var(--mono); font-size: max(9px, .68cqw); letter-spacing: .1em; }
+.music-copy em { font-family: var(--cn); font-style: normal; font-size: max(8px, .56cqw); color: #c7b9d4; }
+.music-copy small { font-family: var(--cn); font-size: max(8px, .56cqw); line-height: 1.35; color: #897d97; }
+.music-tag { font-family: var(--mono); font-size: max(7px, .45cqw); letter-spacing: .12em; color: #7c7089; white-space: nowrap; }
+.music-option.selected .music-tag { color: var(--yellow); }
+.settings-note { margin: .6cqw 0 0; font-family: var(--cn); font-size: max(8px, .58cqw); color: var(--yellow); }
+.settings-keys { grid-template-columns: 1fr 1fr; gap: .38cqw .9cqw; }
+.settings-keys div { font-size: max(8px, .6cqw); }
+.settings-keys kbd { font-size: max(8px, .52cqw); }
+.settings-guide { margin: 0; padding: 0; list-style: none; display: grid; gap: .32cqw; }
+.settings-guide li { position: relative; padding-left: .8cqw; font-family: var(--cn); font-size: max(8px, .62cqw); line-height: 1.55; color: #b9acc7; }
+.settings-guide li::before { content: "▸"; position: absolute; left: 0; color: var(--pink); }
+.settings-guide b { color: #f2e9dc; font-weight: 600; }
+.settings-guide kbd { font-size: .9em; }
+.settings-about p { margin: 0 0 .5cqw; font-family: var(--cn); font-size: max(9px, .68cqw); line-height: 1.65; color: #b9acc7; }
+.settings-about .fineprint { font-size: max(8px, .55cqw); color: #776a85; }
+.settings-foot { display: flex; align-items: center; justify-content: space-between; gap: .7cqw; padding-top: .55cqw; border-top: 1px solid rgba(255,255,255,.1); flex: 0 0 auto; }
+.settings-foot > span { font-family: var(--cn); font-size: max(8px, .55cqw); color: #8f829d; }
+.settings-foot kbd { font-size: .9em; }
+.settings-foot .arcade-btn.compact { min-width: 9cqw; padding: .5cqw 1.8cqw .55cqw .9cqw; }
+.settings-foot .arcade-btn.compact .btn-main { font-size: .9cqw; }
+.settings-foot .arcade-btn.compact::after { font-size: 1.5cqw; }
+
+/* ————— upgrade HUD ————— */
+.hud-upgrades { display: grid; gap: .08cqw; margin-top: .25cqw; }
+.upg-row { display: flex; align-items: center; gap: .35cqw; font-family: var(--mono); font-size: max(7px, .48cqw); letter-spacing: .05em; color: #bfb2cb; }
+.upg-row > span { display: grid; place-items: center; width: .9cqw; height: .9cqw; min-width: 9px; min-height: 9px; color: #090610; background: #29e7ff; font-family: var(--cn); font-size: max(7px, .48cqw); font-weight: 900; }
+.upg-row[data-upg="attack"] > span { background: #ff5b6b; }
+.upg-row[data-upg="defense"] > span { background: #57e389; }
+.upg-row b { font-weight: 400; color: #d9cddf; }
+.upg-row b::after { content: ""; }
+
 /* ————— cover / difficulty / boss talk ————— */
 .cover-ribbon {
   display: inline-flex; align-items: center; gap: .55cqw;
@@ -920,6 +1036,56 @@ body.touch-mode .toast { bottom: 30%; }
   #boss-talk-progress { font-size: max(7px, .9cqw); }
   #boss-talk-skip { font-size: max(7px, 1cqw); padding: .2cqw .5cqw; }
 }
+
+@media (min-width: 900px) {
+  body { overflow-y: auto; }
+  .page { min-height: 100svh; }
+}
+@media (max-height: 900px) {
+  .cabinet-footer { display: none; }
+}
+@media (min-width: 900px) and (max-height: 760px) {
+  .page { width: min(1080px, calc((100svh - 92px) * 16 / 9 + 22px)); }
+  .topbar { padding-bottom: 8px; }
+}
+@media (max-width: 700px) {
+  .page { min-height: 100svh; padding: 5px 0 4px; }
+  .cover-actions { gap: .35cqw; }
+  .ghost-arcade { min-width: 9.5cqw; padding: .7cqw 1cqw; }
+  .ghost-arcade .btn-main { font-size: max(8px, 2.2cqw); }
+  .ghost-arcade .btn-sub { font-size: max(6px, .8cqw); }
+  .settings-screen { padding: 1.2cqw; }
+  .settings-card { width: 94cqw; max-height: 95%; padding: .8cqw 1cqw .5cqw; }
+  .settings-head h2 { font-size: 4cqw; margin: .15cqw 0 .1cqw; }
+  .settings-head p { display: none; }
+  .settings-head .ghost-btn { padding: .25cqw .55cqw; font-size: max(7px, 1.1cqw); }
+  .settings-tabs { gap: .1cqw; margin-top: .35cqw; padding-bottom: .25cqw; }
+  .settings-tab { padding: .2cqw .45cqw; font-size: max(7px, 1.3cqw); }
+  .settings-body { padding: .35cqw .1cqw .3cqw; }
+  .settings-panel-title { margin-bottom: .25cqw; gap: .3cqw; }
+  .settings-panel-title b, .settings-panel-title span { font-size: max(7px, 1.05cqw); }
+  .music-options { gap: .25cqw; }
+  .music-option { gap: .35cqw; padding: .3cqw .4cqw; }
+  .music-copy b { font-size: max(8px, 1.45cqw); }
+  .music-copy em, .music-copy small { font-size: max(7px, 1.05cqw); }
+  .music-copy small { display: none; }
+  .music-tag { font-size: max(6px, .85cqw); }
+  .music-radio { width: 1.35cqw; height: 1.35cqw; min-width: 6px; min-height: 6px; }
+  .settings-note { margin-top: .3cqw; font-size: max(7px, 1.1cqw); }
+  .settings-keys { gap: .2cqw .5cqw; }
+  .settings-keys div { font-size: max(8px, 1.35cqw); }
+  .settings-guide { gap: .2cqw; }
+  .settings-guide li { font-size: max(8px, 1.35cqw); padding-left: .6cqw; line-height: 1.45; }
+  .settings-about p { font-size: max(8px, 1.25cqw); line-height: 1.45; margin-bottom: .25cqw; }
+  .settings-foot { padding-top: .3cqw; }
+  .settings-foot > span { display: none; }
+  .settings-foot .arcade-btn.compact { margin-left: auto; min-width: 14cqw; padding: .35cqw 1.5cqw .4cqw .7cqw; }
+  .settings-foot .arcade-btn.compact .btn-main { font-size: max(8px, 1.4cqw); }
+  .hud-upgrades { gap: 0; margin-top: .12cqw; }
+  .upg-row { font-size: max(6px, .9cqw); gap: .2cqw; }
+  .upg-row > span { width: 1.5cqw; height: 1.5cqw; min-width: 6px; min-height: 6px; font-size: max(6px, .85cqw); }
+}
+
 @media (hover: none) and (pointer: coarse) {
   .manual { margin-top: 16px; }
   .hud-name-row b { font-size: 1.7cqw; }

@@ -84,6 +84,37 @@
     }
   };
 
+  const MUSIC_PACKS = {
+    classic: {
+      name: 'NEON CLASSIC', cn: '霓虹经典',
+      bpmMul: 1, transpose: 0, gainMul: 1,
+      leadWave: 'square', bassWave: 'sawtooth', padWave: 'sawtooth',
+      drumMul: 1, hatMul: 1, filterMul: 1, delayGain: .18
+    },
+    midnight: {
+      name: 'MIDNIGHT DRIVE', cn: '午夜驱动',
+      bpmMul: .9, transpose: -3, gainMul: .9,
+      leadWave: 'triangle', bassWave: 'triangle', padWave: 'sine',
+      drumMul: .82, hatMul: .78, filterMul: .72, delayGain: .28
+    },
+    steel: {
+      name: 'STEEL PULSE', cn: '钢铁脉冲',
+      bpmMul: 1.08, transpose: 2, gainMul: 1.04,
+      leadWave: 'sawtooth', bassWave: 'square', padWave: 'sawtooth',
+      drumMul: 1.16, hatMul: 1.18, filterMul: 1.3, delayGain: .1
+    }
+  };
+
+  function applyMusicPack(track, pack) {
+    const p = pack || MUSIC_PACKS.classic;
+    return {
+      ...track,
+      bpm: track.bpm * p.bpmMul,
+      root: track.root + p.transpose,
+      gain: track.gain * p.gainMul
+    };
+  }
+
   class SoundSystem {
     constructor() {
       this.ctx = null;
@@ -103,6 +134,21 @@
       this.volume = 0.58;
       this.lastHitAt = 0;
       this.stepDur = 0;
+      this.musicPackKey = 'classic';
+      this.musicPack = MUSIC_PACKS.classic;
+    }
+
+    setMusicPack(key) {
+      if (!MUSIC_PACKS[key]) return false;
+      this.musicPackKey = key;
+      this.musicPack = MUSIC_PACKS[key];
+      if (this.delayGain && this.ctx) this.delayGain.gain.value = this.musicPack.delayGain;
+      const current = this.trackName;
+      if (current) {
+        this.stopMusic();
+        this.playTrack(current);
+      }
+      return true;
     }
 
     ensure() {
@@ -125,7 +171,7 @@
         this.delay = this.ctx.createDelay(0.6);
         this.delay.delayTime.value = 0.22;
         this.delayGain = this.ctx.createGain();
-        this.delayGain.gain.value = 0.18;
+        this.delayGain.gain.value = this.musicPack.delayGain;
         this.delay.connect(this.delayGain);
         this.delayGain.connect(this.master);
         this.delayGain.connect(this.delay);
@@ -161,7 +207,7 @@
       if (this.trackName === name && this.timer) return;
       this.stopMusic();
       this.trackName = name;
-      this.track = TRACKS[name];
+      this.track = applyMusicPack(TRACKS[name], this.musicPack);
       this.step = 0;
       this.nextTime = this.ctx.currentTime + 0.08;
       this.stepDur = 60 / this.track.bpm / 4;
@@ -213,13 +259,15 @@
       }
 
       // drums
-      if (s === 0 || s === 4 || s === 8 || s === 12) this.kick(when, 0.17 * g);
-      if (s === 14 && half === 1) this.kick(when, 0.12 * g);
-      if (s === 4 || s === 12) this.snare(when, 0.09 * g);
-      if (s === 7 || s === 15) this.snare(when, 0.035 * g, 1.3);
-      if (s % 2 === 0) this.hat(when, 0.024 * g * t.hat);
-      if (s === 2 || s === 10) this.hat(when, 0.038 * g * t.hat, 1.25);
-      if (half === 1 && s === 15 && Math.random() < 0.6) this.hat(when, 0.025 * g, 1.4);
+      const dp = this.musicPack.drumMul;
+      const hp = this.musicPack.hatMul;
+      if (s === 0 || s === 4 || s === 8 || s === 12) this.kick(when, 0.17 * g * dp);
+      if (s === 14 && half === 1) this.kick(when, 0.12 * g * dp);
+      if (s === 4 || s === 12) this.snare(when, 0.09 * g * dp);
+      if (s === 7 || s === 15) this.snare(when, 0.035 * g * dp, 1.3);
+      if (s % 2 === 0) this.hat(when, 0.024 * g * t.hat * hp);
+      if (s === 2 || s === 10) this.hat(when, 0.038 * g * t.hat * hp, 1.25);
+      if (half === 1 && s === 15 && Math.random() < 0.6) this.hat(when, 0.025 * g * hp, 1.4);
     }
 
     // ——— instruments ———
@@ -228,11 +276,11 @@
       const o = c.createOscillator();
       const f = c.createBiquadFilter();
       const g = c.createGain();
-      o.type = 'sawtooth';
+      o.type = this.musicPack.bassWave;
       o.frequency.setValueAtTime(freq, when);
       f.type = 'lowpass';
-      f.frequency.setValueAtTime(520, when);
-      f.frequency.exponentialRampToValueAtTime(160, when + dur);
+      f.frequency.setValueAtTime(520 * this.musicPack.filterMul, when);
+      f.frequency.exponentialRampToValueAtTime(160 * this.musicPack.filterMul, when + dur);
       f.Q.value = 4;
       g.gain.setValueAtTime(0.0001, when);
       g.gain.exponentialRampToValueAtTime(gain, when + 0.012);
@@ -246,9 +294,9 @@
       const o = c.createOscillator();
       const g = c.createGain();
       const f = c.createBiquadFilter();
-      o.type = 'square';
+      o.type = this.musicPack.leadWave;
       o.frequency.setValueAtTime(freq, when);
-      f.type = 'lowpass'; f.frequency.value = 2800;
+      f.type = 'lowpass'; f.frequency.value = 2800 * this.musicPack.filterMul;
       g.gain.setValueAtTime(0.0001, when);
       g.gain.exponentialRampToValueAtTime(gain, when + 0.008);
       g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
@@ -267,10 +315,10 @@
       freqs.forEach((freq, i) => {
         const o = c.createOscillator();
         const f = c.createBiquadFilter();
-        o.type = i % 2 ? 'triangle' : 'sawtooth';
+        o.type = i % 2 ? 'triangle' : this.musicPack.padWave;
         o.frequency.value = freq;
         o.detune.value = i * 7 - 7;
-        f.type = 'lowpass'; f.frequency.value = 900;
+        f.type = 'lowpass'; f.frequency.value = 900 * this.musicPack.filterMul;
         o.connect(f); f.connect(g);
         o.start(when); o.stop(when + dur + 0.03);
       });

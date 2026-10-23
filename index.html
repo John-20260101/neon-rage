@@ -61,6 +61,11 @@
               </div>
               <div class="meter hp-meter"><i id="hp-ghost"></i><i id="hp-fill"></i></div>
               <div class="hud-subrow"><span id="hud-weapon">FISTS</span><span id="hud-special">必杀 HP -7</span></div>
+              <div id="hud-upgrades" class="hud-upgrades is-hidden" aria-label="斗士强化">
+                <div class="upg-row" data-upg="speed"><span>速</span><b id="upg-speed">Lv.0 0/3</b></div>
+                <div class="upg-row" data-upg="attack"><span>攻</span><b id="upg-attack">Lv.0 0/3</b></div>
+                <div class="upg-row" data-upg="defense"><span>防</span><b id="upg-defense">Lv.0 0/3</b></div>
+              </div>
             </div>
           </div>
           <div class="hud-center">
@@ -113,10 +118,16 @@
             </h1>
             <div class="logo-cn">霓 虹 怒 火</div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
-            <button id="btn-start" class="arcade-btn" type="button">
-              <span class="btn-main">开始游戏</span>
-              <span class="btn-sub">PRESS ENTER / 点击开始</span>
-            </button>
+            <div class="cover-actions">
+              <button id="btn-start" class="arcade-btn" type="button">
+                <span class="btn-main">开始游戏</span>
+                <span class="btn-sub">PRESS ENTER / 点击开始</span>
+              </button>
+              <button id="btn-settings" class="ghost-arcade" type="button">
+                <span class="btn-main">游戏设置</span>
+                <span class="btn-sub">S / SETTINGS</span>
+              </button>
+            </div>
             <div class="cover-next">NEXT // 选择难度</div>
             <div class="title-meta">
               <span>1 PLAYER</span>
@@ -192,6 +203,93 @@
             <div class="select-buttons">
               <button id="btn-difficulty-back" class="ghost-btn" type="button">返回封面</button>
               <button id="btn-difficulty-confirm" class="arcade-btn compact" type="button"><span class="btn-main">确认难度</span><span class="btn-sub">ENTER</span></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings-screen" class="overlay settings-screen is-hidden">
+          <div class="settings-card">
+            <div class="settings-head">
+              <div>
+                <div class="eyebrow">SYSTEM <span>//</span> CONFIG</div>
+                <h2>游戏设置</h2>
+                <p>音乐、操作与生存守则都在这里。</p>
+              </div>
+              <button id="btn-settings-close" class="ghost-btn" type="button">返回封面</button>
+            </div>
+            <div class="settings-tabs" role="tablist" aria-label="设置分类">
+              <button class="settings-tab is-active" data-tab="audio" type="button" role="tab" aria-selected="true">声音</button>
+              <button class="settings-tab" data-tab="controls" type="button" role="tab" aria-selected="false">操作</button>
+              <button class="settings-tab" data-tab="guide" type="button" role="tab" aria-selected="false">生存守则</button>
+              <button class="settings-tab" data-tab="about" type="button" role="tab" aria-selected="false">关于</button>
+            </div>
+            <div class="settings-body" id="settings-body">
+              <section class="settings-panel is-active" data-panel="audio">
+                <div class="settings-panel-title"><b>BGM PACK</b><span>背景音乐风格</span></div>
+                <div class="music-options">
+                  <button class="music-option" data-pack="classic" type="button">
+                    <span class="music-radio"></span>
+                    <span class="music-copy"><b>NEON CLASSIC</b><em>霓虹经典</em><small>原始合成器音色，最快上手的街机味道。</small></span>
+                    <span class="music-tag">DEFAULT</span>
+                  </button>
+                  <button class="music-option" data-pack="midnight" type="button">
+                    <span class="music-radio"></span>
+                    <span class="music-copy"><b>MIDNIGHT DRIVE</b><em>午夜驱动</em><small>更慢、更暖的低音与三角波主音，适合雨夜清街。</small></span>
+                    <span class="music-tag">SLOW</span>
+                  </button>
+                  <button class="music-option" data-pack="steel" type="button">
+                    <span class="music-radio"></span>
+                    <span class="music-copy"><b>STEEL PULSE</b><em>钢铁脉冲</em><small>更快、更硬的锯齿主音与重鼓，Boss 战压迫感更强。</small></span>
+                    <span class="music-tag">FAST</span>
+                  </button>
+                </div>
+                <p id="settings-music-status" class="settings-note">当前：NEON CLASSIC</p>
+              </section>
+              <section class="settings-panel" data-panel="controls">
+                <div class="settings-panel-title"><b>HOW TO FIGHT</b><span>操作</span></div>
+                <div class="keys settings-keys">
+                  <div><kbd>WASD</kbd><span>移动 / 上下走位</span></div>
+                  <div><kbd>→ →</kbd><span>跑动（第二下按住）</span></div>
+                  <div><kbd>→ → + J</kbd><span>冲刺技（火 / 电 / 尘）</span></div>
+                  <div><kbd>J</kbd><span>连击 / 使用武器</span></div>
+                  <div><kbd>K</kbd><span>跳跃 / 空中踢</span></div>
+                  <div><kbd>L</kbd><span>必杀（消耗生命）</span></div>
+                  <div><kbd>E</kbd><span>抓取 / 投掷 / 拾取道具</span></div>
+                  <div><kbd>ESC</kbd><span>暂停</span></div>
+                </div>
+              </section>
+              <section class="settings-panel" data-panel="guide">
+                <div class="settings-panel-title"><b>STREET WISDOM</b><span>生存守则</span></div>
+                <ul class="settings-guide">
+                  <li><b>走位比出拳重要。</b>用上下方向错开敌人的拳头，再从侧面切入。</li>
+                  <li><b>双击前方向并按住可以跑动。</b>跑动中按 <kbd>J</kbd> 直接放冲刺技：REX 带火焰，LUNA 带闪电，BRUNO 带烟尘。</li>
+                  <li><b>敌人头顶有血条。</b>血条变黄、闪红时说明快倒了，优先补刀；Boss 的血量看屏幕顶部。</li>
+                  <li><b>抓取后按 J 膝击，按 K 投掷。</b>把打手砸向同伴，能连带击倒。</li>
+                  <li><b>必杀会扣自己的血。</b>REX「烈焰升龙」范围最大，LUNA「雷光贯线」贯穿前方一条线，BRUNO「裂地重砸」震开周身；被围住时再用。</li>
+                  <li><b>木箱和普通油桶能打碎。</b>苹果、汽水、汉堡和医疗包回血；钢管、小刀、手枪都能上手。</li>
+                  <li><b>发光的强化油桶</b>会掉出 3 枚同属性芯片。速、攻、防各 3 级，每级需要吃 3 枚。</li>
+                  <li><b>手枪只有 6 发。</b>按 <kbd>J</kbd> 射击，子弹可以打断敌人；打空后自动丢掉。</li>
+                  <li><b>金条和钱袋是高分道具。</b>金条 +3000，钱袋 +1200；看到就别错过。</li>
+                  <li><b>新对手各有套路。</b>拳手会侧闪三连拳，鞭手攻击距离很长，枪手会后退放冷枪；塞壬会腾空飞踢，蝰蛇会后退扔飞刀。</li>
+                  <li><b>Boss 会随关卡解锁新招。</b>剃刀会大范围横扫，泰坦会冲撞和跳跃重砸，维克托会升龙拳与大型波动拳；看到蓄力先拉开。</li>
+                  <li><b>摔跤手会抓人。</b>被近身抓住会被过肩摔扔出去；保持上下错位，别和它贴脸。</li>
+                  <li><b>第 4 关是双子战。</b>渡鸦会瞬移斩与四连刀，夜莺会飞跃踢与三连旋风腿；先集中击倒一个，警告栏会只剩一条血。</li>
+                  <li><b>最终 Boss 有三阶段。</b>机枪阶段用跳跃躲弹幕；暴走阶段防冲刺重拳；天翔阶段它会悬浮俯冲，抓落地硬直反击。</li>
+                </ul>
+              </section>
+              <section class="settings-panel" data-panel="about">
+                <div class="settings-panel-title"><b>ABOUT</b><span>关于</span></div>
+                <div class="settings-about">
+                  <p>《霓虹怒火》是一部受 16-bit 清版动作经典启发的原创同人作品。角色、像素画面、关卡、音乐均为程序化原创，不使用原作美术或音频素材。</p>
+                  <p class="fineprint">SEGA、Streets of Rage 及相关商标归其权利人所有。本作非商业、非官方作品。</p>
+                  <p class="fineprint">NEON RAGE // NEO CITY ARCADE // BUILT WITH CANVAS + WEB AUDIO</p>
+                </div>
+              </section>
+            </div>
+            <div class="settings-foot">
+              <span><kbd>←</kbd><kbd>→</kbd> 切换分类　<kbd>ESC</kbd> 返回封面</span>
+              <button id="btn-settings-back" class="arcade-btn compact" type="button"><span class="btn-main">返回封面</span><span class="btn-sub">ESC</span></button>
             </div>
           </div>
         </div>
@@ -356,50 +454,6 @@
       </div>
     </section>
 
-    <section class="manual" aria-label="游戏说明">
-      <div class="manual-block">
-        <span class="manual-kicker">HOW TO FIGHT / 操作</span>
-        <div class="keys">
-          <div><kbd>WASD</kbd><span>移动 / 上下走位</span></div>
-          <div><kbd>→ →</kbd><span>跑动（第二下按住）</span></div>
-          <div><kbd>→ → + J</kbd><span>冲刺技（火 / 电 / 尘）</span></div>
-          <div><kbd>J</kbd><span>连击 / 使用武器</span></div>
-          <div><kbd>K</kbd><span>跳跃 / 空中踢</span></div>
-          <div><kbd>L</kbd><span>必杀（消耗生命）</span></div>
-          <div><kbd>E</kbd><span>抓取 / 投掷 / 拾取道具</span></div>
-          <div><kbd>ESC</kbd><span>暂停</span></div>
-        </div>
-      </div>
-      <div class="manual-block tips-block">
-        <span class="manual-kicker">STREET WISDOM / 生存守则</span>
-        <ul>
-          <li><b>走位比出拳重要。</b>用上下方向错开敌人的拳头，再从侧面切入。</li>
-          <li><b>双击前方向并按住可以跑动。</b>跑动中按 <kbd>J</kbd> 直接放冲刺技：REX 带火焰，LUNA 带闪电，BRUNO 带烟尘。</li>
-          <li><b>敌人头顶有血条。</b>血条变黄、闪红时说明快倒了，优先补刀；Boss 的血量看屏幕顶部。</li>
-          <li><b>抓取后按 J 膝击，按 K 投掷。</b>把打手砸向同伴，能连带击倒。</li>
-          <li><b>必杀会扣自己的血。</b>REX「烈焰升龙」范围最大，LUNA「雷光贯线」贯穿前方一条线，BRUNO「裂地重砸」震开周身；被围住时再用。</li>
-          <li><b>木箱和油桶能打碎。</b>苹果、汽水、汉堡和医疗包回血；钢管、小刀、手枪都能上手。</li>
-          <li><b>手枪只有 6 发。</b>按 <kbd>J</kbd> 射击，子弹可以打断敌人；打空后自动丢掉。</li>
-          <li><b>金条和钱袋是高分道具。</b>金条 +3000，钱袋 +1200；看到就别错过。</li>
-          <li><b>新对手各有套路。</b>拳手会侧闪三连拳，鞭手攻击距离很长，枪手会后退放冷枪；塞壬会腾空飞踢，蝰蛇会后退扔飞刀。</li>
-          <li><b>Boss 会随关卡解锁新招。</b>剃刀会大范围横扫，泰坦会冲撞和跳跃重砸，维克托会升龙拳与大型波动拳；看到蓄力先拉开。</li>
-          <li><b>摔跤手会抓人。</b>被近身抓住会被过肩摔扔出去；保持上下错位，别和它贴脸。</li>
-          <li><b>第 4 关是双子战。</b>渡鸦会瞬移斩与四连刀，夜莺会飞跃踢与三连旋风腿；先集中击倒一个，警告栏会只剩一条血。</li>
-          <li><b>最终 Boss 有三阶段。</b>机枪阶段用跳跃躲弹幕；暴走阶段防冲刺重拳；天翔阶段它会悬浮俯冲，抓落地硬直反击。</li>
-        </ul>
-      </div>
-      <div class="manual-block credits-block">
-        <span class="manual-kicker">ABOUT / 关于</span>
-        <p>《霓虹怒火》是一部受 16-bit 清版动作经典启发的原创同人作品。角色、像素画面、关卡、音乐均为程序化原创，不使用原作美术或音频素材。</p>
-        <p class="fineprint">SEGA、Streets of Rage 及相关商标归其权利人所有。本作非商业、非官方作品。</p>
-      </div>
-    </section>
-
-    <footer class="page-footer">
-      <span>NEON RAGE // 199X</span>
-      <span>BUILT WITH CANVAS + WEB AUDIO</span>
-      <span>NO QUARTERS NEEDED</span>
-    </footer>
   </main>
 
   <script src="js/audio.js"></script>

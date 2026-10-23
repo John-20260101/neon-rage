@@ -2056,7 +2056,8 @@
     const yy = y + bob;
     const heal = type === 'apple' || type === 'burger' || type === 'soda' || type === 'medkit';
     const money = type === 'cash' || type === 'gold' || type === 'moneybag';
-    const col = type === 'moneybag' ? 'rgba(196,137,74,' : heal ? 'rgba(87,227,137,' : money ? 'rgba(255,210,63,' : 'rgba(41,231,255,';
+    const upgradeColor = type === 'boostAttack' ? '255,91,107' : type === 'boostDefense' ? '87,227,137' : type === 'boostSpeed' ? '41,231,255' : null;
+    const col = upgradeColor ? `rgba(${upgradeColor},` : type === 'moneybag' ? 'rgba(196,137,74,' : heal ? 'rgba(87,227,137,' : money ? 'rgba(255,210,63,' : 'rgba(41,231,255,';
     g.save();
     const grd = g.createRadialGradient(x, yy - 7, 1, x, yy - 7, 17);
     grd.addColorStop(0, col + '.26)');
@@ -2134,6 +2135,25 @@
       px(g, x - 2, yy - 3, 3, 6, '#805b3d');
       px(g, x + 6, yy - 6, 3, 1, '#ffe27a');
       px(g, x - 8, yy - 9, 9, 1, 'rgba(41,231,255,.35)');
+    } else if (type === 'boostSpeed' || type === 'boostAttack' || type === 'boostDefense') {
+      const c = type === 'boostAttack' ? '#ff5b6b' : type === 'boostDefense' ? '#57e389' : '#29e7ff';
+      px(g, x - 7, yy - 10, 14, 12, INK);
+      px(g, x - 6, yy - 9, 12, 10, '#161523');
+      px(g, x - 5, yy - 8, 10, 8, c);
+      px(g, x - 5, yy - 8, 10, 2, '#f4ecdc');
+      if (type === 'boostSpeed') {
+        px(g, x - 3, yy - 5, 5, 2, '#071018');
+        px(g, x - 1, yy - 7, 2, 2, '#071018');
+        px(g, x + 2, yy - 5, 2, 2, '#071018');
+      } else if (type === 'boostAttack') {
+        px(g, x - 3, yy - 6, 6, 4, '#071018');
+        px(g, x - 2, yy - 7, 2, 2, '#071018');
+        px(g, x + 1, yy - 7, 2, 2, '#071018');
+      } else {
+        px(g, x - 4, yy - 7, 8, 5, '#071018');
+        px(g, x - 2, yy - 3, 4, 2, '#071018');
+        px(g, x - 3, yy - 6, 6, 2, c);
+      }
     } else {
       // pipe
       g.save();
@@ -2148,7 +2168,7 @@
     g.restore();
   }
 
-  function drawCrate(g, x, y, type, flash, t) {
+  function drawCrate(g, x, y, type, flash, t, upgrade) {
     const hitShake = flash ? Math.sin(t * 70) * 1.4 : 0;
     g.save();
     g.translate(Math.round(x + hitShake), Math.round(y));
@@ -2162,6 +2182,20 @@
       px(g, -6, -19, 3, 1, '#b75a4e');
       px(g, -9, -3, 18, 3, INK);
       px(g, -8, -3, 16, 2, '#3b2326');
+      if (upgrade) {
+        const c = upgrade === 'attack' ? '#ff5b6b' : upgrade === 'defense' ? '#57e389' : '#29e7ff';
+        const pulse = .55 + Math.sin(t * 3) * .25;
+        g.globalAlpha = pulse;
+        g.strokeStyle = c;
+        g.lineWidth = 1;
+        g.strokeRect(-7.5, -20.5, 15, 20);
+        g.fillStyle = c;
+        px(g, -4, -24, 8, 2, c);
+        px(g, -2, -26, 4, 2, c);
+        g.globalAlpha = 1;
+        px(g, -2, -15, 4, 4, c);
+        px(g, -1, -14, 2, 2, '#071018');
+      }
     } else {
       px(g, -12, -20, 24, 20, INK);
       px(g, -11, -19, 22, 19, flash ? '#fff1d0' : '#72513a');

@@ -78,8 +78,12 @@ button:focus-visible, [tabindex]:focus-visible {
 .page {
   position: relative; z-index: 1;
   width: min(1240px, calc(100% - 32px));
+  min-height: 100svh;
   margin: 0 auto;
-  padding: 22px 0 28px;
+  padding: 8px 0 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 /* ————— top bar ————— */
@@ -663,6 +667,118 @@ body.touch-mode .toast { bottom: 30%; }
 }
 
 
+
+/* ————— single-screen cover / settings ————— */
+.cover-actions {
+  display: flex; align-items: stretch; flex-wrap: wrap; gap: .65cqw;
+}
+.ghost-arcade {
+  display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center;
+  gap: .15cqw; min-width: 11.5cqw;
+  padding: 1cqw 1.5cqw;
+  border: 1px solid rgba(41,231,255,.42);
+  background: rgba(5,3,12,.62);
+  color: var(--paper); cursor: pointer;
+  font-family: var(--cn); font-weight: 900;
+  clip-path: polygon(0 0, 100% 0, calc(100% - .9cqw) 100%, 0 100%);
+  box-shadow: 0 .25cqw 0 rgba(41,231,255,.15), 0 .9cqw 2cqw rgba(0,0,0,.28);
+  transition: .16s ease;
+}
+.ghost-arcade:hover { border-color: var(--cyan); background: rgba(41,231,255,.1); transform: translateY(-1px); }
+.ghost-arcade .btn-main { font-size: 1.05cqw; letter-spacing: .1em; line-height: 1; }
+.ghost-arcade .btn-sub { color: #82e9f8; }
+.cover-next { margin-top: .65cqw; }
+
+.settings-screen {
+  display: flex; align-items: center; justify-content: center;
+  padding: 2.2cqw 3.4cqw;
+  background: radial-gradient(ellipse at 50% 20%, rgba(41,231,255,.08), transparent 55%), rgba(4,2,10,.82);
+  backdrop-filter: blur(4px);
+}
+.settings-card {
+  width: min(86cqw, 720px); max-height: 92%;
+  display: flex; flex-direction: column;
+  padding: 1.1cqw 1.3cqw .8cqw;
+  border: 1px solid rgba(255,210,63,.4);
+  background: linear-gradient(160deg, rgba(22,15,34,.98), rgba(6,4,13,.98));
+  box-shadow: 0 1cqw 4cqw rgba(0,0,0,.62), inset 0 0 2cqw rgba(255,46,99,.05);
+  overflow: hidden;
+}
+.settings-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1cqw; flex: 0 0 auto; }
+.settings-head h2 {
+  margin: .22cqw 0 .12cqw;
+  font-family: var(--display); font-size: 2.35cqw; line-height: 1;
+  letter-spacing: .04em; color: var(--paper);
+  text-shadow: .12cqw .12cqw 0 rgba(255,46,99,.42);
+}
+.settings-head p { margin: 0; font-family: var(--cn); font-size: max(8px, .62cqw); color: #91849f; }
+.settings-head .ghost-btn { padding: .5cqw .8cqw; font-size: max(8px, .58cqw); white-space: nowrap; }
+.settings-tabs { display: flex; gap: .35cqw; margin-top: .75cqw; padding-bottom: .5cqw; border-bottom: 1px solid rgba(255,255,255,.1); flex: 0 0 auto; }
+.settings-tab {
+  border: 1px solid transparent; background: transparent;
+  padding: .34cqw .72cqw; cursor: pointer;
+  font-family: var(--cn); font-size: max(8px, .64cqw); color: #91849f;
+  letter-spacing: .08em; transition: .15s ease;
+}
+.settings-tab:hover { color: var(--paper); }
+.settings-tab.is-active { color: #160a15; background: var(--yellow); border-color: var(--yellow); font-weight: 900; }
+.settings-body {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto;
+  padding: .65cqw .25cqw .5cqw; scrollbar-width: thin;
+  scrollbar-color: rgba(255,210,63,.55) rgba(255,255,255,.06);
+}
+.settings-body::-webkit-scrollbar { width: 5px; }
+.settings-body::-webkit-scrollbar-thumb { background: rgba(255,210,63,.55); }
+.settings-panel { display: none; }
+.settings-panel.is-active { display: block; }
+.settings-panel-title { display: flex; align-items: baseline; gap: .6cqw; margin-bottom: .5cqw; }
+.settings-panel-title b { font-family: var(--mono); font-size: max(8px, .6cqw); letter-spacing: .18em; color: var(--cyan); }
+.settings-panel-title span { font-family: var(--cn); font-size: max(8px, .58cqw); color: #8f829d; }
+.music-options { display: grid; gap: .4cqw; }
+.music-option {
+  display: flex; align-items: center; gap: .65cqw; width: 100%;
+  padding: .5cqw .65cqw; text-align: left; cursor: pointer;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.025); color: var(--paper);
+  transition: .15s ease;
+}
+.music-option:hover { border-color: rgba(41,231,255,.4); background: rgba(41,231,255,.045); }
+.music-option.selected { border-color: var(--yellow); background: rgba(255,210,63,.07); box-shadow: inset 2px 0 0 var(--yellow); }
+.music-radio { width: .72cqw; height: .72cqw; min-width: 7px; min-height: 7px; border: 1px solid #71647e; border-radius: 50%; flex: 0 0 auto; }
+.music-option.selected .music-radio { background: var(--yellow); border-color: var(--yellow); box-shadow: 0 0 6px rgba(255,210,63,.65); }
+.music-copy { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
+.music-copy b { font-family: var(--mono); font-size: max(9px, .68cqw); letter-spacing: .1em; }
+.music-copy em { font-family: var(--cn); font-style: normal; font-size: max(8px, .56cqw); color: #c7b9d4; }
+.music-copy small { font-family: var(--cn); font-size: max(8px, .56cqw); line-height: 1.35; color: #897d97; }
+.music-tag { font-family: var(--mono); font-size: max(7px, .45cqw); letter-spacing: .12em; color: #7c7089; white-space: nowrap; }
+.music-option.selected .music-tag { color: var(--yellow); }
+.settings-note { margin: .6cqw 0 0; font-family: var(--cn); font-size: max(8px, .58cqw); color: var(--yellow); }
+.settings-keys { grid-template-columns: 1fr 1fr; gap: .38cqw .9cqw; }
+.settings-keys div { font-size: max(8px, .6cqw); }
+.settings-keys kbd { font-size: max(8px, .52cqw); }
+.settings-guide { margin: 0; padding: 0; list-style: none; display: grid; gap: .32cqw; }
+.settings-guide li { position: relative; padding-left: .8cqw; font-family: var(--cn); font-size: max(8px, .62cqw); line-height: 1.55; color: #b9acc7; }
+.settings-guide li::before { content: "▸"; position: absolute; left: 0; color: var(--pink); }
+.settings-guide b { color: #f2e9dc; font-weight: 600; }
+.settings-guide kbd { font-size: .9em; }
+.settings-about p { margin: 0 0 .5cqw; font-family: var(--cn); font-size: max(9px, .68cqw); line-height: 1.65; color: #b9acc7; }
+.settings-about .fineprint { font-size: max(8px, .55cqw); color: #776a85; }
+.settings-foot { display: flex; align-items: center; justify-content: space-between; gap: .7cqw; padding-top: .55cqw; border-top: 1px solid rgba(255,255,255,.1); flex: 0 0 auto; }
+.settings-foot > span { font-family: var(--cn); font-size: max(8px, .55cqw); color: #8f829d; }
+.settings-foot kbd { font-size: .9em; }
+.settings-foot .arcade-btn.compact { min-width: 9cqw; padding: .5cqw 1.8cqw .55cqw .9cqw; }
+.settings-foot .arcade-btn.compact .btn-main { font-size: .9cqw; }
+.settings-foot .arcade-btn.compact::after { font-size: 1.5cqw; }
+
+/* ————— upgrade HUD ————— */
+.hud-upgrades { display: grid; gap: .08cqw; margin-top: .25cqw; }
+.upg-row { display: flex; align-items: center; gap: .35cqw; font-family: var(--mono); font-size: max(7px, .48cqw); letter-spacing: .05em; color: #bfb2cb; }
+.upg-row > span { display: grid; place-items: center; width: .9cqw; height: .9cqw; min-width: 9px; min-height: 9px; color: #090610; background: #29e7ff; font-family: var(--cn); font-size: max(7px, .48cqw); font-weight: 900; }
+.upg-row[data-upg="attack"] > span { background: #ff5b6b; }
+.upg-row[data-upg="defense"] > span { background: #57e389; }
+.upg-row b { font-weight: 400; color: #d9cddf; }
+.upg-row b::after { content: ""; }
+
 /* ————— cover / difficulty / boss talk ————— */
 .cover-ribbon {
   display: inline-flex; align-items: center; gap: .55cqw;
@@ -930,6 +1046,56 @@ body.touch-mode .toast { bottom: 30%; }
   #boss-talk-progress { font-size: max(7px, .9cqw); }
   #boss-talk-skip { font-size: max(7px, 1cqw); padding: .2cqw .5cqw; }
 }
+
+@media (min-width: 900px) {
+  body { overflow-y: auto; }
+  .page { min-height: 100svh; }
+}
+@media (max-height: 900px) {
+  .cabinet-footer { display: none; }
+}
+@media (min-width: 900px) and (max-height: 760px) {
+  .page { width: min(1080px, calc((100svh - 92px) * 16 / 9 + 22px)); }
+  .topbar { padding-bottom: 8px; }
+}
+@media (max-width: 700px) {
+  .page { min-height: 100svh; padding: 5px 0 4px; }
+  .cover-actions { gap: .35cqw; }
+  .ghost-arcade { min-width: 9.5cqw; padding: .7cqw 1cqw; }
+  .ghost-arcade .btn-main { font-size: max(8px, 2.2cqw); }
+  .ghost-arcade .btn-sub { font-size: max(6px, .8cqw); }
+  .settings-screen { padding: 1.2cqw; }
+  .settings-card { width: 94cqw; max-height: 95%; padding: .8cqw 1cqw .5cqw; }
+  .settings-head h2 { font-size: 4cqw; margin: .15cqw 0 .1cqw; }
+  .settings-head p { display: none; }
+  .settings-head .ghost-btn { padding: .25cqw .55cqw; font-size: max(7px, 1.1cqw); }
+  .settings-tabs { gap: .1cqw; margin-top: .35cqw; padding-bottom: .25cqw; }
+  .settings-tab { padding: .2cqw .45cqw; font-size: max(7px, 1.3cqw); }
+  .settings-body { padding: .35cqw .1cqw .3cqw; }
+  .settings-panel-title { margin-bottom: .25cqw; gap: .3cqw; }
+  .settings-panel-title b, .settings-panel-title span { font-size: max(7px, 1.05cqw); }
+  .music-options { gap: .25cqw; }
+  .music-option { gap: .35cqw; padding: .3cqw .4cqw; }
+  .music-copy b { font-size: max(8px, 1.45cqw); }
+  .music-copy em, .music-copy small { font-size: max(7px, 1.05cqw); }
+  .music-copy small { display: none; }
+  .music-tag { font-size: max(6px, .85cqw); }
+  .music-radio { width: 1.35cqw; height: 1.35cqw; min-width: 6px; min-height: 6px; }
+  .settings-note { margin-top: .3cqw; font-size: max(7px, 1.1cqw); }
+  .settings-keys { gap: .2cqw .5cqw; }
+  .settings-keys div { font-size: max(8px, 1.35cqw); }
+  .settings-guide { gap: .2cqw; }
+  .settings-guide li { font-size: max(8px, 1.35cqw); padding-left: .6cqw; line-height: 1.45; }
+  .settings-about p { font-size: max(8px, 1.25cqw); line-height: 1.45; margin-bottom: .25cqw; }
+  .settings-foot { padding-top: .3cqw; }
+  .settings-foot > span { display: none; }
+  .settings-foot .arcade-btn.compact { margin-left: auto; min-width: 14cqw; padding: .35cqw 1.5cqw .4cqw .7cqw; }
+  .settings-foot .arcade-btn.compact .btn-main { font-size: max(8px, 1.4cqw); }
+  .hud-upgrades { gap: 0; margin-top: .12cqw; }
+  .upg-row { font-size: max(6px, .9cqw); gap: .2cqw; }
+  .upg-row > span { width: 1.5cqw; height: 1.5cqw; min-width: 6px; min-height: 6px; font-size: max(6px, .85cqw); }
+}
+
 @media (hover: none) and (pointer: coarse) {
   .manual { margin-top: 16px; }
   .hud-name-row b { font-size: 1.7cqw; }
@@ -1067,6 +1233,11 @@ body.touch-mode .toast { bottom: 30%; }
               </div>
               <div class="meter hp-meter"><i id="hp-ghost"></i><i id="hp-fill"></i></div>
               <div class="hud-subrow"><span id="hud-weapon">FISTS</span><span id="hud-special">必杀 HP -7</span></div>
+              <div id="hud-upgrades" class="hud-upgrades is-hidden" aria-label="斗士强化">
+                <div class="upg-row" data-upg="speed"><span>速</span><b id="upg-speed">Lv.0 0/3</b></div>
+                <div class="upg-row" data-upg="attack"><span>攻</span><b id="upg-attack">Lv.0 0/3</b></div>
+                <div class="upg-row" data-upg="defense"><span>防</span><b id="upg-defense">Lv.0 0/3</b></div>
+              </div>
             </div>
           </div>
           <div class="hud-center">
@@ -1119,10 +1290,16 @@ body.touch-mode .toast { bottom: 30%; }
             </h1>
             <div class="logo-cn">霓 虹 怒 火</div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
-            <button id="btn-start" class="arcade-btn" type="button">
-              <span class="btn-main">开始游戏</span>
-              <span class="btn-sub">PRESS ENTER / 点击开始</span>
-            </button>
+            <div class="cover-actions">
+              <button id="btn-start" class="arcade-btn" type="button">
+                <span class="btn-main">开始游戏</span>
+                <span class="btn-sub">PRESS ENTER / 点击开始</span>
+              </button>
+              <button id="btn-settings" class="ghost-arcade" type="button">
+                <span class="btn-main">游戏设置</span>
+                <span class="btn-sub">S / SETTINGS</span>
+              </button>
+            </div>
             <div class="cover-next">NEXT // 选择难度</div>
             <div class="title-meta">
               <span>1 PLAYER</span>
@@ -1198,6 +1375,93 @@ body.touch-mode .toast { bottom: 30%; }
             <div class="select-buttons">
               <button id="btn-difficulty-back" class="ghost-btn" type="button">返回封面</button>
               <button id="btn-difficulty-confirm" class="arcade-btn compact" type="button"><span class="btn-main">确认难度</span><span class="btn-sub">ENTER</span></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings-screen" class="overlay settings-screen is-hidden">
+          <div class="settings-card">
+            <div class="settings-head">
+              <div>
+                <div class="eyebrow">SYSTEM <span>//</span> CONFIG</div>
+                <h2>游戏设置</h2>
+                <p>音乐、操作与生存守则都在这里。</p>
+              </div>
+              <button id="btn-settings-close" class="ghost-btn" type="button">返回封面</button>
+            </div>
+            <div class="settings-tabs" role="tablist" aria-label="设置分类">
+              <button class="settings-tab is-active" data-tab="audio" type="button" role="tab" aria-selected="true">声音</button>
+              <button class="settings-tab" data-tab="controls" type="button" role="tab" aria-selected="false">操作</button>
+              <button class="settings-tab" data-tab="guide" type="button" role="tab" aria-selected="false">生存守则</button>
+              <button class="settings-tab" data-tab="about" type="button" role="tab" aria-selected="false">关于</button>
+            </div>
+            <div class="settings-body" id="settings-body">
+              <section class="settings-panel is-active" data-panel="audio">
+                <div class="settings-panel-title"><b>BGM PACK</b><span>背景音乐风格</span></div>
+                <div class="music-options">
+                  <button class="music-option" data-pack="classic" type="button">
+                    <span class="music-radio"></span>
+                    <span class="music-copy"><b>NEON CLASSIC</b><em>霓虹经典</em><small>原始合成器音色，最快上手的街机味道。</small></span>
+                    <span class="music-tag">DEFAULT</span>
+                  </button>
+                  <button class="music-option" data-pack="midnight" type="button">
+                    <span class="music-radio"></span>
+                    <span class="music-copy"><b>MIDNIGHT DRIVE</b><em>午夜驱动</em><small>更慢、更暖的低音与三角波主音，适合雨夜清街。</small></span>
+                    <span class="music-tag">SLOW</span>
+                  </button>
+                  <button class="music-option" data-pack="steel" type="button">
+                    <span class="music-radio"></span>
+                    <span class="music-copy"><b>STEEL PULSE</b><em>钢铁脉冲</em><small>更快、更硬的锯齿主音与重鼓，Boss 战压迫感更强。</small></span>
+                    <span class="music-tag">FAST</span>
+                  </button>
+                </div>
+                <p id="settings-music-status" class="settings-note">当前：NEON CLASSIC</p>
+              </section>
+              <section class="settings-panel" data-panel="controls">
+                <div class="settings-panel-title"><b>HOW TO FIGHT</b><span>操作</span></div>
+                <div class="keys settings-keys">
+                  <div><kbd>WASD</kbd><span>移动 / 上下走位</span></div>
+                  <div><kbd>→ →</kbd><span>跑动（第二下按住）</span></div>
+                  <div><kbd>→ → + J</kbd><span>冲刺技（火 / 电 / 尘）</span></div>
+                  <div><kbd>J</kbd><span>连击 / 使用武器</span></div>
+                  <div><kbd>K</kbd><span>跳跃 / 空中踢</span></div>
+                  <div><kbd>L</kbd><span>必杀（消耗生命）</span></div>
+                  <div><kbd>E</kbd><span>抓取 / 投掷 / 拾取道具</span></div>
+                  <div><kbd>ESC</kbd><span>暂停</span></div>
+                </div>
+              </section>
+              <section class="settings-panel" data-panel="guide">
+                <div class="settings-panel-title"><b>STREET WISDOM</b><span>生存守则</span></div>
+                <ul class="settings-guide">
+                  <li><b>走位比出拳重要。</b>用上下方向错开敌人的拳头，再从侧面切入。</li>
+                  <li><b>双击前方向并按住可以跑动。</b>跑动中按 <kbd>J</kbd> 直接放冲刺技：REX 带火焰，LUNA 带闪电，BRUNO 带烟尘。</li>
+                  <li><b>敌人头顶有血条。</b>血条变黄、闪红时说明快倒了，优先补刀；Boss 的血量看屏幕顶部。</li>
+                  <li><b>抓取后按 J 膝击，按 K 投掷。</b>把打手砸向同伴，能连带击倒。</li>
+                  <li><b>必杀会扣自己的血。</b>REX「烈焰升龙」范围最大，LUNA「雷光贯线」贯穿前方一条线，BRUNO「裂地重砸」震开周身；被围住时再用。</li>
+                  <li><b>木箱和普通油桶能打碎。</b>苹果、汽水、汉堡和医疗包回血；钢管、小刀、手枪都能上手。</li>
+                  <li><b>发光的强化油桶</b>会掉出 3 枚同属性芯片。速、攻、防各 3 级，每级需要吃 3 枚。</li>
+                  <li><b>手枪只有 6 发。</b>按 <kbd>J</kbd> 射击，子弹可以打断敌人；打空后自动丢掉。</li>
+                  <li><b>金条和钱袋是高分道具。</b>金条 +3000，钱袋 +1200；看到就别错过。</li>
+                  <li><b>新对手各有套路。</b>拳手会侧闪三连拳，鞭手攻击距离很长，枪手会后退放冷枪；塞壬会腾空飞踢，蝰蛇会后退扔飞刀。</li>
+                  <li><b>Boss 会随关卡解锁新招。</b>剃刀会大范围横扫，泰坦会冲撞和跳跃重砸，维克托会升龙拳与大型波动拳；看到蓄力先拉开。</li>
+                  <li><b>摔跤手会抓人。</b>被近身抓住会被过肩摔扔出去；保持上下错位，别和它贴脸。</li>
+                  <li><b>第 4 关是双子战。</b>渡鸦会瞬移斩与四连刀，夜莺会飞跃踢与三连旋风腿；先集中击倒一个，警告栏会只剩一条血。</li>
+                  <li><b>最终 Boss 有三阶段。</b>机枪阶段用跳跃躲弹幕；暴走阶段防冲刺重拳；天翔阶段它会悬浮俯冲，抓落地硬直反击。</li>
+                </ul>
+              </section>
+              <section class="settings-panel" data-panel="about">
+                <div class="settings-panel-title"><b>ABOUT</b><span>关于</span></div>
+                <div class="settings-about">
+                  <p>《霓虹怒火》是一部受 16-bit 清版动作经典启发的原创同人作品。角色、像素画面、关卡、音乐均为程序化原创，不使用原作美术或音频素材。</p>
+                  <p class="fineprint">SEGA、Streets of Rage 及相关商标归其权利人所有。本作非商业、非官方作品。</p>
+                  <p class="fineprint">NEON RAGE // NEO CITY ARCADE // BUILT WITH CANVAS + WEB AUDIO</p>
+                </div>
+              </section>
+            </div>
+            <div class="settings-foot">
+              <span><kbd>←</kbd><kbd>→</kbd> 切换分类　<kbd>ESC</kbd> 返回封面</span>
+              <button id="btn-settings-back" class="arcade-btn compact" type="button"><span class="btn-main">返回封面</span><span class="btn-sub">ESC</span></button>
             </div>
           </div>
         </div>
@@ -1362,50 +1626,6 @@ body.touch-mode .toast { bottom: 30%; }
       </div>
     </section>
 
-    <section class="manual" aria-label="游戏说明">
-      <div class="manual-block">
-        <span class="manual-kicker">HOW TO FIGHT / 操作</span>
-        <div class="keys">
-          <div><kbd>WASD</kbd><span>移动 / 上下走位</span></div>
-          <div><kbd>→ →</kbd><span>跑动（第二下按住）</span></div>
-          <div><kbd>→ → + J</kbd><span>冲刺技（火 / 电 / 尘）</span></div>
-          <div><kbd>J</kbd><span>连击 / 使用武器</span></div>
-          <div><kbd>K</kbd><span>跳跃 / 空中踢</span></div>
-          <div><kbd>L</kbd><span>必杀（消耗生命）</span></div>
-          <div><kbd>E</kbd><span>抓取 / 投掷 / 拾取道具</span></div>
-          <div><kbd>ESC</kbd><span>暂停</span></div>
-        </div>
-      </div>
-      <div class="manual-block tips-block">
-        <span class="manual-kicker">STREET WISDOM / 生存守则</span>
-        <ul>
-          <li><b>走位比出拳重要。</b>用上下方向错开敌人的拳头，再从侧面切入。</li>
-          <li><b>双击前方向并按住可以跑动。</b>跑动中按 <kbd>J</kbd> 直接放冲刺技：REX 带火焰，LUNA 带闪电，BRUNO 带烟尘。</li>
-          <li><b>敌人头顶有血条。</b>血条变黄、闪红时说明快倒了，优先补刀；Boss 的血量看屏幕顶部。</li>
-          <li><b>抓取后按 J 膝击，按 K 投掷。</b>把打手砸向同伴，能连带击倒。</li>
-          <li><b>必杀会扣自己的血。</b>REX「烈焰升龙」范围最大，LUNA「雷光贯线」贯穿前方一条线，BRUNO「裂地重砸」震开周身；被围住时再用。</li>
-          <li><b>木箱和油桶能打碎。</b>苹果、汽水、汉堡和医疗包回血；钢管、小刀、手枪都能上手。</li>
-          <li><b>手枪只有 6 发。</b>按 <kbd>J</kbd> 射击，子弹可以打断敌人；打空后自动丢掉。</li>
-          <li><b>金条和钱袋是高分道具。</b>金条 +3000，钱袋 +1200；看到就别错过。</li>
-          <li><b>新对手各有套路。</b>拳手会侧闪三连拳，鞭手攻击距离很长，枪手会后退放冷枪；塞壬会腾空飞踢，蝰蛇会后退扔飞刀。</li>
-          <li><b>Boss 会随关卡解锁新招。</b>剃刀会大范围横扫，泰坦会冲撞和跳跃重砸，维克托会升龙拳与大型波动拳；看到蓄力先拉开。</li>
-          <li><b>摔跤手会抓人。</b>被近身抓住会被过肩摔扔出去；保持上下错位，别和它贴脸。</li>
-          <li><b>第 4 关是双子战。</b>渡鸦会瞬移斩与四连刀，夜莺会飞跃踢与三连旋风腿；先集中击倒一个，警告栏会只剩一条血。</li>
-          <li><b>最终 Boss 有三阶段。</b>机枪阶段用跳跃躲弹幕；暴走阶段防冲刺重拳；天翔阶段它会悬浮俯冲，抓落地硬直反击。</li>
-        </ul>
-      </div>
-      <div class="manual-block credits-block">
-        <span class="manual-kicker">ABOUT / 关于</span>
-        <p>《霓虹怒火》是一部受 16-bit 清版动作经典启发的原创同人作品。角色、像素画面、关卡、音乐均为程序化原创，不使用原作美术或音频素材。</p>
-        <p class="fineprint">SEGA、Streets of Rage 及相关商标归其权利人所有。本作非商业、非官方作品。</p>
-      </div>
-    </section>
-
-    <footer class="page-footer">
-      <span>NEON RAGE // 199X</span>
-      <span>BUILT WITH CANVAS + WEB AUDIO</span>
-      <span>NO QUARTERS NEEDED</span>
-    </footer>
   </main>
 
   <script>
@@ -1495,6 +1715,37 @@ body.touch-mode .toast { bottom: 30%; }
     }
   };
 
+  const MUSIC_PACKS = {
+    classic: {
+      name: 'NEON CLASSIC', cn: '霓虹经典',
+      bpmMul: 1, transpose: 0, gainMul: 1,
+      leadWave: 'square', bassWave: 'sawtooth', padWave: 'sawtooth',
+      drumMul: 1, hatMul: 1, filterMul: 1, delayGain: .18
+    },
+    midnight: {
+      name: 'MIDNIGHT DRIVE', cn: '午夜驱动',
+      bpmMul: .9, transpose: -3, gainMul: .9,
+      leadWave: 'triangle', bassWave: 'triangle', padWave: 'sine',
+      drumMul: .82, hatMul: .78, filterMul: .72, delayGain: .28
+    },
+    steel: {
+      name: 'STEEL PULSE', cn: '钢铁脉冲',
+      bpmMul: 1.08, transpose: 2, gainMul: 1.04,
+      leadWave: 'sawtooth', bassWave: 'square', padWave: 'sawtooth',
+      drumMul: 1.16, hatMul: 1.18, filterMul: 1.3, delayGain: .1
+    }
+  };
+
+  function applyMusicPack(track, pack) {
+    const p = pack || MUSIC_PACKS.classic;
+    return {
+      ...track,
+      bpm: track.bpm * p.bpmMul,
+      root: track.root + p.transpose,
+      gain: track.gain * p.gainMul
+    };
+  }
+
   class SoundSystem {
     constructor() {
       this.ctx = null;
@@ -1514,6 +1765,21 @@ body.touch-mode .toast { bottom: 30%; }
       this.volume = 0.58;
       this.lastHitAt = 0;
       this.stepDur = 0;
+      this.musicPackKey = 'classic';
+      this.musicPack = MUSIC_PACKS.classic;
+    }
+
+    setMusicPack(key) {
+      if (!MUSIC_PACKS[key]) return false;
+      this.musicPackKey = key;
+      this.musicPack = MUSIC_PACKS[key];
+      if (this.delayGain && this.ctx) this.delayGain.gain.value = this.musicPack.delayGain;
+      const current = this.trackName;
+      if (current) {
+        this.stopMusic();
+        this.playTrack(current);
+      }
+      return true;
     }
 
     ensure() {
@@ -1536,7 +1802,7 @@ body.touch-mode .toast { bottom: 30%; }
         this.delay = this.ctx.createDelay(0.6);
         this.delay.delayTime.value = 0.22;
         this.delayGain = this.ctx.createGain();
-        this.delayGain.gain.value = 0.18;
+        this.delayGain.gain.value = this.musicPack.delayGain;
         this.delay.connect(this.delayGain);
         this.delayGain.connect(this.master);
         this.delayGain.connect(this.delay);
@@ -1572,7 +1838,7 @@ body.touch-mode .toast { bottom: 30%; }
       if (this.trackName === name && this.timer) return;
       this.stopMusic();
       this.trackName = name;
-      this.track = TRACKS[name];
+      this.track = applyMusicPack(TRACKS[name], this.musicPack);
       this.step = 0;
       this.nextTime = this.ctx.currentTime + 0.08;
       this.stepDur = 60 / this.track.bpm / 4;
@@ -1624,13 +1890,15 @@ body.touch-mode .toast { bottom: 30%; }
       }
 
       // drums
-      if (s === 0 || s === 4 || s === 8 || s === 12) this.kick(when, 0.17 * g);
-      if (s === 14 && half === 1) this.kick(when, 0.12 * g);
-      if (s === 4 || s === 12) this.snare(when, 0.09 * g);
-      if (s === 7 || s === 15) this.snare(when, 0.035 * g, 1.3);
-      if (s % 2 === 0) this.hat(when, 0.024 * g * t.hat);
-      if (s === 2 || s === 10) this.hat(when, 0.038 * g * t.hat, 1.25);
-      if (half === 1 && s === 15 && Math.random() < 0.6) this.hat(when, 0.025 * g, 1.4);
+      const dp = this.musicPack.drumMul;
+      const hp = this.musicPack.hatMul;
+      if (s === 0 || s === 4 || s === 8 || s === 12) this.kick(when, 0.17 * g * dp);
+      if (s === 14 && half === 1) this.kick(when, 0.12 * g * dp);
+      if (s === 4 || s === 12) this.snare(when, 0.09 * g * dp);
+      if (s === 7 || s === 15) this.snare(when, 0.035 * g * dp, 1.3);
+      if (s % 2 === 0) this.hat(when, 0.024 * g * t.hat * hp);
+      if (s === 2 || s === 10) this.hat(when, 0.038 * g * t.hat * hp, 1.25);
+      if (half === 1 && s === 15 && Math.random() < 0.6) this.hat(when, 0.025 * g * hp, 1.4);
     }
 
     // ——— instruments ———
@@ -1639,11 +1907,11 @@ body.touch-mode .toast { bottom: 30%; }
       const o = c.createOscillator();
       const f = c.createBiquadFilter();
       const g = c.createGain();
-      o.type = 'sawtooth';
+      o.type = this.musicPack.bassWave;
       o.frequency.setValueAtTime(freq, when);
       f.type = 'lowpass';
-      f.frequency.setValueAtTime(520, when);
-      f.frequency.exponentialRampToValueAtTime(160, when + dur);
+      f.frequency.setValueAtTime(520 * this.musicPack.filterMul, when);
+      f.frequency.exponentialRampToValueAtTime(160 * this.musicPack.filterMul, when + dur);
       f.Q.value = 4;
       g.gain.setValueAtTime(0.0001, when);
       g.gain.exponentialRampToValueAtTime(gain, when + 0.012);
@@ -1657,9 +1925,9 @@ body.touch-mode .toast { bottom: 30%; }
       const o = c.createOscillator();
       const g = c.createGain();
       const f = c.createBiquadFilter();
-      o.type = 'square';
+      o.type = this.musicPack.leadWave;
       o.frequency.setValueAtTime(freq, when);
-      f.type = 'lowpass'; f.frequency.value = 2800;
+      f.type = 'lowpass'; f.frequency.value = 2800 * this.musicPack.filterMul;
       g.gain.setValueAtTime(0.0001, when);
       g.gain.exponentialRampToValueAtTime(gain, when + 0.008);
       g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
@@ -1678,10 +1946,10 @@ body.touch-mode .toast { bottom: 30%; }
       freqs.forEach((freq, i) => {
         const o = c.createOscillator();
         const f = c.createBiquadFilter();
-        o.type = i % 2 ? 'triangle' : 'sawtooth';
+        o.type = i % 2 ? 'triangle' : this.musicPack.padWave;
         o.frequency.value = freq;
         o.detune.value = i * 7 - 7;
-        f.type = 'lowpass'; f.frequency.value = 900;
+        f.type = 'lowpass'; f.frequency.value = 900 * this.musicPack.filterMul;
         o.connect(f); f.connect(g);
         o.start(when); o.stop(when + dur + 0.03);
       });
@@ -3982,7 +4250,8 @@ body.touch-mode .toast { bottom: 30%; }
     const yy = y + bob;
     const heal = type === 'apple' || type === 'burger' || type === 'soda' || type === 'medkit';
     const money = type === 'cash' || type === 'gold' || type === 'moneybag';
-    const col = type === 'moneybag' ? 'rgba(196,137,74,' : heal ? 'rgba(87,227,137,' : money ? 'rgba(255,210,63,' : 'rgba(41,231,255,';
+    const upgradeColor = type === 'boostAttack' ? '255,91,107' : type === 'boostDefense' ? '87,227,137' : type === 'boostSpeed' ? '41,231,255' : null;
+    const col = upgradeColor ? `rgba(${upgradeColor},` : type === 'moneybag' ? 'rgba(196,137,74,' : heal ? 'rgba(87,227,137,' : money ? 'rgba(255,210,63,' : 'rgba(41,231,255,';
     g.save();
     const grd = g.createRadialGradient(x, yy - 7, 1, x, yy - 7, 17);
     grd.addColorStop(0, col + '.26)');
@@ -4060,6 +4329,25 @@ body.touch-mode .toast { bottom: 30%; }
       px(g, x - 2, yy - 3, 3, 6, '#805b3d');
       px(g, x + 6, yy - 6, 3, 1, '#ffe27a');
       px(g, x - 8, yy - 9, 9, 1, 'rgba(41,231,255,.35)');
+    } else if (type === 'boostSpeed' || type === 'boostAttack' || type === 'boostDefense') {
+      const c = type === 'boostAttack' ? '#ff5b6b' : type === 'boostDefense' ? '#57e389' : '#29e7ff';
+      px(g, x - 7, yy - 10, 14, 12, INK);
+      px(g, x - 6, yy - 9, 12, 10, '#161523');
+      px(g, x - 5, yy - 8, 10, 8, c);
+      px(g, x - 5, yy - 8, 10, 2, '#f4ecdc');
+      if (type === 'boostSpeed') {
+        px(g, x - 3, yy - 5, 5, 2, '#071018');
+        px(g, x - 1, yy - 7, 2, 2, '#071018');
+        px(g, x + 2, yy - 5, 2, 2, '#071018');
+      } else if (type === 'boostAttack') {
+        px(g, x - 3, yy - 6, 6, 4, '#071018');
+        px(g, x - 2, yy - 7, 2, 2, '#071018');
+        px(g, x + 1, yy - 7, 2, 2, '#071018');
+      } else {
+        px(g, x - 4, yy - 7, 8, 5, '#071018');
+        px(g, x - 2, yy - 3, 4, 2, '#071018');
+        px(g, x - 3, yy - 6, 6, 2, c);
+      }
     } else {
       // pipe
       g.save();
@@ -4074,7 +4362,7 @@ body.touch-mode .toast { bottom: 30%; }
     g.restore();
   }
 
-  function drawCrate(g, x, y, type, flash, t) {
+  function drawCrate(g, x, y, type, flash, t, upgrade) {
     const hitShake = flash ? Math.sin(t * 70) * 1.4 : 0;
     g.save();
     g.translate(Math.round(x + hitShake), Math.round(y));
@@ -4088,6 +4376,20 @@ body.touch-mode .toast { bottom: 30%; }
       px(g, -6, -19, 3, 1, '#b75a4e');
       px(g, -9, -3, 18, 3, INK);
       px(g, -8, -3, 16, 2, '#3b2326');
+      if (upgrade) {
+        const c = upgrade === 'attack' ? '#ff5b6b' : upgrade === 'defense' ? '#57e389' : '#29e7ff';
+        const pulse = .55 + Math.sin(t * 3) * .25;
+        g.globalAlpha = pulse;
+        g.strokeStyle = c;
+        g.lineWidth = 1;
+        g.strokeRect(-7.5, -20.5, 15, 20);
+        g.fillStyle = c;
+        px(g, -4, -24, 8, 2, c);
+        px(g, -2, -26, 4, 2, c);
+        g.globalAlpha = 1;
+        px(g, -2, -15, 4, 4, c);
+        px(g, -1, -14, 2, 2, '#071018');
+      }
     } else {
       px(g, -12, -20, 24, 20, INK);
       px(g, -11, -19, 22, 19, flash ? '#fff1d0' : '#72513a');
@@ -4137,6 +4439,10 @@ body.touch-mode .toast { bottom: 30%; }
     hpMeter: document.querySelector('.hp-meter'),
     hudWeapon: $('hud-weapon'),
     hudSpecial: $('hud-special'),
+    hudUpgrades: $('hud-upgrades'),
+    upgSpeed: $('upg-speed'),
+    upgAttack: $('upg-attack'),
+    upgDefense: $('upg-defense'),
     hudStage: $('hud-stage'),
     hudGoal: $('hud-goal'),
     hudScore: $('hud-score'),
@@ -4156,6 +4462,10 @@ body.touch-mode .toast { bottom: 30%; }
     bossTalkProgress: $('boss-talk-progress'),
     bossTalkSkip: $('boss-talk-skip'),
     title: $('title-screen'),
+    settings: $('settings-screen'),
+    settingsBody: $('settings-body'),
+    settingsMusicStatus: $('settings-music-status'),
+    musicOptions: document.querySelectorAll('.music-option'),
     difficulty: $('difficulty-screen'),
     difficultyGrid: $('difficulty-grid'),
     select: $('select-screen'),
@@ -4188,6 +4498,9 @@ body.touch-mode .toast { bottom: 30%; }
     soundBtn: $('btn-sound'),
     charGrid: $('char-grid'),
     btnStart: $('btn-start'),
+    btnSettings: $('btn-settings'),
+    btnSettingsClose: $('btn-settings-close'),
+    btnSettingsBack: $('btn-settings-back'),
     btnConfirm: $('btn-select-confirm'),
     btnSelectBack: $('btn-select-back'),
     btnDifficultyBack: $('btn-difficulty-back'),
@@ -4270,6 +4583,68 @@ body.touch-mode .toast { bottom: 30%; }
       desc: 'Boss 更硬，拳头更疼，只有两条命。给真正想拆掉 V 塔的人。'
     }
   };
+
+  const UPGRADE_STATS = {
+    speed: {
+      key: 'speed', name: '移动速度', short: '速', token: 'boostSpeed',
+      color: '#29e7ff', maxLevel: 3, perLevel: 3,
+      desc: '行走与跑动速度提升。'
+    },
+    attack: {
+      key: 'attack', name: '攻击速度', short: '攻', token: 'boostAttack',
+      color: '#ff5b6b', maxLevel: 3, perLevel: 3,
+      desc: '普通拳脚与武器攻击更快。'
+    },
+    defense: {
+      key: 'defense', name: '防御', short: '防', token: 'boostDefense',
+      color: '#57e389', maxLevel: 3, perLevel: 3,
+      desc: '减少受到的伤害。'
+    }
+  };
+  const UPGRADE_ORDER = ['speed', 'attack', 'defense'];
+  const UPGRADE_TOKEN_STAT = {
+    boostSpeed: 'speed', boostAttack: 'attack', boostDefense: 'defense'
+  };
+  const MUSIC_SETTINGS_KEY = 'neonRageMusicPack';
+  const MUSIC_PACK_LABELS = {
+    classic: 'NEON CLASSIC', midnight: 'MIDNIGHT DRIVE', steel: 'STEEL PULSE'
+  };
+
+  function makeUpgradeState() {
+    return {
+      speed: { level: 0, progress: 0 },
+      attack: { level: 0, progress: 0 },
+      defense: { level: 0, progress: 0 }
+    };
+  }
+
+  function currentUpgradeLevel(stat) {
+    const u = G.upgrades && G.upgrades[stat];
+    return u ? u.level : 0;
+  }
+
+  function moveSpeedMul() {
+    return 1 + currentUpgradeLevel('speed') * .07;
+  }
+
+  function attackTimeScale() {
+    return 1 - currentUpgradeLevel('attack') * .08;
+  }
+
+  function defenseDamageMul() {
+    return 1 - currentUpgradeLevel('defense') * .08;
+  }
+
+  function scaleAttackData(data) {
+    const scale = attackTimeScale();
+    if (scale >= .999 || !data) return data;
+    return {
+      ...data,
+      startup: data.startup * scale,
+      active: data.active * scale,
+      recovery: data.recovery * scale
+    };
+  }
 
   const BOSS_TALK = {
     razor: {
@@ -4406,7 +4781,9 @@ body.touch-mode .toast { bottom: 30%; }
       props: [
         { type: 'crate', x: 475, y: 242 }, { type: 'barrel', x: 905, y: 224 },
         { type: 'crate', x: 1085, y: 244 }, { type: 'barrel', x: 1490, y: 220 },
-        { type: 'crate', x: 1670, y: 244 }, { type: 'crate', x: 1780, y: 208 }
+        { type: 'crate', x: 1670, y: 244 }, { type: 'crate', x: 1780, y: 208 },
+        { type: 'barrel', x: 690, y: 238, upgrade: 'speed', upgradeId: 's1-speed' },
+        { type: 'barrel', x: 1950, y: 226, upgrade: 'attack', upgradeId: 's1-attack' }
       ],
       pickups: [
         { type: 'burger', x: 640, y: 242 }, { type: 'knife', x: 1130, y: 238 },
@@ -4427,7 +4804,9 @@ body.touch-mode .toast { bottom: 30%; }
       props: [
         { type: 'barrel', x: 430, y: 238 }, { type: 'crate', x: 970, y: 242 },
         { type: 'barrel', x: 1330, y: 218 }, { type: 'crate', x: 1700, y: 238 },
-        { type: 'crate', x: 1760, y: 208 }
+        { type: 'crate', x: 1760, y: 208 },
+        { type: 'barrel', x: 690, y: 238, upgrade: 'defense', upgradeId: 's2-defense' },
+        { type: 'barrel', x: 1900, y: 226, upgrade: 'speed', upgradeId: 's2-speed' }
       ],
       pickups: [
         { type: 'soda', x: 540, y: 240 }, { type: 'pistol', x: 1250, y: 236 },
@@ -4447,7 +4826,9 @@ body.touch-mode .toast { bottom: 30%; }
       ],
       props: [
         { type: 'crate', x: 500, y: 236 }, { type: 'barrel', x: 1000, y: 218 },
-        { type: 'crate', x: 1450, y: 240 }, { type: 'crate', x: 1760, y: 208 }
+        { type: 'crate', x: 1450, y: 240 }, { type: 'crate', x: 1760, y: 208 },
+        { type: 'barrel', x: 760, y: 238, upgrade: 'attack', upgradeId: 's3-attack' },
+        { type: 'barrel', x: 1620, y: 226, upgrade: 'defense', upgradeId: 's3-defense' }
       ],
       pickups: [
         { type: 'medkit', x: 560, y: 240 }, { type: 'pistol', x: 1190, y: 238 },
@@ -4468,7 +4849,9 @@ body.touch-mode .toast { bottom: 30%; }
       props: [
         { type: 'barrel', x: 480, y: 236 }, { type: 'crate', x: 980, y: 242 },
         { type: 'crate', x: 1500, y: 220 }, { type: 'barrel', x: 1960, y: 240 },
-        { type: 'crate', x: 2320, y: 208 }
+        { type: 'crate', x: 2320, y: 208 },
+        { type: 'barrel', x: 700, y: 238, upgrade: 'speed', upgradeId: 's4-speed' },
+        { type: 'barrel', x: 1860, y: 226, upgrade: 'attack', upgradeId: 's4-attack' }
       ],
       pickups: [
         { type: 'medkit', x: 620, y: 240 }, { type: 'pistol', x: 1280, y: 238 },
@@ -4489,7 +4872,8 @@ body.touch-mode .toast { bottom: 30%; }
       props: [
         { type: 'crate', x: 460, y: 236 }, { type: 'barrel', x: 900, y: 218 },
         { type: 'barrel', x: 1380, y: 240 }, { type: 'crate', x: 1800, y: 208 },
-        { type: 'crate', x: 2080, y: 242 }
+        { type: 'crate', x: 2080, y: 242 },
+        { type: 'barrel', x: 1820, y: 226, upgrade: 'defense', upgradeId: 's5-defense' }
       ],
       pickups: [
         { type: 'medkit', x: 560, y: 240 }, { type: 'pistol', x: 1120, y: 238 },
@@ -4540,6 +4924,9 @@ body.touch-mode .toast { bottom: 30%; }
     selectedDifficulty: 'normal',
     difficulty: DIFFICULTIES.normal,
     bossTalk: null,
+    upgrades: makeUpgradeState(),
+    collectedUpgrades: new Set(),
+    settingsTab: 'audio',
     charKey: 'rex',
     muted: false,
     finalVictory: false,
@@ -4634,7 +5021,7 @@ body.touch-mode .toast { bottom: 30%; }
     if (dom.titleBest) dom.titleBest.textContent = `BEST ${pad(Math.max(G.score, getBest()), 6)}`;
   }
   function clearOverlays() {
-    [dom.title, dom.difficulty, dom.select, dom.stageCard, dom.pause, dom.result, dom.gameover, dom.bossTalk].forEach(el => show(el, false));
+    [dom.title, dom.settings, dom.difficulty, dom.select, dom.stageCard, dom.pause, dom.result, dom.gameover, dom.bossTalk].forEach(el => show(el, false));
   }
   function blurFocus() {
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
@@ -4656,6 +5043,20 @@ body.touch-mode .toast { bottom: 30%; }
     else if (p.weapon === 'knife') dom.hudWeapon.textContent = `KNIFE ${Math.max(0, p.weaponDur)}/10`;
     else dom.hudWeapon.textContent = `PIPE ${Math.max(0, p.weaponDur)}/12`;
     dom.hudSpecial.textContent = `必杀 -${PLAYER_STATS[p.charKey].specialCost} HP`;
+    if (dom.hudUpgrades) {
+      const ups = G.upgrades || makeUpgradeState();
+      const any = UPGRADE_ORDER.some(k => ups[k].level > 0 || ups[k].progress > 0);
+      show(dom.hudUpgrades, any);
+      const set = (el, stat) => {
+        if (!el) return;
+        const u = ups[stat];
+        const def = UPGRADE_STATS[stat];
+        el.textContent = u.level >= def.maxLevel ? `Lv.${u.level} MAX` : `Lv.${u.level} ${u.progress}/${def.perLevel}`;
+      };
+      set(dom.upgSpeed, 'speed');
+      set(dom.upgAttack, 'attack');
+      set(dom.upgDefense, 'defense');
+    }
     const aliveBosses = [G.boss, G.boss2].filter(b => b && !b.dead);
     if (G.battle) {
       if (G.battle.boss) dom.hudGoal.textContent = aliveBosses.length ? (aliveBosses.length > 1 ? 'TWIN BOSS' : 'BOSS FIGHT') : 'TARGET DOWN';
@@ -4881,6 +5282,70 @@ body.touch-mode .toast { bottom: 30%; }
     blurFocus();
   }
 
+  function loadMusicPack() {
+    let key = 'classic';
+    try {
+      const saved = localStorage.getItem(MUSIC_SETTINGS_KEY);
+      if (saved && MUSIC_PACK_LABELS[saved]) key = saved;
+    } catch (e) { /* storage unavailable */ }
+    Sound.setMusicPack(key);
+    return key;
+  }
+
+  function updateMusicOptions() {
+    const current = Sound.musicPackKey || 'classic';
+    if (dom.musicOptions) {
+      dom.musicOptions.forEach(option => {
+        const selected = option.dataset.pack === current;
+        option.classList.toggle('selected', selected);
+        option.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      });
+    }
+    if (dom.settingsMusicStatus) {
+      dom.settingsMusicStatus.textContent = `当前：${MUSIC_PACK_LABELS[current] || current}`;
+    }
+  }
+
+  function selectMusicPack(key) {
+    if (!MUSIC_PACK_LABELS[key]) return;
+    Sound.setMusicPack(key);
+    try { localStorage.setItem(MUSIC_SETTINGS_KEY, key); } catch (e) { /* ignore */ }
+    updateMusicOptions();
+    Sound.playTrack('title');
+    Sound.menu();
+  }
+
+  function setSettingsTab(tab) {
+    if (!['audio', 'controls', 'guide', 'about'].includes(tab)) return;
+    G.settingsTab = tab;
+    document.querySelectorAll('.settings-tab').forEach(btn => {
+      const active = btn.dataset.tab === tab;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    document.querySelectorAll('.settings-panel').forEach(panel => {
+      panel.classList.toggle('is-active', panel.dataset.panel === tab);
+    });
+    if (dom.settingsBody) dom.settingsBody.scrollTop = 0;
+    Sound.menu();
+  }
+
+  function openSettings(tab) {
+    setMode('settings');
+    clearOverlays();
+    show(dom.settings, true);
+    show(dom.title, false);
+    show(dom.hud, false);
+    show(dom.bossUI, false);
+    show(dom.touch, false);
+    G.settingsTab = tab || G.settingsTab || 'audio';
+    setSettingsTab(G.settingsTab);
+    updateMusicOptions();
+    Sound.playTrack('title');
+    Sound.menu();
+    blurFocus();
+  }
+
   function updateDifficultyCards() {
     document.querySelectorAll('.difficulty-card').forEach(card => {
       const selected = card.dataset.diff === G.selectedDifficulty;
@@ -4935,6 +5400,8 @@ body.touch-mode .toast { bottom: 30%; }
     G.charKey = key || G.selectedChar || 'rex';
     G.score = 0;
     G.lives = (G.difficulty || DIFFICULTIES.normal).lives;
+    G.upgrades = makeUpgradeState();
+    G.collectedUpgrades = new Set();
     G.maxCombo = 0;
     G.combo = 0;
     G.finalVictory = false;
@@ -4977,11 +5444,15 @@ body.touch-mode .toast { bottom: 30%; }
     const startX = document.body.classList.contains('touch-mode') ? 132 : 82;
     G.player = createPlayer(G.charKey, startX, 230);
     G.player.invuln = 2;
+    if (!G.upgrades) G.upgrades = makeUpgradeState();
+    if (!G.collectedUpgrades) G.collectedUpgrades = new Set();
     // stage props
     stage.props.forEach(prop => {
+      if (prop.upgradeId && G.collectedUpgrades.has(prop.upgradeId)) return;
       G.crates.push({
         kind: 'crate', type: prop.type, x: prop.x, y: prop.y, hp: 10, maxHp: 10,
-        flash: 0, dead: false, anim: Math.random() * 10
+        flash: 0, dead: false, anim: Math.random() * 10,
+        upgrade: prop.upgrade || null, upgradeId: prop.upgradeId || null
       });
     });
     (stage.pickups || []).forEach(pickup => addItem(pickup.type, pickup.x, pickup.y));
@@ -5228,8 +5699,9 @@ body.touch-mode .toast { bottom: 30%; }
     const moving = len > 0.01;
     p.state = moving ? 'walk' : 'idle';
     p.pose = p.state;
-    p.x += mx * p.speed * dt;
-    p.y += my * p.speed * .68 * dt;
+    const moveMul = moveSpeedMul();
+    p.x += mx * p.speed * moveMul * dt;
+    p.y += my * p.speed * .68 * moveMul * dt;
 
     if (p.dashReady > 0 && p.dashCooldown <= 0 && Input.consumeAttack()) { startDashAttack(); return; }
     if (Input.consumeAttack()) { startPlayerAttack(); return; }
@@ -5262,7 +5734,7 @@ body.touch-mode .toast { bottom: 30%; }
       p.queuedAttack = false;
       p.attack = {
         timer: 0,
-        data: { ...w },
+        data: scaleAttackData(w),
         index: 2,
         struck: false,
         weapon: true,
@@ -5274,7 +5746,7 @@ body.touch-mode .toast { bottom: 30%; }
       else Sound.whoosh();
       return;
     }
-    const data = PLAYER_STATS[p.charKey].combo[0];
+    const data = scaleAttackData(PLAYER_STATS[p.charKey].combo[0]);
     p.state = 'attack';
     p.stateTime = 0;
     p.comboStep = 0;
@@ -5288,7 +5760,7 @@ body.touch-mode .toast { bottom: 30%; }
     const p = G.player;
     const combo = PLAYER_STATS[p.charKey].combo;
     const next = Math.min(combo.length - 1, p.attack.index + 1);
-    p.attack = { timer: 0, data: combo[next], index: next, struck: false, weapon: false };
+    p.attack = { timer: 0, data: scaleAttackData(combo[next]), index: next, struck: false, weapon: false };
     p.stateTime = 0;
     p.queuedAttack = false;
     if (next === 2) Sound.whoosh();
@@ -5453,7 +5925,7 @@ body.touch-mode .toast { bottom: 30%; }
 
     // Ramp up over the first few frames so the run reads as acceleration.
     const ramp = Math.min(1, p.runTime / .16);
-    p.x += dir * st.runSpeed * (.55 + .45 * ramp) * dt;
+    p.x += dir * st.runSpeed * moveSpeedMul() * (.55 + .45 * ramp) * dt;
     p.y = clamp(p.y, FLOOR_TOP, FLOOR_BOTTOM);
     p.runTrailTimer -= dt;
     if (p.runTrailTimer <= 0) {
@@ -5651,7 +6123,7 @@ body.touch-mode .toast { bottom: 30%; }
     p.stateTime = 0;
     p.vz = st.jump;
     p.z = 1;
-    p.vx = (Input.down('left') ? -1 : Input.down('right') ? 1 : 0) * p.speed * .55;
+    p.vx = (Input.down('left') ? -1 : Input.down('right') ? 1 : 0) * p.speed * .55 * moveSpeedMul();
     p.vy = 0;
     p.jumpHit = new Set();
     Sound.jump();
@@ -6085,7 +6557,7 @@ body.touch-mode .toast { bottom: 30%; }
         holder.cooldown = rand(holder.def.coolMin, holder.def.coolMax);
       }
     }
-    const dmg = Math.max(1, Math.round(amount * ((G.difficulty || DIFFICULTIES.normal).damageTaken)));
+    const dmg = Math.max(1, Math.round(amount * ((G.difficulty || DIFFICULTIES.normal).damageTaken) * defenseDamageMul()));
     p.hp = Math.max(0, p.hp - dmg);
     p.invuln = comboHit ? (knockdown ? .42 : .1) : .88;
     p.hitFlash = .16;
@@ -6982,7 +7454,8 @@ body.touch-mode .toast { bottom: 30%; }
   const ITEM_NAMES = {
     apple: '苹果', soda: '汽水', burger: '汉堡', medkit: '医疗包',
     cash: '现金', moneybag: '钱袋', gold: '金条',
-    pipe: '钢管', knife: '小刀', pistol: '手枪'
+    pipe: '钢管', knife: '小刀', pistol: '手枪',
+    boostSpeed: '疾风芯片', boostAttack: '狂暴芯片', boostDefense: '铁壁芯片'
   };
 
   function addItem(type, x, y, extra) {
@@ -7022,15 +7495,80 @@ body.touch-mode .toast { bottom: 30%; }
       spawnBurst(c.x, c.y, 12, c.type === 'barrel' ? '#c75a42' : '#a77b54', 12, 70);
       Sound.break();
       shake(3.5);
-      const type = rollCrateLoot();
-      if (type) {
-        const extra = type === 'pistol' ? { ammo: 6 } : {};
-        addItem(type, c.x + rand(-5, 5), c.y + rand(-2, 3), extra);
+      if (c.upgrade) {
+        const def = UPGRADE_STATS[c.upgrade];
+        if (def) {
+          if (c.upgradeId) G.collectedUpgrades.add(c.upgradeId);
+          for (let i = 0; i < def.perLevel; i++) {
+            addItem(def.token, c.x + rand(-8, 8), c.y + rand(-3, 4));
+          }
+          spawnBurst(c.x, c.y, 26, def.color, 9, 55);
+          toast(`${def.name}芯片 ×${def.perLevel}。靠近自动拾取。`, 1.7);
+        }
+      } else {
+        const type = rollCrateLoot();
+        if (type) {
+          const extra = type === 'pistol' ? { ammo: 6 } : {};
+          addItem(type, c.x + rand(-5, 5), c.y + rand(-2, 3), extra);
+        }
       }
     }
   }
 
+  function updateUpgradePickups() {
+    const p = G.player;
+    if (!p || p.state === 'dead') return;
+    for (let i = G.items.length - 1; i >= 0; i--) {
+      const item = G.items[i];
+      const stat = UPGRADE_TOKEN_STAT[item.type];
+      if (!stat) continue;
+      if (Math.abs(item.x - p.x) < 15 && Math.abs(item.y - p.y) < 12) {
+        G.items.splice(i, 1);
+        collectUpgradeToken(stat, item);
+      }
+    }
+  }
+
+  function collectUpgradeToken(stat, item) {
+    const def = UPGRADE_STATS[stat];
+    const u = G.upgrades && G.upgrades[stat];
+    if (!def || !u) return;
+    const p = G.player;
+    if (u.level >= def.maxLevel) {
+      G.score += 300;
+      spawnFloater(p.x, p.y, 34, '+300', def.color);
+      Sound.coin();
+      updateHud();
+      return;
+    }
+    u.progress++;
+    let leveled = false;
+    if (u.progress >= def.perLevel) {
+      u.progress = 0;
+      u.level++;
+      leveled = true;
+    }
+    spawnFloater(p.x, p.y, 34, leveled ? `${def.short} Lv.${u.level}` : `${def.short} ${u.progress}/${def.perLevel}`, def.color);
+    spawnBurst(p.x, p.y, leveled ? 30 : 14, def.color, 7, leveled ? 60 : 38);
+    G.flash = Math.max(G.flash, leveled ? .22 : .06);
+    if (leveled) {
+      Sound.select();
+      toast(`${def.name}提升至 Lv.${u.level}${u.level >= def.maxLevel ? ' MAX' : ''}。`, 1.8);
+      announce('UPGRADE', `${def.name} // Lv.${u.level}`, def.color, 1.35);
+    } else {
+      Sound.pickup();
+      toast(`${def.name} ${u.progress}/${def.perLevel}`, 1.0);
+    }
+    updateHud();
+  }
+
   function pickupItem(item) {
+    if (UPGRADE_TOKEN_STAT[item.type]) {
+      const idx = G.items.indexOf(item);
+      if (idx >= 0) G.items.splice(idx, 1);
+      collectUpgradeToken(UPGRADE_TOKEN_STAT[item.type], item);
+      return;
+    }
     const p = G.player;
     const heal = HEAL_ITEMS[item.type];
     if (heal && p.hp >= p.maxHp) {
@@ -7328,6 +7866,7 @@ body.touch-mode .toast { bottom: 30%; }
       return;
     }
     updatePlayer(dt);
+    updateUpgradePickups();
     for (const e of G.enemies) updateEnemy(e, dt);
     separateEnemies();
     updateProjectiles(dt);
@@ -7366,6 +7905,17 @@ body.touch-mode .toast { bottom: 30%; }
     switch (G.mode) {
       case 'title':
         if (Input.pressed('confirm')) openDifficulty();
+        break;
+      case 'settings':
+        if (Input.pressed('pause')) openTitle(true);
+        if (Input.pressed('left')) {
+          const tabs = ['audio', 'controls', 'guide', 'about'];
+          setSettingsTab(tabs[(tabs.indexOf(G.settingsTab) + 3) % 4]);
+        }
+        if (Input.pressed('right')) {
+          const tabs = ['audio', 'controls', 'guide', 'about'];
+          setSettingsTab(tabs[(tabs.indexOf(G.settingsTab) + 1) % 4]);
+        }
         break;
       case 'difficulty':
         if (Input.pressed('left') || Input.pressed('up')) selectDifficulty(DIFFICULTY_ORDER[(DIFFICULTY_ORDER.indexOf(G.selectedDifficulty) + 2) % 3], true);
@@ -7533,7 +8083,7 @@ body.touch-mode .toast { bottom: 30%; }
   function render(now) {
     const t = G.time;
     ctx.clearRect(0, 0, W, H);
-    if (G.mode === 'title' || G.mode === 'difficulty') {
+    if (G.mode === 'title' || G.mode === 'settings' || G.mode === 'difficulty') {
       renderTitle(t);
     } else if (G.mode === 'select') {
       renderSelect(t);
@@ -8237,7 +8787,7 @@ body.touch-mode .toast { bottom: 30%; }
     const renderables = [];
     for (const c of G.crates) {
       if (c.dead) continue;
-      renderables.push({ y: c.y, draw: () => Art.drawCrate(ctx, c.x - G.camera.x, c.y, c.type, c.flash > 0, G.time) });
+      renderables.push({ y: c.y, draw: () => Art.drawCrate(ctx, c.x - G.camera.x, c.y, c.type, c.flash > 0, G.time, c.upgrade) });
     }
     for (const e of G.enemies) {
       renderables.push({ y: e.y, draw: () => drawEntity(e) });
@@ -8532,6 +9082,13 @@ body.touch-mode .toast { bottom: 30%; }
 
   function bindEvents() {
     window.addEventListener('keydown', (e) => {
+      if (e.code === 'KeyS' && !e.repeat && G.mode === 'title') {
+        ensureAudio();
+        Sound.start();
+        openSettings('audio');
+        e.preventDefault();
+        return;
+      }
       if (e.code === 'KeyM' && !e.repeat) {
         toggleMute();
         e.preventDefault();
@@ -8548,6 +9105,22 @@ body.touch-mode .toast { bottom: 30%; }
       Sound.start();
       openDifficulty();
     });
+    dom.btnSettings.addEventListener('click', () => {
+      ensureAudio();
+      Sound.start();
+      openSettings('audio');
+    });
+    dom.settings.querySelectorAll('.settings-tab').forEach(btn => {
+      btn.addEventListener('click', () => setSettingsTab(btn.dataset.tab));
+    });
+    dom.musicOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        ensureAudio();
+        selectMusicPack(option.dataset.pack);
+      });
+    });
+    dom.btnSettingsClose.addEventListener('click', () => { Sound.menu(); openTitle(true); });
+    dom.btnSettingsBack.addEventListener('click', () => { Sound.menu(); openTitle(true); });
     dom.difficultyGrid.addEventListener('click', (e) => {
       const card = e.target.closest('.difficulty-card');
       if (!card) return;
@@ -8662,6 +9235,7 @@ body.touch-mode .toast { bottom: 30%; }
   // ————————————————————————————————————————————————
   function boot() {
     G.titleVisuals = Art.buildStage(0, 2460);
+    loadMusicPack();
     bindEvents();
     setMode('title');
     show(dom.title, true);
@@ -8696,7 +9270,7 @@ body.touch-mode .toast { bottom: 30%; }
   }
 
   // Read-only debug handle (useful for testing; harmless in play).
-  window.__NEON_RAGE__ = { G, Input, STAGES, PLAYER_STATS, ENEMY_DATA, startStage, spawnEnemy, startRun, hurtPlayer, hitEnemy, killEnemy, clearBattle, showResult };
+  window.__NEON_RAGE__ = { G, Input, STAGES, PLAYER_STATS, ENEMY_DATA, startStage, spawnEnemy, startRun, hurtPlayer, hitEnemy, killEnemy, clearBattle, showResult, damageCrate };
 
   boot();
 })();
