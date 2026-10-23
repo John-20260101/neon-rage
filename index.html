@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#08060f" />
+  <meta name="description" content="NEON RAGE 霓虹怒火 — 一款原创 16-bit 风格横版清关动作游戏。选择三名斗士，扫荡霓虹之城。" />
+  <title>NEON RAGE · 霓虹怒火</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2308060f'/%3E%3Cpath d='M12 50V14h13c11 0 17 5 17 14 0 6-3 10-8 12l10 10H31l-7-8v8H12zm12-19h3c4 0 6-1 6-4s-2-4-6-4h-3v8z' fill='%23ff2e63'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <div class="ambient-glow glow-a"></div>
+    <div class="ambient-glow glow-b"></div>
+    <div class="ambient-grid"></div>
+    <div class="ambient-noise"></div>
+  </div>
+
+  <main class="page">
+    <header class="topbar">
+      <div class="brand-mark" aria-hidden="true">
+        <span>NR</span>
+        <small>199X</small>
+      </div>
+      <div class="topbar-copy">
+        <span class="topbar-kicker">NEO CITY ARCADE ARCHIVE</span>
+        <strong>NEON RAGE <em>霓虹怒火</em></strong>
+      </div>
+      <div class="topbar-actions">
+        <button id="btn-sound" class="utility-btn" type="button" aria-label="开关声音" title="声音 (M)">♪ ON</button>
+        <button id="btn-fullscreen" class="utility-btn" type="button" aria-label="全屏" title="全屏">⛶ 全屏</button>
+      </div>
+    </header>
+
+    <section class="cabinet" id="cabinet" aria-label="Neon Rage 游戏机">
+      <div class="cabinet-topline" aria-hidden="true">
+        <span>NEO CITY</span>
+        <i></i>
+        <span>1 PLAYER</span>
+        <i></i>
+        <span>INSERT FIST</span>
+      </div>
+
+      <div class="screen" id="screen">
+        <canvas id="game" width="480" height="270" tabindex="0" aria-label="游戏画面"></canvas>
+
+        <div class="fx fx-scanlines" aria-hidden="true"></div>
+        <div class="fx fx-vignette" aria-hidden="true"></div>
+        <div class="fx fx-glass" aria-hidden="true"></div>
+        <div id="damage-flash" aria-hidden="true"></div>
+
+        <!-- In-game HUD -->
+        <div id="hud" class="hud is-hidden" aria-hidden="true">
+          <div class="hud-left">
+            <div class="hud-portrait"><canvas id="hud-portrait" width="40" height="50"></canvas></div>
+            <div class="hud-vitals">
+              <div class="hud-name-row">
+                <b id="hud-name">REX</b>
+                <span id="hud-lives" class="hud-lives">×3</span>
+              </div>
+              <div class="meter hp-meter"><i id="hp-ghost"></i><i id="hp-fill"></i></div>
+              <div class="hud-subrow"><span id="hud-weapon">FISTS</span><span id="hud-special">必杀 HP -7</span></div>
+            </div>
+          </div>
+          <div class="hud-center">
+            <span id="hud-stage">STAGE 01</span>
+            <div id="hud-goal">DOCKSIDE 9</div>
+          </div>
+          <div class="hud-right">
+            <div class="hud-score"><span>SCORE</span><b id="hud-score">000000</b></div>
+            <div class="hud-combo"><span>COMBO</span><b id="hud-combo">×0</b></div>
+          </div>
+        </div>
+
+        <div id="boss-ui" class="boss-ui is-hidden">
+          <div class="boss-row">
+            <div class="boss-ui-head"><span>WARNING // BOSS</span><b id="boss-name">RAZOR</b></div>
+            <div class="meter boss-meter"><i id="boss-fill"></i></div>
+          </div>
+          <div id="boss-row-2" class="boss-row boss-row-2 is-hidden">
+            <div class="boss-ui-head"><span>WARNING // BOSS 2</span><b id="boss-name-2">NYX</b></div>
+            <div class="meter boss-meter"><i id="boss-fill-2"></i></div>
+          </div>
+        </div>
+
+        <!-- Title screen -->
+        <div id="title-screen" class="overlay title-screen">
+          <div class="title-rays" aria-hidden="true"></div>
+          <div class="title-content">
+            <div class="eyebrow">NEO CITY <span>//</span> 199X <span>//</span> ARCADE</div>
+            <h1 class="game-logo" aria-label="Neon Rage">
+              <span class="logo-neon">NEON</span>
+              <span class="logo-rage">RAGE</span>
+            </h1>
+            <div class="logo-cn">霓 虹 怒 火</div>
+            <p class="title-copy">当法律沉睡，拳头就是黎明。</p>
+            <button id="btn-start" class="arcade-btn" type="button">
+              <span class="btn-main">投币开始</span>
+              <span class="btn-sub">PRESS ENTER / CLICK</span>
+            </button>
+            <div class="title-meta">
+              <span>1 PLAYER</span>
+              <span>ORIGINAL PIXEL BEAT 'EM UP</span>
+              <span>5 STAGES</span>
+              <span id="title-best">BEST 000000</span>
+            </div>
+          </div>
+          <div class="title-stamp" aria-hidden="true">
+            <span>NEO CITY</span>
+            <span>TRUTH</span>
+            <span>JUSTICE</span>
+            <span>STREET</span>
+          </div>
+          <div class="title-ticker" aria-hidden="true">
+            <span>SYNDICATE CONTROL: 89%</span>
+            <span>//</span>
+            <span>POLICE RESPONSE: 0%</span>
+            <span>//</span>
+            <span>STREET JUSTICE: ONLINE</span>
+          </div>
+        </div>
+
+        <!-- Character select -->
+        <div id="select-screen" class="overlay select-screen is-hidden">
+          <div class="select-head">
+            <div class="eyebrow">CHARACTER SELECT <span>//</span> 选择斗士</div>
+            <h2>今晚，谁去清街？</h2>
+            <p>三人三套打法。选一个，把 V 先生的打手赶出霓虹区。</p>
+          </div>
+          <div class="char-grid" id="char-grid">
+            <button class="char-card" data-char="rex" type="button">
+              <span class="char-index">01</span>
+              <canvas class="char-preview" width="120" height="136"></canvas>
+              <span class="char-tag">BALANCED</span>
+              <span class="char-name">REX <em>雷克斯</em></span>
+              <span class="char-role">街头拳王 · 全能</span>
+              <div class="stat-row"><span>力</span><div class="stat-track"><i style="width:70%"></i></div></div>
+              <div class="stat-row"><span>速</span><div class="stat-track"><i style="width:70%"></i></div></div>
+              <div class="stat-row"><span>技</span><div class="stat-track"><i style="width:78%"></i></div></div>
+              <p class="char-desc">前特警。三连拳稳定；前前+J「崩拳突进」可击倒一排。</p>
+              <span class="char-trait">崩拳突进 · 回旋风暴</span>
+            </button>
+            <button class="char-card" data-char="luna" type="button">
+              <span class="char-index">02</span>
+              <canvas class="char-preview" width="120" height="136"></canvas>
+              <span class="char-tag">FAST</span>
+              <span class="char-name">LUNA <em>露娜</em></span>
+              <span class="char-role">夜行舞者 · 速度</span>
+              <div class="stat-row"><span>力</span><div class="stat-track"><i style="width:58%"></i></div></div>
+              <div class="stat-row"><span>速</span><div class="stat-track"><i style="width:94%"></i></div></div>
+              <div class="stat-row"><span>技</span><div class="stat-track"><i style="width:86%"></i></div></div>
+              <p class="char-desc">夜行舞者。出拳最快；前前+J「流光踢」突进距离最远。</p>
+              <span class="char-trait">流光踢 · 空中压制</span>
+            </button>
+            <button class="char-card" data-char="bruno" type="button">
+              <span class="char-index">03</span>
+              <canvas class="char-preview" width="120" height="136"></canvas>
+              <span class="char-tag">POWER</span>
+              <span class="char-name">BRUNO <em>布鲁诺</em></span>
+              <span class="char-role">码头重锤 · 力量</span>
+              <div class="stat-row"><span>力</span><div class="stat-track"><i style="width:96%"></i></div></div>
+              <div class="stat-row"><span>速</span><div class="stat-track"><i style="width:52%"></i></div></div>
+              <div class="stat-row"><span>技</span><div class="stat-track"><i style="width:66%"></i></div></div>
+              <p class="char-desc">码头重锤。抗击打；前前+J「蛮牛冲撞」伤害最高。</p>
+              <span class="char-trait">蛮牛冲撞 · 硬抗围攻</span>
+            </button>
+          </div>
+          <div class="select-footer">
+            <div class="select-help"><kbd>←</kbd><kbd>→</kbd> 选择　<kbd>ENTER</kbd> 出战　<kbd>ESC</kbd> 返回</div>
+            <div class="select-buttons">
+              <button id="btn-select-back" class="ghost-btn" type="button">返回</button>
+              <button id="btn-select-confirm" class="arcade-btn compact" type="button"><span class="btn-main">确认出战</span><span class="btn-sub">ENTER</span></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage intro -->
+        <div id="stage-card" class="overlay stage-card is-hidden">
+          <div class="stage-card-inner">
+            <div class="stage-kicker">NEO CITY // CRIME DISTRICT</div>
+            <div class="stage-number">STAGE <span id="stage-num">01</span></div>
+            <h2 id="stage-title">DOCKSIDE 9</h2>
+            <div class="stage-cn" id="stage-cn">第九码头</div>
+            <div class="stage-line"></div>
+            <p id="stage-desc">雨把整座城市洗成霓虹色。今晚，码头不接货，只接拳头。</p>
+            <div class="stage-skip">ENTER 跳过</div>
+          </div>
+        </div>
+
+        <!-- Pause -->
+        <div id="pause-screen" class="overlay modal-screen is-hidden">
+          <div class="modal-card">
+            <div class="eyebrow">SYSTEM // PAUSED</div>
+            <h2>暂停</h2>
+            <p class="modal-copy">喘口气。外面还有整条街的人等着挨揍。</p>
+            <div class="pause-controls">
+              <div><kbd>WASD</kbd> / <kbd>方向键</kbd><span>移动</span></div>
+              <div><kbd>J</kbd><span>连击</span></div>
+              <div><kbd>K</kbd><span>跳跃</span></div>
+              <div><kbd>L</kbd><span>必杀（耗血）</span></div>
+              <div><kbd>E</kbd><span>抓取 / 投掷 / 拾取道具</span></div>
+              <div><kbd>→ →</kbd><span>跑动（第二下按住）</span></div>
+              <div><kbd>→ → + J</kbd><span>角色冲刺技</span></div>
+            </div>
+            <div class="modal-buttons">
+              <button id="btn-resume" class="arcade-btn compact" type="button"><span class="btn-main">继续</span><span class="btn-sub">ESC</span></button>
+              <button id="btn-restart" class="ghost-btn" type="button">重开本关</button>
+              <button id="btn-quit" class="ghost-btn danger" type="button">回到标题</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage clear / victory -->
+        <div id="result-screen" class="overlay modal-screen result-screen is-hidden">
+          <div class="modal-card result-card">
+            <div class="eyebrow" id="result-kicker">STAGE CLEAR</div>
+            <div class="result-grade" id="result-grade">A</div>
+            <h2 id="result-title">街区已清空</h2>
+            <p id="result-copy" class="modal-copy">霓虹重新亮了起来。只是今晚，换了一群人倒下。</p>
+            <div class="result-stats">
+              <div><span>SCORE</span><b id="result-score">000000</b></div>
+              <div><span>TIME</span><b id="result-time">00:00</b></div>
+              <div><span>MAX COMBO</span><b id="result-combo">×0</b></div>
+              <div><span>HITS TAKEN</span><b id="result-hits">0</b></div>
+            </div>
+            <div class="modal-buttons">
+              <button id="btn-next" class="arcade-btn compact" type="button"><span class="btn-main">进入下一关</span><span class="btn-sub">ENTER</span></button>
+              <button id="btn-result-title" class="ghost-btn" type="button">回到标题</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game over -->
+        <div id="gameover-screen" class="overlay modal-screen gameover-screen is-hidden">
+          <div class="modal-card gameover-card">
+            <div class="eyebrow">SYSTEM // FLATLINED</div>
+            <h2 class="gameover-title">GAME OVER</h2>
+            <p class="modal-copy">霓虹还没熄灭，但今晚的你倒下了。</p>
+            <div class="result-stats mini">
+              <div><span>FINAL SCORE</span><b id="gameover-score">000000</b></div>
+              <div><span>STAGE</span><b id="gameover-stage">01</b></div>
+            </div>
+            <div class="modal-buttons">
+              <button id="btn-retry" class="arcade-btn compact" type="button"><span class="btn-main">再战一次</span><span class="btn-sub">重开本关</span></button>
+              <button id="btn-gameover-title" class="ghost-btn" type="button">回到标题</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transient messages -->
+        <div id="toast" class="toast" aria-live="polite"></div>
+        <div id="rotate-hint" class="rotate-hint is-hidden">
+          <span>↻</span> 横屏体验更佳
+        </div>
+
+        <!-- Touch controls -->
+        <div id="touch-controls" class="touch-controls is-hidden" aria-label="触屏控制">
+          <div class="touch-dpad">
+            <button class="touch-key up" data-action="up" type="button" aria-label="上">▲</button>
+            <button class="touch-key left" data-action="left" type="button" aria-label="左">◀</button>
+            <button class="touch-key right" data-action="right" type="button" aria-label="右">▶</button>
+            <button class="touch-key down" data-action="down" type="button" aria-label="下">▼</button>
+          </div>
+          <div class="touch-actions">
+            <button class="touch-key action special" data-action="special" type="button" aria-label="必杀">必杀</button>
+            <button class="touch-key action grab" data-action="grab" type="button" aria-label="抓取">抓</button>
+            <button class="touch-key action jump" data-action="jump" type="button" aria-label="跳跃">跳</button>
+            <button class="touch-key action attack" data-action="attack" type="button" aria-label="攻击">打</button>
+          </div>
+          <button id="btn-touch-pause" class="touch-key touch-pause" type="button" aria-label="暂停">Ⅱ</button>
+        </div>
+      </div>
+
+      <div class="cabinet-footer" aria-hidden="true">
+        <span>NEON RAGE™ / NEO CITY ARCADE</span>
+        <span class="footer-leds"><i></i><i></i><i></i></span>
+        <span>ORIGINAL 16-BIT-STYLE BEAT 'EM UP</span>
+      </div>
+    </section>
+
+    <section class="manual" aria-label="游戏说明">
+      <div class="manual-block">
+        <span class="manual-kicker">HOW TO FIGHT / 操作</span>
+        <div class="keys">
+          <div><kbd>WASD</kbd><span>移动 / 上下走位</span></div>
+          <div><kbd>→ →</kbd><span>跑动（第二下按住）</span></div>
+          <div><kbd>→ → + J</kbd><span>冲刺技（火 / 电 / 尘）</span></div>
+          <div><kbd>J</kbd><span>连击 / 使用武器</span></div>
+          <div><kbd>K</kbd><span>跳跃 / 空中踢</span></div>
+          <div><kbd>L</kbd><span>必杀（消耗生命）</span></div>
+          <div><kbd>E</kbd><span>抓取 / 投掷 / 拾取道具</span></div>
+          <div><kbd>ESC</kbd><span>暂停</span></div>
+        </div>
+      </div>
+      <div class="manual-block tips-block">
+        <span class="manual-kicker">STREET WISDOM / 生存守则</span>
+        <ul>
+          <li><b>走位比出拳重要。</b>用上下方向错开敌人的拳头，再从侧面切入。</li>
+          <li><b>双击前方向并按住可以跑动。</b>跑动中按 <kbd>J</kbd> 直接放冲刺技：REX 带火焰，LUNA 带闪电，BRUNO 带烟尘。</li>
+          <li><b>敌人头顶有血条。</b>血条变黄、闪红时说明快倒了，优先补刀；Boss 的血量看屏幕顶部。</li>
+          <li><b>抓取后按 J 膝击，按 K 投掷。</b>把打手砸向同伴，能连带击倒。</li>
+          <li><b>必杀会扣自己的血。</b>被围住时再用，别在空血时逞英雄。</li>
+          <li><b>木箱和油桶能打碎。</b>苹果、汽水、汉堡和医疗包回血；钢管、小刀、手枪都能上手。</li>
+          <li><b>手枪只有 6 发。</b>按 <kbd>J</kbd> 射击，子弹可以打断敌人；打空后自动丢掉。</li>
+          <li><b>金条和钱袋是高分道具。</b>金条 +3000，钱袋 +1200；看到就别错过。</li>
+          <li><b>新对手各有套路。</b>拳手会侧闪三连拳，鞭手攻击距离很长，枪手会后退放冷枪；塞壬会腾空飞踢，蝰蛇会后退扔飞刀。</li>
+          <li><b>Boss 会随关卡解锁新招。</b>剃刀会大范围横扫，泰坦会冲撞和跳跃重砸，维克托会升龙拳与大型波动拳；看到蓄力先拉开。</li>
+          <li><b>摔跤手会抓人。</b>被近身抓住会被过肩摔扔出去；保持上下错位，别和它贴脸。</li>
+          <li><b>第 4 关是双子战。</b>渡鸦会瞬移斩与四连刀，夜莺会飞跃踢与三连旋风腿；先集中击倒一个，警告栏会只剩一条血。</li>
+          <li><b>最终 Boss 有三阶段。</b>机枪阶段用跳跃躲弹幕；暴走阶段防冲刺重拳；天翔阶段它会悬浮俯冲，抓落地硬直反击。</li>
+        </ul>
+      </div>
+      <div class="manual-block credits-block">
+        <span class="manual-kicker">ABOUT / 关于</span>
+        <p>《霓虹怒火》是一部受 16-bit 清版动作经典启发的原创同人作品。角色、像素画面、关卡、音乐均为程序化原创，不使用原作美术或音频素材。</p>
+        <p class="fineprint">SEGA、Streets of Rage 及相关商标归其权利人所有。本作非商业、非官方作品。</p>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <span>NEON RAGE // 199X</span>
+      <span>BUILT WITH CANVAS + WEB AUDIO</span>
+      <span>NO QUARTERS NEEDED</span>
+    </footer>
+  </main>
+
+  <script src="js/audio.js"></script>
+  <script src="js/art.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
