@@ -384,32 +384,39 @@ button:focus-visible, [tabindex]:focus-visible {
 .select-head p { margin: 0; font-family: var(--cn); font-size: max(9px, .9cqw); color: var(--muted); letter-spacing: .08em; }
 .char-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.3cqw; flex: 1 1 auto; min-height: 0; }
 .char-card {
+  --char-bg: none;
   position: relative; display: flex; flex-direction: column; align-items: flex-start;
   padding: 1.1cqw 1.5cqw 1cqw 1.2cqw;
   text-align: left; cursor: pointer;
   border: 1px solid rgba(244,236,220,.16);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.055), transparent 34%),
-    linear-gradient(155deg, rgba(122,61,240,.15), rgba(9,6,16,.94) 55%);
+  background-color: #090610;
+  background-image:
+    linear-gradient(180deg, rgba(4,2,10,.56) 0%, rgba(4,2,10,.22) 30%, rgba(4,2,10,.7) 64%, rgba(4,2,10,.95) 100%),
+    linear-gradient(155deg, color-mix(in srgb, var(--char-color, #7a3df0) 14%, transparent), transparent 46%, rgba(9,6,16,.62) 100%),
+    var(--char-bg);
+  background-size: cover;
+  background-position: center, center, center 28%;
+  background-repeat: no-repeat;
   color: var(--paper);
   overflow: hidden;
-  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
 }
 .char-card::before {
   content: ""; position: absolute; inset: 0;
   background: repeating-linear-gradient(135deg, rgba(255,255,255,.025) 0 1px, transparent 1px 12px);
   pointer-events: none;
 }
-.char-card[data-char="rex"] { --char-color: #ff2e63; }
-.char-card[data-char="luna"] { --char-color: #7a3df0; }
-.char-card[data-char="bruno"] { --char-color: #ffd23f; }
+.char-card[data-char="rex"] { --char-color: #ff2e63; --char-bg: url("images/char-rex.webp"); }
+.char-card[data-char="luna"] { --char-color: #7a3df0; --char-bg: url("images/char-luna.webp"); }
+.char-card[data-char="bruno"] { --char-color: #ffd23f; --char-bg: url("images/char-bruno.webp"); }
 .char-card:hover, .char-card.selected {
   transform: translateY(-.18cqw);
   border-color: var(--char-color, var(--pink));
   box-shadow: 0 .8cqw 2.5cqw rgba(0,0,0,.5), 0 0 2.2cqw color-mix(in srgb, var(--char-color, var(--pink)) 28%, transparent);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.075), transparent 36%),
-    linear-gradient(155deg, color-mix(in srgb, var(--char-color, var(--pink)) 18%, transparent), rgba(9,6,16,.95) 58%);
+  background-image:
+    linear-gradient(180deg, rgba(4,2,10,.4) 0%, rgba(4,2,10,.08) 30%, rgba(4,2,10,.64) 64%, rgba(4,2,10,.94) 100%),
+    linear-gradient(155deg, color-mix(in srgb, var(--char-color, var(--pink)) 22%, transparent), transparent 46%, rgba(9,6,16,.58) 100%),
+    var(--char-bg);
 }
 .char-card.selected::before {
   border: 1px solid rgba(255,255,255,.12);
@@ -689,19 +696,25 @@ body.touch-mode .toast { bottom: 30%; }
 }
 .difficulty-card {
   --diff-color: var(--yellow);
+  --diff-bg: none;
   position: relative; display: flex; flex-direction: column; align-items: flex-start;
   padding: 1.05cqw 1.2cqw; text-align: left; cursor: pointer;
   border: 1px solid rgba(244,236,220,.16);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.045), transparent 35%),
-    linear-gradient(160deg, color-mix(in srgb, var(--diff-color) 11%, transparent), rgba(9,6,16,.94) 62%);
+  background-color: #090610;
+  background-image:
+    linear-gradient(180deg, rgba(4,2,10,.5) 0%, rgba(4,2,10,.16) 30%, rgba(4,2,10,.68) 62%, rgba(4,2,10,.94) 100%),
+    linear-gradient(160deg, color-mix(in srgb, var(--diff-color) 12%, transparent), transparent 42%, rgba(9,6,16,.6) 100%),
+    var(--diff-bg);
+  background-size: cover;
+  background-position: center, center, center 32%;
+  background-repeat: no-repeat;
   color: var(--paper);
   transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
   overflow: hidden;
 }
-.difficulty-card[data-diff="easy"] { --diff-color: #57e389; }
-.difficulty-card[data-diff="normal"] { --diff-color: var(--yellow); }
-.difficulty-card[data-diff="hard"] { --diff-color: #ff5b6b; }
+.difficulty-card[data-diff="easy"] { --diff-color: #57e389; --diff-bg: url("images/difficulty-easy.webp"); }
+.difficulty-card[data-diff="normal"] { --diff-color: var(--yellow); --diff-bg: url("images/difficulty-normal.webp"); }
+.difficulty-card[data-diff="hard"] { --diff-color: #ff5b6b; --diff-bg: url("images/difficulty-hard.webp"); }
 .difficulty-card:hover, .difficulty-card.selected {
   transform: translateY(-.18cqw);
   border-color: var(--diff-color);

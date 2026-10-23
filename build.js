@@ -6,7 +6,18 @@ const root = __dirname;
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 
 let html = read('index.html');
-const css = read('styles.css');
+let css = read('styles.css');
+
+// Inline local background images so the shareable HTML stays self-contained.
+const imageMime = { '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg' };
+css = css.replace(/url\(["']?(images\/[^"')]+)["']?\)/g, (match, rel) => {
+  const file = path.join(root, rel);
+  if (!fs.existsSync(file)) throw new Error(`Missing image asset for CSS: ${rel}`);
+  const ext = path.extname(rel).toLowerCase();
+  const mime = imageMime[ext];
+  if (!mime) throw new Error(`Unsupported image asset type: ${rel}`);
+  return `url("data:${mime};base64,${fs.readFileSync(file).toString('base64')}")`;
+});
 const scripts = ['js/audio.js', 'js/art.js', 'js/game.js'];
 
 html = html.replace(
