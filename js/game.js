@@ -33,8 +33,20 @@
     bossRow2: $('boss-row-2'),
     bossName2: $('boss-name-2'),
     bossFill2: $('boss-fill-2'),
+    bossTalk: $('boss-talk'),
+    bossTalkPortrait: $('boss-talk-portrait'),
+    bossTalkName: $('boss-talk-name'),
+    bossTalkRole: $('boss-talk-role'),
+    bossTalkText: $('boss-talk-text'),
+    bossTalkProgress: $('boss-talk-progress'),
+    bossTalkSkip: $('boss-talk-skip'),
     title: $('title-screen'),
+    difficulty: $('difficulty-screen'),
+    difficultyGrid: $('difficulty-grid'),
     select: $('select-screen'),
+    selectDifficulty: $('select-difficulty'),
+    pauseDifficulty: $('pause-difficulty'),
+    stageKicker: $('stage-kicker'),
     stageCard: $('stage-card'),
     stageNum: $('stage-num'),
     stageTitle: $('stage-title'),
@@ -63,6 +75,8 @@
     btnStart: $('btn-start'),
     btnConfirm: $('btn-select-confirm'),
     btnSelectBack: $('btn-select-back'),
+    btnDifficultyBack: $('btn-difficulty-back'),
+    btnDifficultyConfirm: $('btn-difficulty-confirm'),
     btnResume: $('btn-resume'),
     btnRestart: $('btn-restart'),
     btnQuit: $('btn-quit'),
@@ -119,6 +133,61 @@
         name: '蛮牛头槌', en: 'BULL HEADBUTT', startup: .07, active: .14, recovery: .28,
         damage: 18, range: 45, kb: 175, knockdown: true, pose: 'headbutt', speed: 175, duration: .22, fx: 'smoke'
       }
+    }
+  };
+
+
+  const DIFFICULTY_ORDER = ['easy', 'normal', 'hard'];
+  const DIFFICULTIES = {
+    easy: {
+      key: 'easy', name: 'EASY', cn: '简单', tag: '街头练习', accent: '#57e389',
+      enemyHp: .8, damageTaken: .7, lives: 4,
+      desc: '敌人更脆，拳脚更轻。四条命，足够把整条街走完。'
+    },
+    normal: {
+      key: 'normal', name: 'NORMAL', cn: '普通', tag: '标准街头', accent: '#ffd23f',
+      enemyHp: 1, damageTaken: 1, lives: 3,
+      desc: '原汁原味的清版节奏。三条命，一次完整的霓虹之夜。'
+    },
+    hard: {
+      key: 'hard', name: 'HARD', cn: '困难', tag: '一命通关', accent: '#ff5b6b',
+      enemyHp: 1.2, damageTaken: 1.4, lives: 2,
+      desc: 'Boss 更硬，拳头更疼，只有两条命。给真正想拆掉 V 塔的人。'
+    }
+  };
+
+  const BOSS_TALK = {
+    razor: {
+      title: 'DOCKSIDE ENFORCER', name: 'RAZOR', cn: '剃刀', char: 'razor',
+      lines: [
+        { char: 'razor', speaker: 'RAZOR', role: '码头行刑人', text: '第九码头的每一盏路灯都替我收过钱。你这种小角色，连让我拔刀的资格都没有。' }
+      ]
+    },
+    titan: {
+      title: 'UNDERGROUND CHAMPION', name: 'TITAN', cn: '泰坦', char: 'titan',
+      lines: [
+        { char: 'titan', speaker: 'TITAN', role: '地下拳王', text: '黑市擂台四十二场，没人撑过我一拳。你猜，这副骨头能撑几秒？' }
+      ]
+    },
+    vector: {
+      title: "V'S SHADOW", name: 'VECTOR', cn: '维克托', char: 'vector',
+      lines: [
+        { char: 'vector', speaker: 'VECTOR', role: 'V 先生之影', text: 'V 先生从不出手。因为他知道，只要我站在这里，你就见不到他。' }
+      ]
+    },
+    twin: {
+      title: 'TWIN ASSASSINS', name: 'RAVEN // NYX', cn: '双子刺客', char: 'raven',
+      lines: [
+        { char: 'raven', speaker: 'RAVEN', role: '双子刺客 · 姐', text: '妹妹，你看他的眼神——还真以为自己是来赢的。' },
+        { char: 'nyx', speaker: 'NYX', role: '双子刺客 · 妹', text: '那就让他记住：霓虹花园的最后一拍，永远由我们收。' }
+      ]
+    },
+    final: {
+      title: 'FINAL FORM', name: 'V-PRIME', cn: 'V先生·终焉', char: 'vprime',
+      lines: [
+        { char: 'vprime', speaker: 'V-PRIME', role: '终焉容器 · 第一形态', text: '肉体只是容器。我给你准备了三具身体——第一具，用来数你身上的弹孔。' },
+        { char: 'vprime', speaker: 'V-PRIME', role: '终焉容器 · 第一形态', text: '城市需要一个神。而我，正好有三张脸。' }
+      ]
     }
   };
 
@@ -353,6 +422,9 @@
     announce: null,
     toastTimer: 0,
     selectedChar: 'rex',
+    selectedDifficulty: 'normal',
+    difficulty: DIFFICULTIES.normal,
+    bossTalk: null,
     charKey: 'rex',
     muted: false,
     finalVictory: false,
@@ -447,7 +519,7 @@
     if (dom.titleBest) dom.titleBest.textContent = `BEST ${pad(Math.max(G.score, getBest()), 6)}`;
   }
   function clearOverlays() {
-    [dom.title, dom.select, dom.stageCard, dom.pause, dom.result, dom.gameover].forEach(el => show(el, false));
+    [dom.title, dom.difficulty, dom.select, dom.stageCard, dom.pause, dom.result, dom.gameover, dom.bossTalk].forEach(el => show(el, false));
   }
   function blurFocus() {
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
@@ -496,7 +568,7 @@
 
   function resetHud() {
     dom.hudName.textContent = PLAYER_STATS[G.charKey].name;
-    dom.hudStage.textContent = G.stage ? `STAGE ${G.stage.number}` : 'STAGE 01';
+    dom.hudStage.textContent = G.stage ? `STAGE ${G.stage.number} · ${(G.difficulty || DIFFICULTIES.normal).name}` : 'STAGE 01';
     dom.hudGoal.textContent = G.stage ? G.stage.goal : '';
     const pc = dom.hudPortrait.getContext('2d');
     pc.imageSmoothingEnabled = false;
@@ -531,6 +603,121 @@
     };
   }
 
+  function drawBossTalkPortrait(charKey) {
+    const c = dom.bossTalkPortrait;
+    if (!c) return;
+    const g = c.getContext('2d');
+    g.imageSmoothingEnabled = false;
+    g.clearRect(0, 0, c.width, c.height);
+    g.fillStyle = '#0b0710';
+    g.fillRect(0, 0, c.width, c.height);
+    const grad = g.createRadialGradient(c.width / 2, c.height * .38, 2, c.width / 2, c.height * .48, c.width * .8);
+    grad.addColorStop(0, 'rgba(255,46,99,.2)');
+    grad.addColorStop(1, 'rgba(255,46,99,0)');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, c.width, c.height);
+    Art.drawFighter(g, {
+      x: c.width / 2, y: c.height - 5, z: 0, facing: 1, scale: 1.58,
+      char: Art.CHARS[charKey] || Art.CHARS.rex, pose: 'idle', ext: 0,
+      anim: G.time * .45, alpha: 1, rim: (Art.CHARS[charKey] || Art.CHARS.rex).colors.accent
+    });
+    const fade = g.createLinearGradient(0, 0, 0, c.height);
+    fade.addColorStop(0, 'rgba(5,3,10,.05)');
+    fade.addColorStop(1, 'rgba(5,3,10,.55)');
+    g.fillStyle = fade;
+    g.fillRect(0, 0, c.width, c.height);
+  }
+
+  function showBossTalkLine() {
+    const t = G.bossTalk;
+    if (!t) return;
+    const line = t.data.lines[t.index];
+    if (!line) return;
+    dom.bossTalkName.textContent = line.speaker;
+    dom.bossTalkRole.textContent = line.role || '';
+    dom.bossTalkText.textContent = line.text;
+    dom.bossTalkProgress.textContent = `${t.index + 1} / ${t.data.lines.length}`;
+    drawBossTalkPortrait(line.char);
+  }
+
+  function beginBossTalk(key) {
+    const data = BOSS_TALK[key];
+    if (!data || G.bossTalk) return;
+    const bosses = [G.boss, G.boss2].filter(b => b && !b.dead);
+    if (!bosses.length) return;
+    G.announce = null;
+    G.hitstop = 0;
+    const camX = G.camera.x;
+    for (const e of bosses) {
+      e.state = 'chase';
+      e.stateTime = 0;
+      e.attack = null;
+      e.attacking = false;
+      e.cooldown = 99;
+      e.pose = 'idle';
+      e.x = clamp(e.x, camX + 55, camX + W - 55);
+      e.facing = e.x >= (G.player ? G.player.x : camX + W / 2) ? -1 : 1;
+    }
+    if (G.player) {
+      G.player.attack = null;
+      G.player.vx = 0;
+      G.player.vy = 0;
+    }
+    G.bossTalk = { data, index: 0, timer: 0, total: data.lines.length };
+    showBossTalkLine();
+    show(dom.bossTalk, true);
+    if (document.body.classList.contains('touch-mode')) dom.touch.classList.add('is-hidden');
+    Sound.menu();
+  }
+
+  function advanceBossTalk() {
+    const t = G.bossTalk;
+    if (!t) return;
+    if (t.index + 1 < t.data.lines.length) {
+      t.index++;
+      t.timer = 0;
+      showBossTalkLine();
+      Sound.menu();
+    } else {
+      endBossTalk(false);
+    }
+  }
+
+  function endBossTalk(skipped) {
+    if (!G.bossTalk) return;
+    G.bossTalk = null;
+    show(dom.bossTalk, false);
+    if (document.body.classList.contains('touch-mode')) dom.touch.classList.remove('is-hidden');
+    const bosses = [G.boss, G.boss2].filter(b => b && !b.dead);
+    for (const e of bosses) {
+      e.cooldown = Math.min(e.cooldown, 1);
+      e.state = 'chase';
+      e.stateTime = 0;
+    }
+    if (G.player && G.player.state !== 'dead') G.player.invuln = Math.max(G.player.invuln, .8);
+    G.hitstop = 0;
+    if (skipped) Sound.menu();
+  }
+
+  function clearBossTalk() {
+    if (G.bossTalk) {
+      G.bossTalk = null;
+      show(dom.bossTalk, false);
+      if (document.body.classList.contains('touch-mode')) dom.touch.classList.remove('is-hidden');
+    }
+  }
+
+  function updateBossTalk(dt) {
+    const t = G.bossTalk;
+    if (!t) return;
+    t.timer += dt;
+    if (t.timer > .35 && (Input.pressed('confirm') || Input.pressed('attack') || Input.pressed('jump'))) {
+      advanceBossTalk();
+      return;
+    }
+    if (t.timer > 4.2) advanceBossTalk();
+  }
+
   function setMode(mode) {
     G.lastMode = G.mode;
     G.mode = mode;
@@ -538,6 +725,7 @@
   }
 
   function openTitle(fromGame) {
+    clearBossTalk();
     setMode('title');
     clearOverlays();
     show(dom.title, true);
@@ -565,6 +753,40 @@
     show(dom.touch, document.body.classList.contains('touch-mode') && !fromGame ? true : document.body.classList.contains('touch-mode'));
   }
 
+  function openDifficulty() {
+    setMode('difficulty');
+    clearOverlays();
+    show(dom.difficulty, true);
+    show(dom.hud, false);
+    show(dom.bossUI, false);
+    G.selectedDifficulty = G.selectedDifficulty || 'normal';
+    updateDifficultyCards();
+    Sound.playTrack('select');
+    Sound.menu();
+    blurFocus();
+  }
+
+  function updateDifficultyCards() {
+    document.querySelectorAll('.difficulty-card').forEach(card => {
+      const selected = card.dataset.diff === G.selectedDifficulty;
+      card.classList.toggle('selected', selected);
+      card.setAttribute('aria-pressed', selected ? 'true' : 'false');
+    });
+  }
+
+  function selectDifficulty(key, withSound) {
+    if (!DIFFICULTIES[key]) return;
+    G.selectedDifficulty = key;
+    updateDifficultyCards();
+    if (withSound) Sound.menu();
+  }
+
+  function confirmDifficulty() {
+    G.difficulty = DIFFICULTIES[G.selectedDifficulty] || DIFFICULTIES.normal;
+    Sound.select();
+    openSelect();
+  }
+
   function openSelect() {
     setMode('select');
     clearOverlays();
@@ -573,6 +795,7 @@
     show(dom.bossUI, false);
     G.selectedChar = G.charKey || 'rex';
     updateCharCards();
+    if (dom.selectDifficulty) dom.selectDifficulty.textContent = `DIFFICULTY // ${G.difficulty.name}`;
     Sound.playTrack('select');
     Sound.menu();
     blurFocus();
@@ -596,7 +819,7 @@
   function beginRun(key) {
     G.charKey = key || G.selectedChar || 'rex';
     G.score = 0;
-    G.lives = 3;
+    G.lives = (G.difficulty || DIFFICULTIES.normal).lives;
     G.maxCombo = 0;
     G.combo = 0;
     G.finalVictory = false;
@@ -606,6 +829,7 @@
   function startStage(index) {
     const stage = STAGES[index];
     if (!stage) return;
+    clearBossTalk();
     setMode('intro');
     clearOverlays();
     G.stageIndex = index;
@@ -651,8 +875,9 @@
     dom.stageTitle.textContent = stage.title;
     dom.stageCn.textContent = stage.cn;
     dom.stageDesc.textContent = stage.desc;
+    if (dom.stageKicker) dom.stageKicker.textContent = `NEO CITY // ${(G.difficulty || DIFFICULTIES.normal).name} // CRIME DISTRICT`;
     dom.hudName.textContent = PLAYER_STATS[G.charKey].name;
-    dom.hudStage.textContent = `STAGE ${stage.number}`;
+    dom.hudStage.textContent = `STAGE ${stage.number} · ${(G.difficulty || DIFFICULTIES.normal).name}`;
     dom.hudGoal.textContent = stage.goal;
     dom.hudScore.textContent = pad(G.score, 6);
     show(dom.hud, false);
@@ -688,7 +913,7 @@
   }
 
   function retryStage() {
-    G.lives = 3;
+    G.lives = (G.difficulty || DIFFICULTIES.normal).lives;
     G.score = G.scoreAtStageStart || 0;
     startStage(G.stageIndex);
   }
@@ -701,6 +926,8 @@
     const def = baseDef.boss ? { ...baseDef } : baseDef;
     const opt = options || {};
     const fromLeft = opt.side === 'left';
+    const diff = G.difficulty || DIFFICULTIES.normal;
+    const scaledHp = Math.max(1, Math.round(def.hp * diff.enemyHp));
     const e = {
       kind: 'enemy', type, def,
       char: makeEnemyChar(type),
@@ -713,7 +940,7 @@
       enterDelay: opt.delay || 0,
       weapon: type === 'gunner' ? 'pistol' : type === 'whip' ? 'whip' : type === 'viper' ? 'knife' : type === 'vprime' ? 'machinegun' : type === 'razor' ? 'sword' : null,
       pose: 'walk',
-      hp: def.hp, maxHp: def.hp,
+      hp: scaledHp, maxHp: scaledHp,
       speed: def.speed,
       scale: def.scale,
       offsetY: rand(-12, 12),
@@ -784,6 +1011,7 @@
       else if (wave.boss === 'final') announce('WARNING', 'V-PRIME // 最终形态', '#ff2e63', 2.6);
       Sound.playTrack(wave.boss === 'twin' ? 'twin' : wave.boss === 'final' ? 'final' : 'boss');
       G.finishing = false;
+      beginBossTalk(wave.boss);
     }
     updateHud();
   }
@@ -1742,7 +1970,7 @@
         holder.cooldown = rand(holder.def.coolMin, holder.def.coolMax);
       }
     }
-    const dmg = Math.max(1, Math.round(amount));
+    const dmg = Math.max(1, Math.round(amount * ((G.difficulty || DIFFICULTIES.normal).damageTaken)));
     p.hp = Math.max(0, p.hp - dmg);
     p.invuln = comboHit ? (knockdown ? .42 : .1) : .88;
     p.hitFlash = .16;
@@ -1933,10 +2161,13 @@
     return 'jab';
   }
 
+  const BOSS_NORMAL_ATTACKS = new Set(['jab', 'slash', 'heavy', 'lunge', 'combo']);
+
   function startEnemyAttack(e) {
     const id = chooseEnemyAttack(e);
     const base = ATTACK_STYLES[id];
     const style = e.boss ? { ...base } : base;
+    const normalAttack = !!e.boss && BOSS_NORMAL_ATTACKS.has(id);
     if (e.boss) {
       // Boss punches are faster and reach further than the same move on minions.
       if (['melee', 'multi', 'jump', 'sweep', 'shoryu'].includes(style.kind)) {
@@ -1947,12 +2178,18 @@
         if (style.hitGap) style.hitGap *= .84;
       }
       if (style.radius) style.radius += 8;
+      if (normalAttack) {
+        style.startup *= .82;
+        style.active *= .9;
+        style.recovery *= .88;
+      }
     }
     e.state = 'attack';
     e.stateTime = 0;
     e.attacking = true;
     e.attack = {
       id, style, timer: 0, struck: false, hitIndex: 0, shotIndex: 0,
+      normalAttack,
       radius: style.radius || 0,
       pose: style.pose,
       z0: 0
@@ -2042,8 +2279,7 @@
       e.attacking = false;
       e.attack = null;
       e.pose = 'idle';
-      e.cooldown = rand(e.def.coolMin, e.def.coolMax);
-      if (e.boss) e.cooldown *= .8;
+      e.cooldown = rand(e.def.coolMin, e.def.coolMax) * (e.boss ? .8 : 1) * (a.normalAttack ? .78 : 1);
     }
   }
 
@@ -2962,6 +3198,12 @@
   }
 
   function updatePlaying(dt) {
+    if (G.bossTalk) {
+      updateBossTalk(dt);
+      updateParticles(dt * .2);
+      updateHud();
+      return;
+    }
     G.stageTime += dt;
     if (G.hitstop > 0) {
       G.hitstop -= dt;
@@ -3008,7 +3250,13 @@
 
     switch (G.mode) {
       case 'title':
-        if (Input.pressed('confirm')) openSelect();
+        if (Input.pressed('confirm')) openDifficulty();
+        break;
+      case 'difficulty':
+        if (Input.pressed('left') || Input.pressed('up')) selectDifficulty(DIFFICULTY_ORDER[(DIFFICULTY_ORDER.indexOf(G.selectedDifficulty) + 2) % 3], true);
+        if (Input.pressed('right') || Input.pressed('down')) selectDifficulty(DIFFICULTY_ORDER[(DIFFICULTY_ORDER.indexOf(G.selectedDifficulty) + 1) % 3], true);
+        if (Input.pressed('confirm')) confirmDifficulty();
+        if (Input.pressed('pause')) openTitle(true);
         break;
       case 'select':
         if (Input.pressed('left')) selectChar(G.selectedChar === 'rex' ? 'bruno' : G.selectedChar === 'luna' ? 'rex' : 'luna', true);
@@ -3017,7 +3265,7 @@
           Sound.select();
           beginRun(G.selectedChar);
         }
-        if (Input.pressed('pause')) openTitle(true);
+        if (Input.pressed('pause')) openDifficulty();
         break;
       case 'intro':
         G.introTimer -= dt;
@@ -3076,7 +3324,7 @@
     const grade = calcGrade();
     const stage = G.stage;
     if (final) {
-      dom.resultKicker.textContent = 'VICTORY // CITY SAVED';
+      dom.resultKicker.textContent = `VICTORY // ${(G.difficulty || DIFFICULTIES.normal).name} // CITY SAVED`;
       dom.resultGrade.textContent = grade;
       dom.resultTitle.textContent = '霓虹之城，天亮了';
       dom.resultCopy.textContent = '机枪、铁拳、天翔——三具身体都倒在核心。V 先生的帝国在晨曦中崩塌，城市终于安静下来。';
@@ -3085,7 +3333,7 @@
       G.score += 6000;
       Sound.victory();
     } else {
-      dom.resultKicker.textContent = `STAGE ${stage.number} // CLEAR`;
+      dom.resultKicker.textContent = `STAGE ${stage.number} // ${(G.difficulty || DIFFICULTIES.normal).name} // CLEAR`;
       dom.resultGrade.textContent = grade;
       dom.resultTitle.textContent = stage.number === '04' ? '花园已清场' : stage.number === '05' ? '核心已停转' : '街区已清空';
       const copyByStage = {
@@ -3114,8 +3362,8 @@
     if (G.finalVictory) {
       G.finalVictory = false;
       G.score = 0;
-      G.lives = 3;
-      openSelect();
+      G.lives = (G.difficulty || DIFFICULTIES.normal).lives;
+      openDifficulty();
       return;
     }
     startStage(G.stageIndex + 1);
@@ -3123,6 +3371,7 @@
 
   function pauseGame() {
     if (G.mode !== 'playing') return;
+    if (dom.pauseDifficulty) dom.pauseDifficulty.textContent = (G.difficulty || DIFFICULTIES.normal).name;
     setMode('paused');
     show(dom.pause, true);
     show(dom.hud, false);
@@ -3169,7 +3418,7 @@
   function render(now) {
     const t = G.time;
     ctx.clearRect(0, 0, W, H);
-    if (G.mode === 'title') {
+    if (G.mode === 'title' || G.mode === 'difficulty') {
       renderTitle(t);
     } else if (G.mode === 'select') {
       renderSelect(t);
@@ -3200,6 +3449,44 @@
     if (!G.titleVisuals) G.titleVisuals = Art.buildStage(0, 2460);
     const cam = 470 + Math.sin(t * .055) * 85;
     Art.drawBackground(ctx, 0, G.titleVisuals, cam, t, W, H);
+    // Cover layer: the five bosses wait behind the three heroes.
+    const silhouettes = [
+      { key: 'razor', x: 286, y: 236, scale: 1.22, phase: .2 },
+      { key: 'titan', x: 338, y: 246, scale: 1.34, phase: 1.4 },
+      { key: 'vector', x: 390, y: 242, scale: 1.28, phase: 2.6 },
+      { key: 'raven', x: 438, y: 248, scale: 1.18, phase: 3.8 },
+      { key: 'vprime', x: 470, y: 240, scale: 1.42, phase: 5.1 }
+    ];
+    for (const b of silhouettes) {
+      Art.drawShadow(ctx, b.x, b.y, 0, b.scale, .2);
+      Art.drawFighter(ctx, {
+        x: b.x, y: b.y, z: 0, facing: -1, scale: b.scale,
+        char: Art.CHARS[b.key], pose: 'idle', ext: 0,
+        anim: t + b.phase, alpha: .2,
+        rim: b.key === 'vprime' ? '#ff264f' : Art.CHARS[b.key].colors.accent
+      });
+    }
+    // occasional lightning behind the cover art
+    const strike = Math.sin(t * 1.9) + Math.sin(t * 4.3);
+    if (strike > 1.78) {
+      ctx.save();
+      ctx.globalAlpha = .09 + Math.max(0, strike - 1.78) * .16;
+      ctx.fillStyle = '#d9eaff';
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalAlpha *= 1.8;
+      ctx.strokeStyle = '#eaf6ff';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      let lx = 410, ly = 20;
+      ctx.moveTo(lx, ly);
+      for (let i = 0; i < 5; i++) {
+        lx += Math.sin(t * 17 + i * 3.1) * 17;
+        ly += 18;
+        ctx.lineTo(lx, ly);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
     const trio = [
       { key: 'rex', x: 304, y: 238, pose: Math.sin(t * 1.25) > .84 ? 'punch1' : 'idle', ext: Math.sin(t * 1.25) > .84 ? 1 : 0, delay: 0 },
       { key: 'luna', x: 360, y: 246, pose: Math.sin(t * 1.25 + 1.1) > .88 ? 'kick' : 'idle', ext: Math.sin(t * 1.25 + 1.1) > .88 ? 1 : 0, delay: 1.2 },
@@ -4144,7 +4431,26 @@
     dom.btnStart.addEventListener('click', () => {
       ensureAudio();
       Sound.start();
-      openSelect();
+      openDifficulty();
+    });
+    dom.difficultyGrid.addEventListener('click', (e) => {
+      const card = e.target.closest('.difficulty-card');
+      if (!card) return;
+      selectDifficulty(card.dataset.diff, true);
+      ensureAudio();
+    });
+    dom.difficultyGrid.addEventListener('dblclick', (e) => {
+      const card = e.target.closest('.difficulty-card');
+      if (!card) return;
+      selectDifficulty(card.dataset.diff, true);
+      confirmDifficulty();
+    });
+    dom.btnDifficultyBack.addEventListener('click', () => { Sound.menu(); openTitle(true); });
+    dom.btnDifficultyConfirm.addEventListener('click', () => { ensureAudio(); confirmDifficulty(); });
+    dom.bossTalkSkip.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); endBossTalk(true); });
+    dom.bossTalk.addEventListener('click', (e) => {
+      if (e.target.closest('#boss-talk-skip')) return;
+      if (G.bossTalk && G.bossTalk.timer > .35) advanceBossTalk();
     });
     dom.charGrid.addEventListener('click', (e) => {
       const card = e.target.closest('.char-card');
@@ -4164,7 +4470,7 @@
       Sound.select();
       beginRun(G.selectedChar);
     });
-    dom.btnSelectBack.addEventListener('click', () => { Sound.menu(); openTitle(true); });
+    dom.btnSelectBack.addEventListener('click', () => { Sound.menu(); openDifficulty(); });
     dom.btnResume.addEventListener('click', resumeGame);
     dom.btnRestart.addEventListener('click', () => { show(dom.pause, false); Sound.setPaused(false); startStage(G.stageIndex); });
     dom.btnQuit.addEventListener('click', quitToTitle);

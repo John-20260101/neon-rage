@@ -655,6 +655,182 @@ body.touch-mode .toast { bottom: 30%; }
   font-size: 8px; letter-spacing: .16em; color: #61566e;
 }
 
+
+/* ————— cover / difficulty / boss talk ————— */
+.cover-ribbon {
+  display: inline-flex; align-items: center; gap: .55cqw;
+  margin-bottom: .9cqw; padding: .3cqw .75cqw;
+  border-left: 2px solid var(--yellow);
+  background: rgba(255,210,63,.08);
+  font-family: var(--mono); font-size: max(8px, .55cqw);
+  letter-spacing: .18em; color: var(--yellow);
+}
+.cover-ribbon span { color: var(--pink); }
+.cover-next {
+  margin-top: .75cqw;
+  font-family: var(--mono); font-size: max(8px, .5cqw);
+  letter-spacing: .22em; color: #8d7f9b;
+}
+.cover-next::before { content: "▸"; color: var(--cyan); margin-right: .45cqw; }
+
+.difficulty-screen {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 2.3cqw 3.6cqw 1.8cqw; gap: 1.1cqw;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 15%, rgba(255,210,63,.1), transparent 55%),
+    linear-gradient(180deg, rgba(4,2,10,.88), rgba(4,2,10,.95));
+  backdrop-filter: blur(4px);
+}
+.difficulty-head { text-align: center; flex: 0 0 auto; }
+.difficulty-head .eyebrow { justify-content: center; font-size: .62cqw; }
+.difficulty-head h2 {
+  margin: .35cqw 0 .18cqw;
+  font-family: var(--display); font-size: 3.2cqw; letter-spacing: .04em;
+  color: var(--paper); text-shadow: .18cqw .18cqw 0 rgba(255,46,99,.45);
+}
+.difficulty-head p {
+  margin: 0; font-family: var(--cn); font-size: max(9px, .84cqw);
+  color: var(--muted); letter-spacing: .06em;
+}
+.difficulty-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.15cqw;
+  flex: 1 1 auto; min-height: 0;
+}
+.difficulty-card {
+  --diff-color: var(--yellow);
+  position: relative; display: flex; flex-direction: column; align-items: flex-start;
+  padding: 1.05cqw 1.2cqw; text-align: left; cursor: pointer;
+  border: 1px solid rgba(244,236,220,.16);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.045), transparent 35%),
+    linear-gradient(160deg, color-mix(in srgb, var(--diff-color) 11%, transparent), rgba(9,6,16,.94) 62%);
+  color: var(--paper);
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+  overflow: hidden;
+}
+.difficulty-card[data-diff="easy"] { --diff-color: #57e389; }
+.difficulty-card[data-diff="normal"] { --diff-color: var(--yellow); }
+.difficulty-card[data-diff="hard"] { --diff-color: #ff5b6b; }
+.difficulty-card:hover, .difficulty-card.selected {
+  transform: translateY(-.18cqw);
+  border-color: var(--diff-color);
+  box-shadow: 0 .7cqw 2cqw rgba(0,0,0,.5), 0 0 1.8cqw color-mix(in srgb, var(--diff-color) 25%, transparent);
+}
+.diff-index {
+  position: absolute; right: .7cqw; top: .25cqw;
+  font-family: var(--display); font-size: 3cqw; line-height: 1;
+  color: rgba(255,255,255,.09);
+}
+.diff-tag {
+  font-family: var(--mono); font-size: max(8px, .56cqw);
+  letter-spacing: .2em; color: var(--diff-color);
+}
+.diff-name {
+  margin-top: .22cqw;
+  font-family: var(--display); font-size: max(14px, 1.75cqw); line-height: 1.05;
+}
+.diff-name em {
+  display: block; margin-top: .18cqw;
+  font-family: var(--mono); font-style: normal;
+  font-size: max(7px, .44cqw); letter-spacing: .14em; color: #8f819e;
+}
+.diff-role {
+  margin-top: .3cqw; font-family: var(--cn);
+  font-size: max(8px, .62cqw); color: #cbbfd7; letter-spacing: .1em;
+}
+.diff-badge {
+  position: absolute; right: .8cqw; top: 2.3cqw;
+  padding: .12cqw .38cqw; border: 1px solid rgba(255,210,63,.5);
+  color: var(--yellow); font-family: var(--cn); font-size: max(7px, .48cqw);
+}
+.diff-stats {
+  width: 100%; margin-top: .7cqw; padding-top: .55cqw;
+  border-top: 1px solid rgba(255,255,255,.09);
+  display: grid; gap: .26cqw;
+}
+.diff-stats div { display: flex; align-items: center; justify-content: space-between; gap: .5cqw; }
+.diff-stats span { font-family: var(--cn); font-size: max(8px, .56cqw); color: #9d90ac; }
+.diff-stats b { font-family: var(--mono); font-weight: 700; font-size: max(9px, .68cqw); color: var(--diff-color); }
+.diff-desc {
+  margin: auto 0 0; padding-top: .55cqw;
+  font-family: var(--cn); font-size: max(9px, .64cqw); line-height: 1.5;
+  color: #b7aac5;
+}
+.difficulty-footer { padding-top: .1cqw; }
+
+.pause-diff {
+  margin: .2cqw 0 .7cqw; padding: .35cqw .6cqw;
+  border-left: 2px solid var(--yellow);
+  font-family: var(--cn); font-size: max(8px, .66cqw); color: #b7aac5;
+  letter-spacing: .08em;
+}
+.pause-diff b { color: var(--yellow); font-family: var(--mono); font-size: .9em; }
+.select-difficulty {
+  display: inline-block; margin-top: .45cqw !important;
+  padding: .18cqw .55cqw; border: 1px solid rgba(255,210,63,.28);
+  color: var(--yellow) !important; font-family: var(--mono) !important;
+  font-size: max(8px, .52cqw) !important; letter-spacing: .16em;
+}
+
+.boss-talk {
+  position: absolute; z-index: 19; left: 50%; bottom: 4.5%;
+  transform: translateX(-50%);
+  width: min(84cqw, 640px); min-width: 280px;
+  display: flex; align-items: stretch; gap: 1cqw;
+  padding: .9cqw 1.1cqw;
+  background:
+    linear-gradient(90deg, rgba(255,46,99,.12), transparent 28%),
+    rgba(4,2,10,.92);
+  border: 1px solid rgba(255,210,63,.46);
+  box-shadow: 0 1cqw 3cqw rgba(0,0,0,.62), inset 0 0 2cqw rgba(255,46,99,.08);
+  pointer-events: auto;
+}
+.boss-talk::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px;
+  background: linear-gradient(90deg, var(--pink), var(--yellow), var(--cyan));
+}
+#boss-talk-portrait {
+  width: 7.8cqw; height: 9.1cqw; min-width: 74px; min-height: 88px;
+  flex: 0 0 auto; display: block;
+  background: radial-gradient(ellipse at 50% 40%, rgba(255,46,99,.16), transparent 68%), #0b0710;
+  border: 1px solid rgba(255,255,255,.16);
+  image-rendering: pixelated;
+}
+.boss-talk-body { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; }
+.boss-talk-top { display: flex; align-items: baseline; gap: .6cqw; flex-wrap: wrap; }
+.boss-talk-kicker {
+  font-family: var(--mono); font-size: max(7px, .46cqw);
+  letter-spacing: .18em; color: #ff9f9f;
+}
+.boss-talk-top b {
+  font-family: var(--display); font-size: max(12px, 1.18cqw);
+  letter-spacing: .05em; color: var(--yellow);
+}
+.boss-talk-top em {
+  font-family: var(--cn); font-style: normal; font-size: max(8px, .58cqw);
+  letter-spacing: .08em; color: #b9adc7;
+}
+#boss-talk-text {
+  margin: .35cqw 0 .45cqw;
+  font-family: var(--cn); font-size: max(10px, .82cqw); line-height: 1.55;
+  color: #f0e8dc; letter-spacing: .04em; min-height: 3.1em;
+}
+.boss-talk-foot { display: flex; align-items: center; gap: .8cqw; margin-top: auto; }
+#boss-talk-progress {
+  font-family: var(--mono); font-size: max(8px, .52cqw);
+  letter-spacing: .12em; color: #9b8da9;
+}
+.boss-talk-hint {
+  font-family: var(--cn); font-size: max(8px, .5cqw);
+  color: #766a84; letter-spacing: .06em;
+}
+#boss-talk-skip {
+  margin-left: auto; pointer-events: auto;
+  padding: .32cqw .7cqw; font-size: max(8px, .58cqw);
+}
+.ghost-btn.small { padding: .3cqw .7cqw; }
+
 /* ————— animations ————— */
 @keyframes titleIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 @keyframes stageIn { from { opacity: 0; transform: scale(.96); letter-spacing: .08em; } to { opacity: 1; transform: none; } }
@@ -707,6 +883,40 @@ body.touch-mode .toast { bottom: 30%; }
   .result-stats > div:nth-child(-n+2) { border-bottom: 1px solid var(--line); padding-bottom: .4cqw; }
 }
 
+
+@media (max-width: 700px) {
+  .cover-ribbon { margin-bottom: .55cqw; padding: .2cqw .5cqw; font-size: max(7px, .95cqw); }
+  .cover-next { font-size: max(7px, .9cqw); margin-top: .45cqw; }
+  .title-copy { font-size: max(8px, 1.5cqw); margin: .8cqw 0 1cqw; }
+  .difficulty-screen { padding: 1.6cqw 1.4cqw 1.1cqw; gap: .55cqw; }
+  .difficulty-head .eyebrow { font-size: .9cqw; }
+  .difficulty-head h2 { margin: .2cqw 0 .1cqw; font-size: 4cqw; }
+  .difficulty-head p { display: none; }
+  .difficulty-grid { gap: .55cqw; }
+  .difficulty-card { padding: .55cqw .6cqw; }
+  .diff-index { display: none; }
+  .diff-tag { font-size: max(7px, .9cqw); }
+  .diff-name { margin-top: .1cqw; font-size: max(9px, 2.2cqw); }
+  .diff-name em { display: none; }
+  .diff-role, .diff-badge, .diff-desc { display: none; }
+  .diff-stats { margin-top: .35cqw; padding-top: .3cqw; gap: .12cqw; }
+  .diff-stats span { font-size: max(7px, .92cqw); }
+  .diff-stats b { font-size: max(7px, 1.02cqw); }
+  .difficulty-footer { padding-top: 0; }
+  .difficulty-footer .select-help { display: none; }
+  .difficulty-footer .select-buttons { margin-left: auto; }
+  .select-difficulty { font-size: max(7px, .9cqw) !important; margin-top: .2cqw !important; }
+  .pause-diff { font-size: max(8px, 1.5cqw); }
+  .boss-talk { width: 94%; bottom: 3%; padding: .7cqw .8cqw; gap: .7cqw; }
+  #boss-talk-portrait { width: 12cqw; height: 14cqw; min-width: 52px; min-height: 62px; }
+  #boss-talk-text { margin: .2cqw 0 .3cqw; font-size: max(9px, 1.3cqw); line-height: 1.42; min-height: 2.7em; }
+  .boss-talk-kicker { font-size: max(6px, .82cqw); }
+  .boss-talk-top b { font-size: max(10px, 2.4cqw); }
+  .boss-talk-top em, .boss-talk-hint { display: none; }
+  .boss-talk-foot { gap: .5cqw; }
+  #boss-talk-progress { font-size: max(7px, .9cqw); }
+  #boss-talk-skip { font-size: max(7px, 1cqw); padding: .2cqw .5cqw; }
+}
 @media (hover: none) and (pointer: coarse) {
   .manual { margin-top: 16px; }
   .hud-name-row b { font-size: 1.7cqw; }
@@ -856,6 +1066,23 @@ body.touch-mode .toast { bottom: 30%; }
           </div>
         </div>
 
+        <div id="boss-talk" class="boss-talk is-hidden" aria-live="polite">
+          <canvas id="boss-talk-portrait" width="96" height="112"></canvas>
+          <div class="boss-talk-body">
+            <div class="boss-talk-top">
+              <span class="boss-talk-kicker">BOSS ENCOUNTER // 出场</span>
+              <b id="boss-talk-name">RAZOR</b>
+              <em id="boss-talk-role">码头行刑人</em>
+            </div>
+            <p id="boss-talk-text"></p>
+            <div class="boss-talk-foot">
+              <span id="boss-talk-progress">1 / 1</span>
+              <span class="boss-talk-hint">ENTER / 点击继续</span>
+              <button id="boss-talk-skip" class="ghost-btn small" type="button">跳过</button>
+            </div>
+          </div>
+        </div>
+
         <div id="boss-ui" class="boss-ui is-hidden">
           <div class="boss-row">
             <div class="boss-ui-head"><span>WARNING // BOSS</span><b id="boss-name">RAZOR</b></div>
@@ -871,21 +1098,24 @@ body.touch-mode .toast { bottom: 30%; }
         <div id="title-screen" class="overlay title-screen">
           <div class="title-rays" aria-hidden="true"></div>
           <div class="title-content">
+            <div class="cover-ribbon">GAME COVER <span>//</span> NEO CITY 199X</div>
             <div class="eyebrow">NEO CITY <span>//</span> 199X <span>//</span> ARCADE</div>
             <h1 class="game-logo" aria-label="Neon Rage">
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
             <div class="logo-cn">霓 虹 怒 火</div>
-            <p class="title-copy">当法律沉睡，拳头就是黎明。</p>
+            <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <button id="btn-start" class="arcade-btn" type="button">
-              <span class="btn-main">投币开始</span>
-              <span class="btn-sub">PRESS ENTER / CLICK</span>
+              <span class="btn-main">开始游戏</span>
+              <span class="btn-sub">PRESS ENTER / 点击开始</span>
             </button>
+            <div class="cover-next">NEXT // 选择难度</div>
             <div class="title-meta">
               <span>1 PLAYER</span>
               <span>ORIGINAL PIXEL BEAT 'EM UP</span>
               <span>5 STAGES</span>
+              <span>3 DIFFICULTIES</span>
               <span id="title-best">BEST 000000</span>
             </div>
           </div>
@@ -904,12 +1134,68 @@ body.touch-mode .toast { bottom: 30%; }
           </div>
         </div>
 
+        <!-- Difficulty select -->
+        <div id="difficulty-screen" class="overlay difficulty-screen is-hidden">
+          <div class="difficulty-head">
+            <div class="eyebrow">DIFFICULTY <span>//</span> 选择难度</div>
+            <h2>今晚，打多狠？</h2>
+            <p>难度会影响敌人血量、你受到的伤害和剩余生命。选错了不能中途改。</p>
+          </div>
+          <div class="difficulty-grid" id="difficulty-grid">
+            <button class="difficulty-card" data-diff="easy" type="button" aria-pressed="false">
+              <span class="diff-index">01</span>
+              <span class="diff-tag">EASY</span>
+              <span class="diff-name">简单 <em>STREET PRACTICE</em></span>
+              <span class="diff-role">街头练习</span>
+              <div class="diff-stats">
+                <div><span>敌人 HP</span><b>80%</b></div>
+                <div><span>受到伤害</span><b>70%</b></div>
+                <div><span>初始生命</span><b>4</b></div>
+              </div>
+              <p class="diff-desc">敌人更脆，拳脚更轻。四条命，足够把整条街走完。</p>
+            </button>
+            <button class="difficulty-card" data-diff="normal" type="button" aria-pressed="false">
+              <span class="diff-index">02</span>
+              <span class="diff-tag">NORMAL</span>
+              <span class="diff-name">普通 <em>STREET STANDARD</em></span>
+              <span class="diff-role">标准街头</span>
+              <span class="diff-badge">推荐</span>
+              <div class="diff-stats">
+                <div><span>敌人 HP</span><b>100%</b></div>
+                <div><span>受到伤害</span><b>100%</b></div>
+                <div><span>初始生命</span><b>3</b></div>
+              </div>
+              <p class="diff-desc">原汁原味的清版节奏。三条命，一次完整的霓虹之夜。</p>
+            </button>
+            <button class="difficulty-card" data-diff="hard" type="button" aria-pressed="false">
+              <span class="diff-index">03</span>
+              <span class="diff-tag">HARD</span>
+              <span class="diff-name">困难 <em>NO QUARTERS</em></span>
+              <span class="diff-role">一命通关</span>
+              <div class="diff-stats">
+                <div><span>敌人 HP</span><b>120%</b></div>
+                <div><span>受到伤害</span><b>140%</b></div>
+                <div><span>初始生命</span><b>2</b></div>
+              </div>
+              <p class="diff-desc">Boss 更硬，拳头更疼，只有两条命。给真正想拆掉 V 塔的人。</p>
+            </button>
+          </div>
+          <div class="select-footer difficulty-footer">
+            <div class="select-help"><kbd>←</kbd><kbd>→</kbd> 选择难度　<kbd>ENTER</kbd> 确认　<kbd>ESC</kbd> 返回封面</div>
+            <div class="select-buttons">
+              <button id="btn-difficulty-back" class="ghost-btn" type="button">返回封面</button>
+              <button id="btn-difficulty-confirm" class="arcade-btn compact" type="button"><span class="btn-main">确认难度</span><span class="btn-sub">ENTER</span></button>
+            </div>
+          </div>
+        </div>
+
         <!-- Character select -->
         <div id="select-screen" class="overlay select-screen is-hidden">
           <div class="select-head">
             <div class="eyebrow">CHARACTER SELECT <span>//</span> 选择斗士</div>
             <h2>今晚，谁去清街？</h2>
             <p>三人三套打法。选一个，把 V 先生的打手赶出霓虹区。</p>
+            <p id="select-difficulty" class="select-difficulty">DIFFICULTY // NORMAL</p>
           </div>
           <div class="char-grid" id="char-grid">
             <button class="char-card" data-char="rex" type="button">
@@ -961,7 +1247,7 @@ body.touch-mode .toast { bottom: 30%; }
         <!-- Stage intro -->
         <div id="stage-card" class="overlay stage-card is-hidden">
           <div class="stage-card-inner">
-            <div class="stage-kicker">NEO CITY // CRIME DISTRICT</div>
+            <div class="stage-kicker" id="stage-kicker">NEO CITY // CRIME DISTRICT</div>
             <div class="stage-number">STAGE <span id="stage-num">01</span></div>
             <h2 id="stage-title">DOCKSIDE 9</h2>
             <div class="stage-cn" id="stage-cn">第九码头</div>
@@ -977,6 +1263,7 @@ body.touch-mode .toast { bottom: 30%; }
             <div class="eyebrow">SYSTEM // PAUSED</div>
             <h2>暂停</h2>
             <p class="modal-copy">喘口气。外面还有整条街的人等着挨揍。</p>
+            <div class="pause-diff">当前难度 <b id="pause-difficulty">NORMAL</b></div>
             <div class="pause-controls">
               <div><kbd>WASD</kbd> / <kbd>方向键</kbd><span>移动</span></div>
               <div><kbd>J</kbd><span>连击</span></div>
@@ -3848,8 +4135,20 @@ body.touch-mode .toast { bottom: 30%; }
     bossRow2: $('boss-row-2'),
     bossName2: $('boss-name-2'),
     bossFill2: $('boss-fill-2'),
+    bossTalk: $('boss-talk'),
+    bossTalkPortrait: $('boss-talk-portrait'),
+    bossTalkName: $('boss-talk-name'),
+    bossTalkRole: $('boss-talk-role'),
+    bossTalkText: $('boss-talk-text'),
+    bossTalkProgress: $('boss-talk-progress'),
+    bossTalkSkip: $('boss-talk-skip'),
     title: $('title-screen'),
+    difficulty: $('difficulty-screen'),
+    difficultyGrid: $('difficulty-grid'),
     select: $('select-screen'),
+    selectDifficulty: $('select-difficulty'),
+    pauseDifficulty: $('pause-difficulty'),
+    stageKicker: $('stage-kicker'),
     stageCard: $('stage-card'),
     stageNum: $('stage-num'),
     stageTitle: $('stage-title'),
@@ -3878,6 +4177,8 @@ body.touch-mode .toast { bottom: 30%; }
     btnStart: $('btn-start'),
     btnConfirm: $('btn-select-confirm'),
     btnSelectBack: $('btn-select-back'),
+    btnDifficultyBack: $('btn-difficulty-back'),
+    btnDifficultyConfirm: $('btn-difficulty-confirm'),
     btnResume: $('btn-resume'),
     btnRestart: $('btn-restart'),
     btnQuit: $('btn-quit'),
@@ -3934,6 +4235,61 @@ body.touch-mode .toast { bottom: 30%; }
         name: '蛮牛头槌', en: 'BULL HEADBUTT', startup: .07, active: .14, recovery: .28,
         damage: 18, range: 45, kb: 175, knockdown: true, pose: 'headbutt', speed: 175, duration: .22, fx: 'smoke'
       }
+    }
+  };
+
+
+  const DIFFICULTY_ORDER = ['easy', 'normal', 'hard'];
+  const DIFFICULTIES = {
+    easy: {
+      key: 'easy', name: 'EASY', cn: '简单', tag: '街头练习', accent: '#57e389',
+      enemyHp: .8, damageTaken: .7, lives: 4,
+      desc: '敌人更脆，拳脚更轻。四条命，足够把整条街走完。'
+    },
+    normal: {
+      key: 'normal', name: 'NORMAL', cn: '普通', tag: '标准街头', accent: '#ffd23f',
+      enemyHp: 1, damageTaken: 1, lives: 3,
+      desc: '原汁原味的清版节奏。三条命，一次完整的霓虹之夜。'
+    },
+    hard: {
+      key: 'hard', name: 'HARD', cn: '困难', tag: '一命通关', accent: '#ff5b6b',
+      enemyHp: 1.2, damageTaken: 1.4, lives: 2,
+      desc: 'Boss 更硬，拳头更疼，只有两条命。给真正想拆掉 V 塔的人。'
+    }
+  };
+
+  const BOSS_TALK = {
+    razor: {
+      title: 'DOCKSIDE ENFORCER', name: 'RAZOR', cn: '剃刀', char: 'razor',
+      lines: [
+        { char: 'razor', speaker: 'RAZOR', role: '码头行刑人', text: '第九码头的每一盏路灯都替我收过钱。你这种小角色，连让我拔刀的资格都没有。' }
+      ]
+    },
+    titan: {
+      title: 'UNDERGROUND CHAMPION', name: 'TITAN', cn: '泰坦', char: 'titan',
+      lines: [
+        { char: 'titan', speaker: 'TITAN', role: '地下拳王', text: '黑市擂台四十二场，没人撑过我一拳。你猜，这副骨头能撑几秒？' }
+      ]
+    },
+    vector: {
+      title: "V'S SHADOW", name: 'VECTOR', cn: '维克托', char: 'vector',
+      lines: [
+        { char: 'vector', speaker: 'VECTOR', role: 'V 先生之影', text: 'V 先生从不出手。因为他知道，只要我站在这里，你就见不到他。' }
+      ]
+    },
+    twin: {
+      title: 'TWIN ASSASSINS', name: 'RAVEN // NYX', cn: '双子刺客', char: 'raven',
+      lines: [
+        { char: 'raven', speaker: 'RAVEN', role: '双子刺客 · 姐', text: '妹妹，你看他的眼神——还真以为自己是来赢的。' },
+        { char: 'nyx', speaker: 'NYX', role: '双子刺客 · 妹', text: '那就让他记住：霓虹花园的最后一拍，永远由我们收。' }
+      ]
+    },
+    final: {
+      title: 'FINAL FORM', name: 'V-PRIME', cn: 'V先生·终焉', char: 'vprime',
+      lines: [
+        { char: 'vprime', speaker: 'V-PRIME', role: '终焉容器 · 第一形态', text: '肉体只是容器。我给你准备了三具身体——第一具，用来数你身上的弹孔。' },
+        { char: 'vprime', speaker: 'V-PRIME', role: '终焉容器 · 第一形态', text: '城市需要一个神。而我，正好有三张脸。' }
+      ]
     }
   };
 
@@ -4168,6 +4524,9 @@ body.touch-mode .toast { bottom: 30%; }
     announce: null,
     toastTimer: 0,
     selectedChar: 'rex',
+    selectedDifficulty: 'normal',
+    difficulty: DIFFICULTIES.normal,
+    bossTalk: null,
     charKey: 'rex',
     muted: false,
     finalVictory: false,
@@ -4262,7 +4621,7 @@ body.touch-mode .toast { bottom: 30%; }
     if (dom.titleBest) dom.titleBest.textContent = `BEST ${pad(Math.max(G.score, getBest()), 6)}`;
   }
   function clearOverlays() {
-    [dom.title, dom.select, dom.stageCard, dom.pause, dom.result, dom.gameover].forEach(el => show(el, false));
+    [dom.title, dom.difficulty, dom.select, dom.stageCard, dom.pause, dom.result, dom.gameover, dom.bossTalk].forEach(el => show(el, false));
   }
   function blurFocus() {
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
@@ -4311,7 +4670,7 @@ body.touch-mode .toast { bottom: 30%; }
 
   function resetHud() {
     dom.hudName.textContent = PLAYER_STATS[G.charKey].name;
-    dom.hudStage.textContent = G.stage ? `STAGE ${G.stage.number}` : 'STAGE 01';
+    dom.hudStage.textContent = G.stage ? `STAGE ${G.stage.number} · ${(G.difficulty || DIFFICULTIES.normal).name}` : 'STAGE 01';
     dom.hudGoal.textContent = G.stage ? G.stage.goal : '';
     const pc = dom.hudPortrait.getContext('2d');
     pc.imageSmoothingEnabled = false;
@@ -4346,6 +4705,121 @@ body.touch-mode .toast { bottom: 30%; }
     };
   }
 
+  function drawBossTalkPortrait(charKey) {
+    const c = dom.bossTalkPortrait;
+    if (!c) return;
+    const g = c.getContext('2d');
+    g.imageSmoothingEnabled = false;
+    g.clearRect(0, 0, c.width, c.height);
+    g.fillStyle = '#0b0710';
+    g.fillRect(0, 0, c.width, c.height);
+    const grad = g.createRadialGradient(c.width / 2, c.height * .38, 2, c.width / 2, c.height * .48, c.width * .8);
+    grad.addColorStop(0, 'rgba(255,46,99,.2)');
+    grad.addColorStop(1, 'rgba(255,46,99,0)');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, c.width, c.height);
+    Art.drawFighter(g, {
+      x: c.width / 2, y: c.height - 5, z: 0, facing: 1, scale: 1.58,
+      char: Art.CHARS[charKey] || Art.CHARS.rex, pose: 'idle', ext: 0,
+      anim: G.time * .45, alpha: 1, rim: (Art.CHARS[charKey] || Art.CHARS.rex).colors.accent
+    });
+    const fade = g.createLinearGradient(0, 0, 0, c.height);
+    fade.addColorStop(0, 'rgba(5,3,10,.05)');
+    fade.addColorStop(1, 'rgba(5,3,10,.55)');
+    g.fillStyle = fade;
+    g.fillRect(0, 0, c.width, c.height);
+  }
+
+  function showBossTalkLine() {
+    const t = G.bossTalk;
+    if (!t) return;
+    const line = t.data.lines[t.index];
+    if (!line) return;
+    dom.bossTalkName.textContent = line.speaker;
+    dom.bossTalkRole.textContent = line.role || '';
+    dom.bossTalkText.textContent = line.text;
+    dom.bossTalkProgress.textContent = `${t.index + 1} / ${t.data.lines.length}`;
+    drawBossTalkPortrait(line.char);
+  }
+
+  function beginBossTalk(key) {
+    const data = BOSS_TALK[key];
+    if (!data || G.bossTalk) return;
+    const bosses = [G.boss, G.boss2].filter(b => b && !b.dead);
+    if (!bosses.length) return;
+    G.announce = null;
+    G.hitstop = 0;
+    const camX = G.camera.x;
+    for (const e of bosses) {
+      e.state = 'chase';
+      e.stateTime = 0;
+      e.attack = null;
+      e.attacking = false;
+      e.cooldown = 99;
+      e.pose = 'idle';
+      e.x = clamp(e.x, camX + 55, camX + W - 55);
+      e.facing = e.x >= (G.player ? G.player.x : camX + W / 2) ? -1 : 1;
+    }
+    if (G.player) {
+      G.player.attack = null;
+      G.player.vx = 0;
+      G.player.vy = 0;
+    }
+    G.bossTalk = { data, index: 0, timer: 0, total: data.lines.length };
+    showBossTalkLine();
+    show(dom.bossTalk, true);
+    if (document.body.classList.contains('touch-mode')) dom.touch.classList.add('is-hidden');
+    Sound.menu();
+  }
+
+  function advanceBossTalk() {
+    const t = G.bossTalk;
+    if (!t) return;
+    if (t.index + 1 < t.data.lines.length) {
+      t.index++;
+      t.timer = 0;
+      showBossTalkLine();
+      Sound.menu();
+    } else {
+      endBossTalk(false);
+    }
+  }
+
+  function endBossTalk(skipped) {
+    if (!G.bossTalk) return;
+    G.bossTalk = null;
+    show(dom.bossTalk, false);
+    if (document.body.classList.contains('touch-mode')) dom.touch.classList.remove('is-hidden');
+    const bosses = [G.boss, G.boss2].filter(b => b && !b.dead);
+    for (const e of bosses) {
+      e.cooldown = Math.min(e.cooldown, 1);
+      e.state = 'chase';
+      e.stateTime = 0;
+    }
+    if (G.player && G.player.state !== 'dead') G.player.invuln = Math.max(G.player.invuln, .8);
+    G.hitstop = 0;
+    if (skipped) Sound.menu();
+  }
+
+  function clearBossTalk() {
+    if (G.bossTalk) {
+      G.bossTalk = null;
+      show(dom.bossTalk, false);
+      if (document.body.classList.contains('touch-mode')) dom.touch.classList.remove('is-hidden');
+    }
+  }
+
+  function updateBossTalk(dt) {
+    const t = G.bossTalk;
+    if (!t) return;
+    t.timer += dt;
+    if (t.timer > .35 && (Input.pressed('confirm') || Input.pressed('attack') || Input.pressed('jump'))) {
+      advanceBossTalk();
+      return;
+    }
+    if (t.timer > 4.2) advanceBossTalk();
+  }
+
   function setMode(mode) {
     G.lastMode = G.mode;
     G.mode = mode;
@@ -4353,6 +4827,7 @@ body.touch-mode .toast { bottom: 30%; }
   }
 
   function openTitle(fromGame) {
+    clearBossTalk();
     setMode('title');
     clearOverlays();
     show(dom.title, true);
@@ -4380,6 +4855,40 @@ body.touch-mode .toast { bottom: 30%; }
     show(dom.touch, document.body.classList.contains('touch-mode') && !fromGame ? true : document.body.classList.contains('touch-mode'));
   }
 
+  function openDifficulty() {
+    setMode('difficulty');
+    clearOverlays();
+    show(dom.difficulty, true);
+    show(dom.hud, false);
+    show(dom.bossUI, false);
+    G.selectedDifficulty = G.selectedDifficulty || 'normal';
+    updateDifficultyCards();
+    Sound.playTrack('select');
+    Sound.menu();
+    blurFocus();
+  }
+
+  function updateDifficultyCards() {
+    document.querySelectorAll('.difficulty-card').forEach(card => {
+      const selected = card.dataset.diff === G.selectedDifficulty;
+      card.classList.toggle('selected', selected);
+      card.setAttribute('aria-pressed', selected ? 'true' : 'false');
+    });
+  }
+
+  function selectDifficulty(key, withSound) {
+    if (!DIFFICULTIES[key]) return;
+    G.selectedDifficulty = key;
+    updateDifficultyCards();
+    if (withSound) Sound.menu();
+  }
+
+  function confirmDifficulty() {
+    G.difficulty = DIFFICULTIES[G.selectedDifficulty] || DIFFICULTIES.normal;
+    Sound.select();
+    openSelect();
+  }
+
   function openSelect() {
     setMode('select');
     clearOverlays();
@@ -4388,6 +4897,7 @@ body.touch-mode .toast { bottom: 30%; }
     show(dom.bossUI, false);
     G.selectedChar = G.charKey || 'rex';
     updateCharCards();
+    if (dom.selectDifficulty) dom.selectDifficulty.textContent = `DIFFICULTY // ${G.difficulty.name}`;
     Sound.playTrack('select');
     Sound.menu();
     blurFocus();
@@ -4411,7 +4921,7 @@ body.touch-mode .toast { bottom: 30%; }
   function beginRun(key) {
     G.charKey = key || G.selectedChar || 'rex';
     G.score = 0;
-    G.lives = 3;
+    G.lives = (G.difficulty || DIFFICULTIES.normal).lives;
     G.maxCombo = 0;
     G.combo = 0;
     G.finalVictory = false;
@@ -4421,6 +4931,7 @@ body.touch-mode .toast { bottom: 30%; }
   function startStage(index) {
     const stage = STAGES[index];
     if (!stage) return;
+    clearBossTalk();
     setMode('intro');
     clearOverlays();
     G.stageIndex = index;
@@ -4466,8 +4977,9 @@ body.touch-mode .toast { bottom: 30%; }
     dom.stageTitle.textContent = stage.title;
     dom.stageCn.textContent = stage.cn;
     dom.stageDesc.textContent = stage.desc;
+    if (dom.stageKicker) dom.stageKicker.textContent = `NEO CITY // ${(G.difficulty || DIFFICULTIES.normal).name} // CRIME DISTRICT`;
     dom.hudName.textContent = PLAYER_STATS[G.charKey].name;
-    dom.hudStage.textContent = `STAGE ${stage.number}`;
+    dom.hudStage.textContent = `STAGE ${stage.number} · ${(G.difficulty || DIFFICULTIES.normal).name}`;
     dom.hudGoal.textContent = stage.goal;
     dom.hudScore.textContent = pad(G.score, 6);
     show(dom.hud, false);
@@ -4503,7 +5015,7 @@ body.touch-mode .toast { bottom: 30%; }
   }
 
   function retryStage() {
-    G.lives = 3;
+    G.lives = (G.difficulty || DIFFICULTIES.normal).lives;
     G.score = G.scoreAtStageStart || 0;
     startStage(G.stageIndex);
   }
@@ -4516,6 +5028,8 @@ body.touch-mode .toast { bottom: 30%; }
     const def = baseDef.boss ? { ...baseDef } : baseDef;
     const opt = options || {};
     const fromLeft = opt.side === 'left';
+    const diff = G.difficulty || DIFFICULTIES.normal;
+    const scaledHp = Math.max(1, Math.round(def.hp * diff.enemyHp));
     const e = {
       kind: 'enemy', type, def,
       char: makeEnemyChar(type),
@@ -4528,7 +5042,7 @@ body.touch-mode .toast { bottom: 30%; }
       enterDelay: opt.delay || 0,
       weapon: type === 'gunner' ? 'pistol' : type === 'whip' ? 'whip' : type === 'viper' ? 'knife' : type === 'vprime' ? 'machinegun' : type === 'razor' ? 'sword' : null,
       pose: 'walk',
-      hp: def.hp, maxHp: def.hp,
+      hp: scaledHp, maxHp: scaledHp,
       speed: def.speed,
       scale: def.scale,
       offsetY: rand(-12, 12),
@@ -4599,6 +5113,7 @@ body.touch-mode .toast { bottom: 30%; }
       else if (wave.boss === 'final') announce('WARNING', 'V-PRIME // 最终形态', '#ff2e63', 2.6);
       Sound.playTrack(wave.boss === 'twin' ? 'twin' : wave.boss === 'final' ? 'final' : 'boss');
       G.finishing = false;
+      beginBossTalk(wave.boss);
     }
     updateHud();
   }
@@ -5557,7 +6072,7 @@ body.touch-mode .toast { bottom: 30%; }
         holder.cooldown = rand(holder.def.coolMin, holder.def.coolMax);
       }
     }
-    const dmg = Math.max(1, Math.round(amount));
+    const dmg = Math.max(1, Math.round(amount * ((G.difficulty || DIFFICULTIES.normal).damageTaken)));
     p.hp = Math.max(0, p.hp - dmg);
     p.invuln = comboHit ? (knockdown ? .42 : .1) : .88;
     p.hitFlash = .16;
@@ -5748,10 +6263,13 @@ body.touch-mode .toast { bottom: 30%; }
     return 'jab';
   }
 
+  const BOSS_NORMAL_ATTACKS = new Set(['jab', 'slash', 'heavy', 'lunge', 'combo']);
+
   function startEnemyAttack(e) {
     const id = chooseEnemyAttack(e);
     const base = ATTACK_STYLES[id];
     const style = e.boss ? { ...base } : base;
+    const normalAttack = !!e.boss && BOSS_NORMAL_ATTACKS.has(id);
     if (e.boss) {
       // Boss punches are faster and reach further than the same move on minions.
       if (['melee', 'multi', 'jump', 'sweep', 'shoryu'].includes(style.kind)) {
@@ -5762,12 +6280,18 @@ body.touch-mode .toast { bottom: 30%; }
         if (style.hitGap) style.hitGap *= .84;
       }
       if (style.radius) style.radius += 8;
+      if (normalAttack) {
+        style.startup *= .82;
+        style.active *= .9;
+        style.recovery *= .88;
+      }
     }
     e.state = 'attack';
     e.stateTime = 0;
     e.attacking = true;
     e.attack = {
       id, style, timer: 0, struck: false, hitIndex: 0, shotIndex: 0,
+      normalAttack,
       radius: style.radius || 0,
       pose: style.pose,
       z0: 0
@@ -5857,8 +6381,7 @@ body.touch-mode .toast { bottom: 30%; }
       e.attacking = false;
       e.attack = null;
       e.pose = 'idle';
-      e.cooldown = rand(e.def.coolMin, e.def.coolMax);
-      if (e.boss) e.cooldown *= .8;
+      e.cooldown = rand(e.def.coolMin, e.def.coolMax) * (e.boss ? .8 : 1) * (a.normalAttack ? .78 : 1);
     }
   }
 
@@ -6777,6 +7300,12 @@ body.touch-mode .toast { bottom: 30%; }
   }
 
   function updatePlaying(dt) {
+    if (G.bossTalk) {
+      updateBossTalk(dt);
+      updateParticles(dt * .2);
+      updateHud();
+      return;
+    }
     G.stageTime += dt;
     if (G.hitstop > 0) {
       G.hitstop -= dt;
@@ -6823,7 +7352,13 @@ body.touch-mode .toast { bottom: 30%; }
 
     switch (G.mode) {
       case 'title':
-        if (Input.pressed('confirm')) openSelect();
+        if (Input.pressed('confirm')) openDifficulty();
+        break;
+      case 'difficulty':
+        if (Input.pressed('left') || Input.pressed('up')) selectDifficulty(DIFFICULTY_ORDER[(DIFFICULTY_ORDER.indexOf(G.selectedDifficulty) + 2) % 3], true);
+        if (Input.pressed('right') || Input.pressed('down')) selectDifficulty(DIFFICULTY_ORDER[(DIFFICULTY_ORDER.indexOf(G.selectedDifficulty) + 1) % 3], true);
+        if (Input.pressed('confirm')) confirmDifficulty();
+        if (Input.pressed('pause')) openTitle(true);
         break;
       case 'select':
         if (Input.pressed('left')) selectChar(G.selectedChar === 'rex' ? 'bruno' : G.selectedChar === 'luna' ? 'rex' : 'luna', true);
@@ -6832,7 +7367,7 @@ body.touch-mode .toast { bottom: 30%; }
           Sound.select();
           beginRun(G.selectedChar);
         }
-        if (Input.pressed('pause')) openTitle(true);
+        if (Input.pressed('pause')) openDifficulty();
         break;
       case 'intro':
         G.introTimer -= dt;
@@ -6891,7 +7426,7 @@ body.touch-mode .toast { bottom: 30%; }
     const grade = calcGrade();
     const stage = G.stage;
     if (final) {
-      dom.resultKicker.textContent = 'VICTORY // CITY SAVED';
+      dom.resultKicker.textContent = `VICTORY // ${(G.difficulty || DIFFICULTIES.normal).name} // CITY SAVED`;
       dom.resultGrade.textContent = grade;
       dom.resultTitle.textContent = '霓虹之城，天亮了';
       dom.resultCopy.textContent = '机枪、铁拳、天翔——三具身体都倒在核心。V 先生的帝国在晨曦中崩塌，城市终于安静下来。';
@@ -6900,7 +7435,7 @@ body.touch-mode .toast { bottom: 30%; }
       G.score += 6000;
       Sound.victory();
     } else {
-      dom.resultKicker.textContent = `STAGE ${stage.number} // CLEAR`;
+      dom.resultKicker.textContent = `STAGE ${stage.number} // ${(G.difficulty || DIFFICULTIES.normal).name} // CLEAR`;
       dom.resultGrade.textContent = grade;
       dom.resultTitle.textContent = stage.number === '04' ? '花园已清场' : stage.number === '05' ? '核心已停转' : '街区已清空';
       const copyByStage = {
@@ -6929,8 +7464,8 @@ body.touch-mode .toast { bottom: 30%; }
     if (G.finalVictory) {
       G.finalVictory = false;
       G.score = 0;
-      G.lives = 3;
-      openSelect();
+      G.lives = (G.difficulty || DIFFICULTIES.normal).lives;
+      openDifficulty();
       return;
     }
     startStage(G.stageIndex + 1);
@@ -6938,6 +7473,7 @@ body.touch-mode .toast { bottom: 30%; }
 
   function pauseGame() {
     if (G.mode !== 'playing') return;
+    if (dom.pauseDifficulty) dom.pauseDifficulty.textContent = (G.difficulty || DIFFICULTIES.normal).name;
     setMode('paused');
     show(dom.pause, true);
     show(dom.hud, false);
@@ -6984,7 +7520,7 @@ body.touch-mode .toast { bottom: 30%; }
   function render(now) {
     const t = G.time;
     ctx.clearRect(0, 0, W, H);
-    if (G.mode === 'title') {
+    if (G.mode === 'title' || G.mode === 'difficulty') {
       renderTitle(t);
     } else if (G.mode === 'select') {
       renderSelect(t);
@@ -7015,6 +7551,44 @@ body.touch-mode .toast { bottom: 30%; }
     if (!G.titleVisuals) G.titleVisuals = Art.buildStage(0, 2460);
     const cam = 470 + Math.sin(t * .055) * 85;
     Art.drawBackground(ctx, 0, G.titleVisuals, cam, t, W, H);
+    // Cover layer: the five bosses wait behind the three heroes.
+    const silhouettes = [
+      { key: 'razor', x: 286, y: 236, scale: 1.22, phase: .2 },
+      { key: 'titan', x: 338, y: 246, scale: 1.34, phase: 1.4 },
+      { key: 'vector', x: 390, y: 242, scale: 1.28, phase: 2.6 },
+      { key: 'raven', x: 438, y: 248, scale: 1.18, phase: 3.8 },
+      { key: 'vprime', x: 470, y: 240, scale: 1.42, phase: 5.1 }
+    ];
+    for (const b of silhouettes) {
+      Art.drawShadow(ctx, b.x, b.y, 0, b.scale, .2);
+      Art.drawFighter(ctx, {
+        x: b.x, y: b.y, z: 0, facing: -1, scale: b.scale,
+        char: Art.CHARS[b.key], pose: 'idle', ext: 0,
+        anim: t + b.phase, alpha: .2,
+        rim: b.key === 'vprime' ? '#ff264f' : Art.CHARS[b.key].colors.accent
+      });
+    }
+    // occasional lightning behind the cover art
+    const strike = Math.sin(t * 1.9) + Math.sin(t * 4.3);
+    if (strike > 1.78) {
+      ctx.save();
+      ctx.globalAlpha = .09 + Math.max(0, strike - 1.78) * .16;
+      ctx.fillStyle = '#d9eaff';
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalAlpha *= 1.8;
+      ctx.strokeStyle = '#eaf6ff';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      let lx = 410, ly = 20;
+      ctx.moveTo(lx, ly);
+      for (let i = 0; i < 5; i++) {
+        lx += Math.sin(t * 17 + i * 3.1) * 17;
+        ly += 18;
+        ctx.lineTo(lx, ly);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
     const trio = [
       { key: 'rex', x: 304, y: 238, pose: Math.sin(t * 1.25) > .84 ? 'punch1' : 'idle', ext: Math.sin(t * 1.25) > .84 ? 1 : 0, delay: 0 },
       { key: 'luna', x: 360, y: 246, pose: Math.sin(t * 1.25 + 1.1) > .88 ? 'kick' : 'idle', ext: Math.sin(t * 1.25 + 1.1) > .88 ? 1 : 0, delay: 1.2 },
@@ -7959,7 +8533,26 @@ body.touch-mode .toast { bottom: 30%; }
     dom.btnStart.addEventListener('click', () => {
       ensureAudio();
       Sound.start();
-      openSelect();
+      openDifficulty();
+    });
+    dom.difficultyGrid.addEventListener('click', (e) => {
+      const card = e.target.closest('.difficulty-card');
+      if (!card) return;
+      selectDifficulty(card.dataset.diff, true);
+      ensureAudio();
+    });
+    dom.difficultyGrid.addEventListener('dblclick', (e) => {
+      const card = e.target.closest('.difficulty-card');
+      if (!card) return;
+      selectDifficulty(card.dataset.diff, true);
+      confirmDifficulty();
+    });
+    dom.btnDifficultyBack.addEventListener('click', () => { Sound.menu(); openTitle(true); });
+    dom.btnDifficultyConfirm.addEventListener('click', () => { ensureAudio(); confirmDifficulty(); });
+    dom.bossTalkSkip.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); endBossTalk(true); });
+    dom.bossTalk.addEventListener('click', (e) => {
+      if (e.target.closest('#boss-talk-skip')) return;
+      if (G.bossTalk && G.bossTalk.timer > .35) advanceBossTalk();
     });
     dom.charGrid.addEventListener('click', (e) => {
       const card = e.target.closest('.char-card');
@@ -7979,7 +8572,7 @@ body.touch-mode .toast { bottom: 30%; }
       Sound.select();
       beginRun(G.selectedChar);
     });
-    dom.btnSelectBack.addEventListener('click', () => { Sound.menu(); openTitle(true); });
+    dom.btnSelectBack.addEventListener('click', () => { Sound.menu(); openDifficulty(); });
     dom.btnResume.addEventListener('click', resumeGame);
     dom.btnRestart.addEventListener('click', () => { show(dom.pause, false); Sound.setPaused(false); startStage(G.stageIndex); });
     dom.btnQuit.addEventListener('click', quitToTitle);

@@ -73,6 +73,23 @@
           </div>
         </div>
 
+        <div id="boss-talk" class="boss-talk is-hidden" aria-live="polite">
+          <canvas id="boss-talk-portrait" width="96" height="112"></canvas>
+          <div class="boss-talk-body">
+            <div class="boss-talk-top">
+              <span class="boss-talk-kicker">BOSS ENCOUNTER // 出场</span>
+              <b id="boss-talk-name">RAZOR</b>
+              <em id="boss-talk-role">码头行刑人</em>
+            </div>
+            <p id="boss-talk-text"></p>
+            <div class="boss-talk-foot">
+              <span id="boss-talk-progress">1 / 1</span>
+              <span class="boss-talk-hint">ENTER / 点击继续</span>
+              <button id="boss-talk-skip" class="ghost-btn small" type="button">跳过</button>
+            </div>
+          </div>
+        </div>
+
         <div id="boss-ui" class="boss-ui is-hidden">
           <div class="boss-row">
             <div class="boss-ui-head"><span>WARNING // BOSS</span><b id="boss-name">RAZOR</b></div>
@@ -88,21 +105,24 @@
         <div id="title-screen" class="overlay title-screen">
           <div class="title-rays" aria-hidden="true"></div>
           <div class="title-content">
+            <div class="cover-ribbon">GAME COVER <span>//</span> NEO CITY 199X</div>
             <div class="eyebrow">NEO CITY <span>//</span> 199X <span>//</span> ARCADE</div>
             <h1 class="game-logo" aria-label="Neon Rage">
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
             <div class="logo-cn">霓 虹 怒 火</div>
-            <p class="title-copy">当法律沉睡，拳头就是黎明。</p>
+            <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <button id="btn-start" class="arcade-btn" type="button">
-              <span class="btn-main">投币开始</span>
-              <span class="btn-sub">PRESS ENTER / CLICK</span>
+              <span class="btn-main">开始游戏</span>
+              <span class="btn-sub">PRESS ENTER / 点击开始</span>
             </button>
+            <div class="cover-next">NEXT // 选择难度</div>
             <div class="title-meta">
               <span>1 PLAYER</span>
               <span>ORIGINAL PIXEL BEAT 'EM UP</span>
               <span>5 STAGES</span>
+              <span>3 DIFFICULTIES</span>
               <span id="title-best">BEST 000000</span>
             </div>
           </div>
@@ -121,12 +141,68 @@
           </div>
         </div>
 
+        <!-- Difficulty select -->
+        <div id="difficulty-screen" class="overlay difficulty-screen is-hidden">
+          <div class="difficulty-head">
+            <div class="eyebrow">DIFFICULTY <span>//</span> 选择难度</div>
+            <h2>今晚，打多狠？</h2>
+            <p>难度会影响敌人血量、你受到的伤害和剩余生命。选错了不能中途改。</p>
+          </div>
+          <div class="difficulty-grid" id="difficulty-grid">
+            <button class="difficulty-card" data-diff="easy" type="button" aria-pressed="false">
+              <span class="diff-index">01</span>
+              <span class="diff-tag">EASY</span>
+              <span class="diff-name">简单 <em>STREET PRACTICE</em></span>
+              <span class="diff-role">街头练习</span>
+              <div class="diff-stats">
+                <div><span>敌人 HP</span><b>80%</b></div>
+                <div><span>受到伤害</span><b>70%</b></div>
+                <div><span>初始生命</span><b>4</b></div>
+              </div>
+              <p class="diff-desc">敌人更脆，拳脚更轻。四条命，足够把整条街走完。</p>
+            </button>
+            <button class="difficulty-card" data-diff="normal" type="button" aria-pressed="false">
+              <span class="diff-index">02</span>
+              <span class="diff-tag">NORMAL</span>
+              <span class="diff-name">普通 <em>STREET STANDARD</em></span>
+              <span class="diff-role">标准街头</span>
+              <span class="diff-badge">推荐</span>
+              <div class="diff-stats">
+                <div><span>敌人 HP</span><b>100%</b></div>
+                <div><span>受到伤害</span><b>100%</b></div>
+                <div><span>初始生命</span><b>3</b></div>
+              </div>
+              <p class="diff-desc">原汁原味的清版节奏。三条命，一次完整的霓虹之夜。</p>
+            </button>
+            <button class="difficulty-card" data-diff="hard" type="button" aria-pressed="false">
+              <span class="diff-index">03</span>
+              <span class="diff-tag">HARD</span>
+              <span class="diff-name">困难 <em>NO QUARTERS</em></span>
+              <span class="diff-role">一命通关</span>
+              <div class="diff-stats">
+                <div><span>敌人 HP</span><b>120%</b></div>
+                <div><span>受到伤害</span><b>140%</b></div>
+                <div><span>初始生命</span><b>2</b></div>
+              </div>
+              <p class="diff-desc">Boss 更硬，拳头更疼，只有两条命。给真正想拆掉 V 塔的人。</p>
+            </button>
+          </div>
+          <div class="select-footer difficulty-footer">
+            <div class="select-help"><kbd>←</kbd><kbd>→</kbd> 选择难度　<kbd>ENTER</kbd> 确认　<kbd>ESC</kbd> 返回封面</div>
+            <div class="select-buttons">
+              <button id="btn-difficulty-back" class="ghost-btn" type="button">返回封面</button>
+              <button id="btn-difficulty-confirm" class="arcade-btn compact" type="button"><span class="btn-main">确认难度</span><span class="btn-sub">ENTER</span></button>
+            </div>
+          </div>
+        </div>
+
         <!-- Character select -->
         <div id="select-screen" class="overlay select-screen is-hidden">
           <div class="select-head">
             <div class="eyebrow">CHARACTER SELECT <span>//</span> 选择斗士</div>
             <h2>今晚，谁去清街？</h2>
             <p>三人三套打法。选一个，把 V 先生的打手赶出霓虹区。</p>
+            <p id="select-difficulty" class="select-difficulty">DIFFICULTY // NORMAL</p>
           </div>
           <div class="char-grid" id="char-grid">
             <button class="char-card" data-char="rex" type="button">
@@ -178,7 +254,7 @@
         <!-- Stage intro -->
         <div id="stage-card" class="overlay stage-card is-hidden">
           <div class="stage-card-inner">
-            <div class="stage-kicker">NEO CITY // CRIME DISTRICT</div>
+            <div class="stage-kicker" id="stage-kicker">NEO CITY // CRIME DISTRICT</div>
             <div class="stage-number">STAGE <span id="stage-num">01</span></div>
             <h2 id="stage-title">DOCKSIDE 9</h2>
             <div class="stage-cn" id="stage-cn">第九码头</div>
@@ -194,6 +270,7 @@
             <div class="eyebrow">SYSTEM // PAUSED</div>
             <h2>暂停</h2>
             <p class="modal-copy">喘口气。外面还有整条街的人等着挨揍。</p>
+            <div class="pause-diff">当前难度 <b id="pause-difficulty">NORMAL</b></div>
             <div class="pause-controls">
               <div><kbd>WASD</kbd> / <kbd>方向键</kbd><span>移动</span></div>
               <div><kbd>J</kbd><span>连击</span></div>

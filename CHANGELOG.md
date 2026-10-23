@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.2.0 — 2026-10-23
+
+- 开屏标题页升级为游戏封面主菜单：五名 Boss 剪影、三名斗士、闪电与版本信息。
+- 新增 EASY / NORMAL / HARD 难度选择；影响敌人 HP、玩家受伤和初始生命。
+- 五关 Boss 出场增加可跳过对话：RAZOR、TITAN、VECTOR、RAVEN/NYX、V-PRIME。
+- 提高 Boss 普通拳脚（jab / slash / heavy / lunge）的起手速度、收招速度和再次出手频率。
+
 ## v0.1.9 — 2026-10-23
 
 - 所有 Boss 的拳脚、连击、跳跃攻击和近身范围技起手更快、判定更远。
