@@ -75,6 +75,27 @@
       chords: [0, 0, -2, -3],
       hat: 1, snare: 1
     },
+    bossRazor: {
+      bpm: 152, root: 37, gain: 1.03,
+      bass: [0, null, 0, 7, 0, null, 10, null, 0, 7, null, 3, 5, null, 7, 10],
+      lead: [19, null, 22, 24, null, 22, 19, 15, 19, 22, null, 24, 27, 24, 22, 19],
+      chords: [0, -2, 3, 5],
+      hat: .95, snare: 1
+    },
+    bossTitan: {
+      bpm: 132, root: 32, gain: 1.08,
+      bass: [0, null, null, 0, null, null, 0, 3, 0, null, null, 0, 5, null, 3, 2],
+      lead: [12, null, 15, null, 12, null, 7, null, 10, null, 12, 15, null, 17, 15, 12],
+      chords: [0, -3, 0, -5],
+      hat: .7, snare: 1
+    },
+    bossVector: {
+      bpm: 158, root: 40, gain: 1.02,
+      bass: [0, 0, 7, 0, 3, 3, 10, 3, 0, 0, 7, 0, 5, 5, 12, 7],
+      lead: [19, 22, 24, 22, 27, 24, 22, 19, 24, 27, 31, 27, 24, 22, 19, 15],
+      chords: [0, 3, 7, 5],
+      hat: 1, snare: .95
+    },
     clear: {
       bpm: 124, root: 48, gain: 0.9,
       bass: [0, 0, null, 0, 7, null, 0, null, 5, null, 7, null, 12, null, null, null],

@@ -67,7 +67,7 @@ button:focus-visible, [tabindex]:focus-visible {
 
 .page {
   position: relative; z-index: 1;
-  width: min(1240px, calc(100% - 32px));
+  width: min(1488px, calc(100% - 16px));
   min-height: 100svh;
   margin: 0 auto;
   padding: 8px 0 6px;
@@ -1039,7 +1039,8 @@ body.touch-mode .toast { bottom: 30%; }
 
 @media (min-width: 900px) {
   body { overflow-y: auto; }
-  .page { min-height: 100svh; }
+  .page { min-height: 100svh; padding-bottom: 0; }
+  .cabinet { padding-bottom: 1px; }
 }
 @media (max-height: 900px) {
   .cabinet-footer { display: none; }
@@ -1167,4 +1168,63 @@ body.touch-mode .toast { bottom: 30%; }
     transition-duration: .001ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+
+/* ————— enlarged game frame / settings readability ————— */
+.settings-card {
+  width: min(94cqw, 1320px);
+  max-height: 94%;
+  padding: 1.4cqw 1.6cqw 1cqw;
+}
+.settings-head h2 { font-size: clamp(24px, 4.4cqw, 58px); }
+.settings-head p { font-size: clamp(14px, 1.08cqw, 18px); }
+.settings-head .ghost-btn { font-size: clamp(12px, .9cqw, 15px); padding: .7cqw 1cqw; }
+.settings-tabs { gap: .45cqw; margin-top: 1cqw; padding-bottom: .65cqw; }
+.settings-tab { font-size: clamp(14px, 1.3cqw, 20px); padding: .55cqw 1.05cqw; }
+.settings-body { padding: .9cqw .35cqw .65cqw; }
+.settings-panel-title { gap: .7cqw; margin-bottom: .7cqw; }
+.settings-panel-title b { font-size: clamp(13px, 1.1cqw, 17px); }
+.settings-panel-title span { font-size: clamp(13px, 1.08cqw, 17px); }
+.music-options { gap: .55cqw; }
+.music-option { gap: .8cqw; padding: .7cqw .85cqw; }
+.music-copy b { font-size: clamp(17px, 1.4cqw, 22px); }
+.music-copy em { font-size: clamp(14px, 1.08cqw, 18px); }
+.music-copy small { font-size: clamp(14px, 1.06cqw, 18px); line-height: 1.4; }
+.music-tag { font-size: clamp(10px, .78cqw, 13px); }
+.music-radio { width: 1.2cqw; height: 1.2cqw; min-width: 12px; min-height: 12px; }
+.settings-note { font-size: clamp(14px, 1.08cqw, 18px); margin-top: .8cqw; }
+.settings-keys { gap: .55cqw 1.1cqw; }
+.settings-keys div { font-size: clamp(14px, 1.15cqw, 18px); }
+.settings-keys kbd { font-size: clamp(12px, 1.0cqw, 15px); }
+.settings-guide { gap: .5cqw; }
+.settings-guide li { font-size: clamp(16px, 1.28cqw, 20px); line-height: 1.55; padding-left: 1.1cqw; }
+.settings-about p { font-size: clamp(15px, 1.2cqw, 19px); line-height: 1.6; margin-bottom: .7cqw; }
+.settings-about .fineprint { font-size: clamp(12px, .98cqw, 16px); }
+.settings-foot { padding-top: .7cqw; }
+.settings-foot > span { font-size: clamp(11px, .9cqw, 15px); }
+.settings-foot .arcade-btn.compact { min-width: 13cqw; padding: .7cqw 2.3cqw .75cqw 1.1cqw; }
+.settings-foot .arcade-btn.compact .btn-main { font-size: clamp(13px, 1.05cqw, 17px); }
+.settings-foot .arcade-btn.compact .btn-sub { font-size: clamp(9px, .65cqw, 12px); }
+.settings-foot .arcade-btn.compact::after { font-size: 2cqw; }
+
+@media (max-width: 700px) {
+  .settings-card { width: 96cqw; padding: 1cqw 1.1cqw .7cqw; }
+  .settings-head h2 { font-size: clamp(20px, 5cqw, 28px); }
+  .settings-head .ghost-btn { font-size: clamp(9px, 2.4cqw, 13px); }
+  .settings-tab { font-size: clamp(9px, 2.7cqw, 14px); padding: .4cqw .6cqw; }
+  .settings-body { padding: .55cqw .2cqw .4cqw; }
+  .settings-panel-title b, .settings-panel-title span { font-size: clamp(9px, 2.3cqw, 13px); }
+  .music-copy b { font-size: clamp(13px, 3.2cqw, 17px); }
+  .music-copy em, .music-copy small { font-size: clamp(10px, 2.6cqw, 14px); }
+  .music-option { padding: .5cqw .55cqw; gap: .45cqw; }
+  .music-tag { font-size: clamp(7px, 1.8cqw, 10px); }
+  .settings-note { font-size: clamp(9px, 2.3cqw, 12px); }
+  .settings-keys div { font-size: clamp(10px, 2.6cqw, 14px); }
+  .settings-keys kbd { font-size: clamp(8px, 2.1cqw, 11px); }
+  .settings-guide li { font-size: clamp(11px, 2.8cqw, 14px); line-height: 1.45; }
+  .settings-about p { font-size: clamp(11px, 2.7cqw, 14px); }
+  .settings-about .fineprint { font-size: clamp(8px, 2.0cqw, 11px); }
+  .settings-foot .arcade-btn.compact { min-width: 20cqw; padding: .5cqw 1.6cqw .55cqw .8cqw; }
+  .settings-foot .arcade-btn.compact .btn-main { font-size: clamp(9px, 2.3cqw, 13px); }
 }

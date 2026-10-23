@@ -192,6 +192,10 @@
   const MUSIC_PACK_LABELS = {
     classic: 'NEON CLASSIC', midnight: 'MIDNIGHT DRIVE', steel: 'STEEL PULSE'
   };
+  const BOSS_TRACKS = {
+    razor: 'bossRazor', titan: 'bossTitan', vector: 'bossVector',
+    twin: 'twin', final: 'final'
+  };
 
   function makeUpgradeState() {
     return {
@@ -353,7 +357,7 @@
     {
       number: '01', title: 'DOCKSIDE 9', cn: '第九码头',
       desc: '雨把整座城市洗成霓虹色。今晚，码头不接货，只接拳头。',
-      goal: '清空第九码头', worldW: 2460, music: 'stage1', bossMusic: 'boss',
+      goal: '清空第九码头', worldW: 2460, music: 'stage1', bossMusic: 'bossRazor',
       waves: [
         { at: 300, spawns: [['punk', 210], ['punk', 242]] },
         { at: 760, spawns: [['punk', 204], ['boxer', 238], ['kicker', 218], ['siren', 248]] },
@@ -376,7 +380,7 @@
     {
       number: '02', title: 'LINE 07', cn: '七号轻轨',
       desc: '末班车已经停运。站台上等你的，是一整队带刀的人。',
-      goal: '夺回七号轻轨', worldW: 2520, music: 'stage2', bossMusic: 'boss',
+      goal: '夺回七号轻轨', worldW: 2520, music: 'stage2', bossMusic: 'bossTitan',
       waves: [
         { at: 290, spawns: [['blade', 212], ['boxer', 240]] },
         { at: 720, spawns: [['kicker', 204], ['gunner', 238], ['viper', 220]] },
@@ -399,7 +403,7 @@
     {
       number: '03', title: 'V-TOWER ROOF', cn: 'V 塔天台',
       desc: '天快亮了。城市最高的地方，V 先生的影子守在门前。',
-      goal: '击溃 V 先生的代理人', worldW: 2500, music: 'stage3', bossMusic: 'boss',
+      goal: '击溃 V 先生的代理人', worldW: 2500, music: 'stage3', bossMusic: 'bossVector',
       waves: [
         { at: 280, spawns: [['kicker', 208], ['boxer', 238]] },
         { at: 700, spawns: [['brute', 226], ['gunner', 206], ['viper', 244]] },
@@ -1178,7 +1182,7 @@
     if (isBoss) {
       if (wave.boss === 'twin') announce('WARNING', 'TWIN BOSS // 双子守卫', '#ff2e63', 2.4);
       else if (wave.boss === 'final') announce('WARNING', 'V-PRIME // 最终形态', '#ff2e63', 2.6);
-      Sound.playTrack(wave.boss === 'twin' ? 'twin' : wave.boss === 'final' ? 'final' : 'boss');
+      Sound.playTrack(BOSS_TRACKS[wave.boss] || G.stage.bossMusic || 'boss');
       G.finishing = false;
       beginBossTalk(wave.boss);
     }
