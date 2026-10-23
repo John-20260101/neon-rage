@@ -298,6 +298,16 @@
         headDX = 1.6;
         break;
       }
+      case 'headbutt':
+        bob = 0;
+        lean = 3.2;
+        headDX = 2.4;
+        headDY = .6;
+        fa = { sx: fsX, sy: shY, ex: fsX - 2, ey: shY + 4, hx: fsX - 4, hy: shY + 8 };
+        ba = { sx: bsX, sy: shY, ex: bsX - 3, ey: shY + 5, hx: bsX - 5, hy: shY + 9 };
+        fl = { hx: hipF, hy: m.torsoBottom, kx: hipF + 3, ky: -8, fx: hipF + 5, fy: 0 };
+        bl = { hx: hipB, hy: m.torsoBottom, kx: hipB - 4, ky: -8, fx: hipB - 6, fy: 0 };
+        break;
       case 'punch1':
         lean = 0.8;
         fa = { sx: fsX, sy: shY, ex: fsX + 5 + 4 * ext, ey: shY + 2, hx: fsX + 8 + 14 * ext, hy: shY + 1 };
@@ -336,6 +346,25 @@
         bl = { hx: hipB, hy: m.torsoBottom, kx: hipB - 2, ky: -8, fx: hipB - 5, fy: -5 };
         fa = { sx: fsX, sy: shY, ex: fsX + 4, ey: shY + 3, hx: fsX + 7, hy: shY + 2 };
         ba = { sx: bsX, sy: shY, ex: bsX - 4, ey: shY + 2, hx: bsX - 7, hy: shY };
+        break;
+      case 'uppercut':
+        lean = 2.2;
+        headDX = 1.2;
+        headDY = -.6;
+        bob = -1.2;
+        fa = { sx: fsX, sy: shY, ex: fsX + 4, ey: shY - 3, hx: fsX + 7, hy: shY - 16 };
+        ba = { sx: bsX, sy: shY, ex: bsX - 4, ey: shY + 4, hx: bsX - 6, hy: shY + 8 };
+        fl = { hx: hipF, hy: m.torsoBottom, kx: hipF + 4, ky: -8, fx: hipF + 7, fy: -4 };
+        bl = { hx: hipB, hy: m.torsoBottom, kx: hipB - 3, ky: -7, fx: hipB - 5, fy: 0 };
+        break;
+      case 'slam':
+        lean = 1.6;
+        headDX = .8;
+        bob = 1.4;
+        fa = { sx: fsX, sy: shY, ex: fsX + 2, ey: shY + 5, hx: fsX + 2, hy: shY + 10 };
+        ba = { sx: bsX, sy: shY, ex: bsX - 2, ey: shY + 5, hx: bsX - 2, hy: shY + 10 };
+        fl = { hx: hipF, hy: m.torsoBottom, kx: hipF + 5, ky: -7, fx: hipF + 7, fy: 0 };
+        bl = { hx: hipB, hy: m.torsoBottom, kx: hipB - 5, ky: -7, fx: hipB - 7, fy: 0 };
         break;
       case 'special':
         bob = Math.sin(anim * 35) * 0.8;
