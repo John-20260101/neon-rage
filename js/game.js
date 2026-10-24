@@ -673,9 +673,10 @@
     dom.hudName.textContent = PLAYER_STATS[G.charKey].name;
     dom.hudStage.textContent = G.stage ? `STAGE ${G.stage.number} · ${(G.difficulty || DIFFICULTIES.normal).name}` : 'STAGE 01';
     dom.hudGoal.textContent = G.stage ? G.stage.goal : '';
-    const pc = dom.hudPortrait.getContext('2d');
-    pc.imageSmoothingEnabled = false;
-    Art.drawHudPortrait(pc, dom.hudPortrait.width, dom.hudPortrait.height, G.charKey, G.time);
+    const portraitKey = G.charKey || 'rex';
+    dom.hudPortrait.classList.remove('rex', 'luna', 'bruno');
+    dom.hudPortrait.classList.add(portraitKey);
+    dom.hudPortrait.setAttribute('aria-label', `${PLAYER_STATS[portraitKey].name} 头像`);
     updateHud();
   }
 
