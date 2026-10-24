@@ -38,6 +38,7 @@
     bossName2: $('boss-name-2'),
     bossFill2: $('boss-fill-2'),
     bossTalk: $('boss-talk'),
+    bossTalkKicker: $('boss-talk-kicker'),
     bossTalkPortrait: $('boss-talk-portrait'),
     bossTalkName: $('boss-talk-name'),
     bossTalkRole: $('boss-talk-role'),
@@ -244,70 +245,140 @@
     };
   }
 
+  const PLAYER_ROLES = {
+    rex: '街头拳王 · 全能',
+    luna: '夜行舞者 · 速度',
+    bruno: '码头重锤 · 力量'
+  };
+
+  const STAGE_BOSS_KEYS = ['razor', 'titan', 'vector', 'twin', 'final'];
+
   const BOSS_TALK = {
     razor: {
       title: 'DOCKSIDE ENFORCER', name: 'RAZOR', cn: '剃刀', char: 'razor',
       lines: [
-        { char: 'razor', speaker: 'RAZOR', role: '码头行刑人', text: '第九码头的每一盏路灯都替我收过钱。你这种小角色，连让我拔刀的资格都没有。' }
+        { char: 'razor', speaker: 'RAZOR', role: '码头行刑人', hold: 5.2, text: '第九码头的每一盏路灯，都替我收过钱。你踩进来的水洼，够赔你一条命。' },
+        { char: 'razor', speaker: 'RAZOR', role: '码头行刑人', hold: 5.2, text: 'V 先生只说清场。我本来想打断你的腿——现在，我改主意了。' },
+        { char: 'player', hold: 4.8, text: {
+          rex: '路灯替你收钱，是因为它们没得选。我有。',
+          luna: '那你得先追上我。顺便说一句，你的刀光很漂亮。',
+          bruno: '码头不是你的。把路让开。'
+        } },
+        { char: 'razor', speaker: 'RAZOR', role: '码头行刑人', hold: 5.2, text: '嘴硬。等我把你挂上吊机，再看你拿什么嘴硬。' }
       ]
     },
     titan: {
       title: 'UNDERGROUND CHAMPION', name: 'TITAN', cn: '泰坦', char: 'titan',
       lines: [
-        { char: 'titan', speaker: 'TITAN', role: '地下拳王', text: '黑市擂台四十二场，没人撑过我一拳。你猜，这副骨头能撑几秒？' }
+        { char: 'titan', speaker: 'TITAN', role: '地下拳王', hold: 5.2, text: '黑市擂台四十二场，没人撑过我一拳。你猜，这副骨头能撑几秒？' },
+        { char: 'titan', speaker: 'TITAN', role: '地下拳王', hold: 5.2, text: 'V 先生买了我十分钟。足够把你打成码头的新地基。' },
+        { char: 'player', hold: 4.8, text: {
+          rex: '你打的是擂台。我打的是街。规则不一样。',
+          luna: '十分钟？够我跳完一支舞，再送你下场。',
+          bruno: '你的拳头很重。我的更重。'
+        } },
+        { char: 'titan', speaker: 'TITAN', role: '地下拳王', hold: 5.2, text: '好。那就别用嘴，用骨头说话。' }
       ]
     },
     vector: {
       title: "V'S SHADOW", name: 'VECTOR', cn: '维克托', char: 'vector',
       lines: [
-        { char: 'vector', speaker: 'VECTOR', role: 'V 先生之影', text: 'V 先生从不出手。因为他知道，只要我站在这里，你就见不到他。' }
+        { char: 'vector', speaker: 'VECTOR', role: 'V 先生之影', hold: 5.2, text: 'V 先生从不出手。因为他知道，只要我站在这里，你就见不到他。' },
+        { char: 'vector', speaker: 'VECTOR', role: 'V 先生之影', hold: 5.2, text: '你们这种人总以为，打倒一个影子就能见到光。' },
+        { char: 'player', hold: 4.8, text: {
+          rex: '影子倒了，光自己会出来。',
+          luna: '那你最好别再站在光里。',
+          bruno: '让开。我不是来聊天的。'
+        } },
+        { char: 'vector', speaker: 'VECTOR', role: 'V 先生之影', hold: 5.2, text: '粗鲁。不过，至少比恐惧有趣。' }
       ]
     },
     twin: {
       title: 'TWIN ASSASSINS', name: 'RAVEN // NYX', cn: '双子刺客', char: 'raven',
       lines: [
-        { char: 'raven', speaker: 'RAVEN', role: '双子刺客 · 姐', text: '妹妹，你看他的眼神——还真以为自己是来赢的。' },
-        { char: 'nyx', speaker: 'NYX', role: '双子刺客 · 妹', text: '那就让他记住：霓虹花园的最后一拍，永远由我们收。' }
+        { char: 'raven', speaker: 'RAVEN', role: '双子刺客 · 姐', hold: 5.2, text: '妹妹，你看他的眼神——还真以为自己是来赢的。' },
+        { char: 'nyx', speaker: 'NYX', role: '双子刺客 · 妹', hold: 5.2, text: '那就让他记住：霓虹花园的最后一拍，永远由我们收。' },
+        { char: 'player', hold: 4.8, text: {
+          rex: '最后一拍？我习惯把整首歌都听完。',
+          luna: '两位姐姐，舞池太小了。出去跳？',
+          bruno: '让开。或者一起躺下。'
+        } },
+        { char: 'raven', speaker: 'RAVEN', role: '双子刺客 · 姐', hold: 5.0, text: '听见了吗？他还会开玩笑。' },
+        { char: 'nyx', speaker: 'NYX', role: '双子刺客 · 妹', hold: 5.2, text: '那就把他的笑声，留到最后。' }
       ]
     },
     final: {
       title: 'FINAL FORM', name: 'V-PRIME', cn: 'V先生·终焉', char: 'vprime',
       lines: [
-        { char: 'vprime', speaker: 'V-PRIME', role: '终焉容器 · 第一形态', text: '肉体只是容器。我给你准备了三具身体——第一具，用来数你身上的弹孔。' },
-        { char: 'vprime', speaker: 'V-PRIME', role: '终焉容器 · 第一形态', text: '城市需要一个神。而我，正好有三张脸。' }
+        { char: 'vprime', speaker: 'V-PRIME', role: '终焉容器 · 第一形态', hold: 5.4, text: '肉体只是容器。我给你准备了三具身体——第一具，用来数你身上的弹孔。' },
+        { char: 'vprime', speaker: 'V-PRIME', role: '终焉容器 · 第一形态', hold: 5.2, text: '你以为你在爬塔？不。你是在走进我的陈列柜。' },
+        { char: 'vprime', speaker: 'V-PRIME', role: '终焉容器 · 第一形态', hold: 5.2, text: '城市需要一个神。而我，正好有三张脸。' },
+        { char: 'player', hold: 4.8, text: {
+          rex: '神不会躲在塔里。更不会数别人的弹孔。',
+          luna: '三张脸？可惜，没有一个敢看着我。',
+          bruno: '神也会流血。我试过。'
+        } },
+        { char: 'vprime', speaker: 'V-PRIME', role: '终焉容器 · 第一形态', hold: 5.2, text: '每一张脸都死过一次。你打碎的，不过是我不想要的旧皮。' },
+        { char: 'vprime', speaker: 'V-PRIME', role: '终焉容器 · 第一形态', hold: 5.0, text: '来吧。让我看看，你能打碎哪一张脸。' }
       ]
     }
   };
 
-  const CHAR_ENDINGS = {
-    rex: {
-      kicker: 'EPILOGUE // REX',
-      title: '黎明之前',
-      role: 'REX // 雷克斯 · 街头拳王',
-      paragraphs: [
-        'V 塔倒塌后的第一个清晨，REX 没有回警局。他坐在第九码头的集装箱上，看雨水把最后一层霓虹冲进下水道。',
-        '三天后，旧城区多了一间没有招牌的拳馆。门口只写着一句话：想学打人，先学站直。来的人有外卖员、夜班保安，也有被收保护费的小店主。',
-        '有人问他什么时候把警徽拿回来。REX 把烟按灭在栏杆上：城市不需要英雄。城市只需要明天早上，还有人愿意开门。'
+  const POST_BOSS_TALK = {
+    razor: {
+      lines: [
+        { char: 'razor', speaker: 'RAZOR', role: '码头行刑人', hold: 5.0, text: '别得意……V 先生只是……把我当看门狗。' },
+        { char: 'razor', speaker: 'RAZOR', role: '码头行刑人', hold: 5.0, text: '狗死了，主人……会亲自下来。' },
+        { char: 'player', hold: 4.8, text: {
+          rex: '那就让他来。第九码头，我等着。',
+          luna: '告诉他，舞池已经清好了。',
+          bruno: '让他带够人。'
+        } }
       ]
     },
-    luna: {
-      kicker: 'EPILOGUE // LUNA',
-      title: '霓虹之上',
-      role: 'LUNA // 露娜 · 夜行舞者',
-      paragraphs: [
-        'V 先生帝国崩塌那晚，LUNA 没有参加庆功。她把名字留在霓虹花园的碎玻璃上，转身走进第一班地铁。',
-        '几个月后，海边小城开了一间只在午夜营业的舞厅。老板从不露脸，舞池上方却总有一道青色闪电。',
-        '偶尔有人认出她，问她为什么离开。LUNA 踩着节拍，头也不回：我不是离开。我只是把舞台，换到了没有人能买下它的地方。'
+    titan: {
+      lines: [
+        { char: 'titan', speaker: 'TITAN', role: '地下拳王', hold: 5.0, text: '四十二场……终于有人……把我打下去了。' },
+        { char: 'titan', speaker: 'TITAN', role: '地下拳王', hold: 5.0, text: 'V 先生……在塔顶……等你。' },
+        { char: 'player', hold: 4.8, text: {
+          rex: '我会上去的。你留在这里，看着。',
+          luna: '谢谢让路。虽然你也没别的选择。',
+          bruno: '下次别收他的钱。'
+        } }
       ]
     },
-    bruno: {
-      kicker: 'EPILOGUE // BRUNO',
-      title: '码头的新规矩',
-      role: 'BRUNO // 布鲁诺 · 码头重锤',
-      paragraphs: [
-        'V 塔的废墟清完后，码头空了很久。直到 BRUNO 拖着那副旧拳套回来，把「第九码头」的牌子重新钉上。',
-        '新规矩很简单：货可以进，枪不能进；工人可以加班，打手不能收钱。有人不服，BRUNO 就带他去空仓库里谈五分钟。',
-        '后来，孩子们在码头边踢球，老工人在棚下喝茶。BRUNO 坐在吊机上啃苹果，看着远处的城市：我不懂什么新世界。但这个码头，从今天起归活着的人。'
+    vector: {
+      lines: [
+        { char: 'vector', speaker: 'VECTOR', role: 'V 先生之影', hold: 5.0, text: '影子……终究……只是影子。' },
+        { char: 'vector', speaker: 'VECTOR', role: 'V 先生之影', hold: 5.0, text: '但光里……也有……V 先生的眼睛。' },
+        { char: 'player', hold: 4.8, text: {
+          rex: '那就把眼睛也打碎。',
+          luna: '我会小心的。毕竟我最擅长在光里跳舞。',
+          bruno: '让他看着我。'
+        } }
+      ]
+    },
+    twin: {
+      lines: [
+        { char: 'raven', speaker: 'RAVEN', role: '双子刺客 · 姐', hold: 4.8, text: '妹妹……这次……好像跳错了拍子。' },
+        { char: 'nyx', speaker: 'NYX', role: '双子刺客 · 妹', hold: 4.8, text: '不……是我们……收错了人。' },
+        { char: 'player', hold: 4.8, text: {
+          rex: '下次选目标前，先看清拳头。',
+          luna: '舞跳得不错。可惜，音乐停了。',
+          bruno: '躺好。别起来了。'
+        } }
+      ]
+    },
+    final: {
+      lines: [
+        { char: 'vprime', speaker: 'V-PRIME', role: '终焉容器 · 第一形态', hold: 5.0, text: '原来……凡人的拳头……也会疼。' },
+        { char: 'vprime', speaker: 'V-PRIME', role: '终焉容器 · 第一形态', hold: 5.2, text: '三具身体……都输给同一个人……真是……不体面。' },
+        { char: 'player', hold: 4.8, text: {
+          rex: '体面是活下来的人写的。',
+          luna: '你的戏演完了。城市该谢幕了。',
+          bruno: '神也会流血。我说过。'
+        } },
+        { char: 'vprime', speaker: 'V-PRIME', role: '终焉容器 · 第一形态', hold: 5.2, text: '拿走吧……这座城……本来就只是……我的一场实验。' }
       ]
     }
   };
@@ -799,44 +870,54 @@
     if (!t) return;
     const line = t.data.lines[t.index];
     if (!line) return;
-    dom.bossTalkName.textContent = line.speaker;
-    dom.bossTalkRole.textContent = line.role || '';
-    dom.bossTalkText.textContent = line.text;
+    const isPlayer = line.char === 'player';
+    const key = isPlayer ? (G.charKey && PLAYER_STATS[G.charKey] ? G.charKey : 'rex') : line.char;
+    const speaker = isPlayer ? PLAYER_STATS[key].name : line.speaker;
+    const role = isPlayer ? PLAYER_ROLES[key] : (line.role || '');
+    const text = isPlayer ? ((line.text && line.text[key]) || (line.text && line.text.rex) || '') : (line.text || '');
+    dom.bossTalkName.textContent = speaker;
+    dom.bossTalkRole.textContent = role;
+    dom.bossTalkText.textContent = text;
     dom.bossTalkProgress.textContent = `${t.index + 1} / ${t.data.lines.length}`;
+    if (dom.bossTalkKicker) dom.bossTalkKicker.textContent = t.post ? 'AFTERMATH // 战败' : 'BOSS ENCOUNTER // 出场';
     if (dom.bossTalkPortrait) {
-      dom.bossTalkPortrait.classList.remove('boss-razor', 'boss-titan', 'boss-vector', 'boss-raven', 'boss-nyx', 'boss-vprime');
-      dom.bossTalkPortrait.classList.add(`boss-${line.char}`);
+      dom.bossTalkPortrait.classList.remove('boss-razor', 'boss-titan', 'boss-vector', 'boss-raven', 'boss-nyx', 'boss-vprime', 'boss-rex', 'boss-luna', 'boss-bruno');
+      dom.bossTalkPortrait.classList.add(`boss-${key}`);
     }
   }
 
-  function beginBossTalk(key) {
-    const data = BOSS_TALK[key];
-    if (!data || G.bossTalk) return;
-    const bosses = [G.boss, G.boss2].filter(b => b && !b.dead);
-    if (!bosses.length) return;
-    G.announce = null;
-    G.hitstop = 0;
-    const camX = G.camera.x;
-    for (const e of bosses) {
-      e.state = 'chase';
-      e.stateTime = 0;
-      e.attack = null;
-      e.attacking = false;
-      e.cooldown = 99;
-      e.pose = 'idle';
-      e.x = clamp(e.x, camX + 55, camX + W - 55);
-      e.facing = e.x >= (G.player ? G.player.x : camX + W / 2) ? -1 : 1;
+  function beginBossTalk(key, options) {
+    const post = !!(options && options.post);
+    const data = post ? POST_BOSS_TALK[key] : BOSS_TALK[key];
+    if (!data || G.bossTalk) return false;
+    if (!post) {
+      const bosses = [G.boss, G.boss2].filter(b => b && !b.dead);
+      if (!bosses.length) return false;
+      G.announce = null;
+      const camX = G.camera.x;
+      for (const e of bosses) {
+        e.state = 'chase';
+        e.stateTime = 0;
+        e.attack = null;
+        e.attacking = false;
+        e.cooldown = 99;
+        e.pose = 'idle';
+        e.x = clamp(e.x, camX + 55, camX + W - 55);
+        e.facing = e.x >= (G.player ? G.player.x : camX + W / 2) ? -1 : 1;
+      }
     }
+    G.hitstop = 0;
     if (G.player) {
       G.player.attack = null;
       G.player.vx = 0;
       G.player.vy = 0;
     }
-    G.bossTalk = { data, index: 0, timer: 0, total: data.lines.length };
+    G.bossTalk = { data, index: 0, timer: 0, total: data.lines.length, post };
     showBossTalkLine();
     show(dom.bossTalk, true);
     if (document.body.classList.contains('touch-mode')) dom.touch.classList.add('is-hidden');
     Sound.menu();
+    return true;
   }
 
   function advanceBossTalk() {
@@ -854,9 +935,16 @@
 
   function endBossTalk(skipped) {
     if (!G.bossTalk) return;
+    const post = !!G.bossTalk.post;
     G.bossTalk = null;
     show(dom.bossTalk, false);
     if (document.body.classList.contains('touch-mode')) dom.touch.classList.remove('is-hidden');
+    if (post) {
+      G.stageClearTimer = 1.2;
+      G.hitstop = 0;
+      if (skipped) Sound.menu();
+      return;
+    }
     const bosses = [G.boss, G.boss2].filter(b => b && !b.dead);
     for (const e of bosses) {
       e.cooldown = Math.min(e.cooldown, 1);
@@ -884,7 +972,8 @@
       advanceBossTalk();
       return;
     }
-    if (t.timer > 4.2) advanceBossTalk();
+    const hold = t.data.lines[t.index] && t.data.lines[t.index].hold || 4.2;
+    if (t.timer > hold) advanceBossTalk();
   }
 
   function setMode(mode) {
@@ -980,7 +1069,25 @@
       panel.classList.toggle('is-active', panel.dataset.panel === tab);
     });
     if (dom.settingsBody) dom.settingsBody.scrollTop = 0;
+    syncMoveDemoGifs(tab);
     Sound.menu();
+  }
+
+  function syncMoveDemoGifs(tab) {
+    const placeholder = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+    document.querySelectorAll('.move-demo-gif').forEach(img => {
+      const gif = img.dataset.gif;
+      if (!gif) return;
+      if (tab === 'controls') {
+        if (img.dataset.playing !== '1') {
+          img.src = gif;
+          img.dataset.playing = '1';
+        }
+      } else if (img.dataset.playing === '1') {
+        img.src = placeholder;
+        img.dataset.playing = '0';
+      }
+    });
   }
 
   function openSettings(tab) {
@@ -1266,11 +1373,16 @@
     show(dom.bossUI, false);
     if (wasBoss) {
       G.finishing = true;
-      G.stageClearTimer = 2.6;
+      G.stageClearTimer = 0;
       announce('K.O.', 'AREA CLEAR // 区域已清空', '#ffd23f', 2.4);
       Sound.stopMusic();
       Sound.bossDown();
       G.score += 1500;
+      const postKey = STAGE_BOSS_KEYS[G.stageIndex];
+      const canTalk = G.player && G.player.state !== 'dead' && POST_BOSS_TALK[postKey];
+      if (!canTalk || !beginBossTalk(postKey, { post: true })) {
+        G.stageClearTimer = 1.0;
+      }
     } else {
       announce('CLEAR', 'GO →', '#29e7ff', 1.15);
       G.score += 250;
@@ -4977,7 +5089,7 @@
   }
 
   // Read-only debug handle (useful for testing; harmless in play).
-  window.__NEON_RAGE__ = { G, Input, STAGES, PLAYER_STATS, ENEMY_DATA, startStage, spawnEnemy, startRun, hurtPlayer, hitEnemy, killEnemy, clearBattle, showResult, showEnding, damageCrate };
+  window.__NEON_RAGE__ = { G, Input, STAGES, PLAYER_STATS, ENEMY_DATA, BOSS_TALK, POST_BOSS_TALK, startStage, spawnEnemy, startRun, hurtPlayer, hitEnemy, killEnemy, clearBattle, showResult, showEnding, beginBossTalk, advanceBossTalk, endBossTalk, damageCrate };
 
   boot();
 })();

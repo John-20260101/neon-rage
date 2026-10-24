@@ -91,7 +91,7 @@
           <div id="boss-talk-portrait" class="boss-portrait" aria-hidden="true"></div>
           <div class="boss-talk-body">
             <div class="boss-talk-top">
-              <span class="boss-talk-kicker">BOSS ENCOUNTER // 出场</span>
+              <span id="boss-talk-kicker" class="boss-talk-kicker">BOSS ENCOUNTER // 出场</span>
               <b id="boss-talk-name">RAZOR</b>
               <em id="boss-talk-role">码头行刑人</em>
             </div>
@@ -125,7 +125,7 @@
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
-            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.10</span></div>
+            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.11</span></div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <div class="cover-actions">
               <button id="btn-start" class="arcade-btn" type="button">
@@ -267,6 +267,32 @@
                   <div><kbd>L</kbd><span>必杀（消耗体力）</span></div>
                   <div><kbd>E</kbd><span>抓取 / 投掷 / 拾取道具</span></div>
                   <div><kbd>ESC</kbd><span>暂停</span></div>
+                </div>
+
+                <div class="settings-demo">
+                  <div class="settings-demo-title"><b>MOVE DEMO</b><span>招式演示</span></div>
+                  <div class="move-demo-grid">
+                    <figure class="move-demo move-demo--rush">
+                      <div class="move-demo-media">
+                        <img class="move-demo-gif" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-gif="images/demos/rex-rush.gif" alt="REX 崩拳突进操作演示：前前加 J" width="480" height="270" decoding="async" />
+                        <span class="move-demo-badge">冲刺技</span>
+                      </div>
+                      <figcaption>
+                        <div><b>REX</b><span>崩拳突进</span></div>
+                        <kbd>→ → + J</kbd>
+                      </figcaption>
+                    </figure>
+                    <figure class="move-demo move-demo--special">
+                      <div class="move-demo-media">
+                        <img class="move-demo-gif" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-gif="images/demos/luna-lightning-line.gif" alt="LUNA 雷光贯线操作演示：按 L" width="480" height="270" decoding="async" />
+                        <span class="move-demo-badge">必杀</span>
+                      </div>
+                      <figcaption>
+                        <div><b>LUNA</b><span>雷光贯线</span></div>
+                        <kbd>L</kbd>
+                      </figcaption>
+                    </figure>
+                  </div>
                 </div>
               </section>
               <section class="settings-panel" data-panel="rank">
