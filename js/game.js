@@ -3700,6 +3700,8 @@
     const ending = CHAR_ENDINGS[key];
     setMode('ending');
     clearOverlays();
+    dom.ending.classList.remove('rex', 'luna', 'bruno');
+    dom.ending.classList.add(key);
     show(dom.ending, true);
     show(dom.hud, false);
     show(dom.bossUI, false);

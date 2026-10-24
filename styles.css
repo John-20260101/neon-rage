@@ -587,12 +587,16 @@ kbd {
 .result-card .modal-buttons { justify-content: center; }
 .result-stats.mini { grid-template-columns: 1fr 1fr; width: 72%; margin: 1.2cqw auto; }
 .ending-screen {
+  --ending-bg: var(--keyart-title);
   z-index: 26;
   background:
     linear-gradient(90deg, rgba(4,2,10,.92), rgba(4,2,10,.62) 48%, rgba(4,2,10,.9)),
     linear-gradient(0deg, rgba(4,2,10,.72), transparent 45%),
-    var(--keyart-title) center / cover no-repeat;
+    var(--ending-bg) center / cover no-repeat;
 }
+.ending-screen.rex { --ending-bg: url("images/endings/rex.webp"); }
+.ending-screen.luna { --ending-bg: url("images/endings/luna.webp"); }
+.ending-screen.bruno { --ending-bg: url("images/endings/bruno.webp"); }
 .ending-card {
   width: min(68%, 860px); max-height: 86%;
   display: flex; flex-direction: column;
