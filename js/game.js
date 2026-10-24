@@ -73,6 +73,15 @@
     resultCombo: $('result-combo'),
     resultHits: $('result-hits'),
     btnNext: $('btn-next'),
+    ending: $('ending-screen'),
+    endingPortrait: $('ending-portrait'),
+    endingKicker: $('ending-kicker'),
+    endingTitle: $('ending-title'),
+    endingRole: $('ending-role'),
+    endingCopy: $('ending-copy'),
+    endingScore: $('ending-score'),
+    btnEndingReplay: $('btn-ending-replay'),
+    btnEndingTitle: $('btn-ending-title'),
     gameover: $('gameover-screen'),
     gameoverScore: $('gameover-score'),
     gameoverStage: $('gameover-stage'),
@@ -266,6 +275,39 @@
       lines: [
         { char: 'vprime', speaker: 'V-PRIME', role: '终焉容器 · 第一形态', text: '肉体只是容器。我给你准备了三具身体——第一具，用来数你身上的弹孔。' },
         { char: 'vprime', speaker: 'V-PRIME', role: '终焉容器 · 第一形态', text: '城市需要一个神。而我，正好有三张脸。' }
+      ]
+    }
+  };
+
+  const CHAR_ENDINGS = {
+    rex: {
+      kicker: 'EPILOGUE // REX',
+      title: '黎明之前',
+      role: 'REX // 雷克斯 · 街头拳王',
+      paragraphs: [
+        'V 塔倒塌后的第一个清晨，REX 没有回警局。他坐在第九码头的集装箱上，看雨水把最后一层霓虹冲进下水道。',
+        '三天后，旧城区多了一间没有招牌的拳馆。门口只写着一句话：想学打人，先学站直。来的人有外卖员、夜班保安，也有被收保护费的小店主。',
+        '有人问他什么时候把警徽拿回来。REX 把烟按灭在栏杆上：城市不需要英雄。城市只需要明天早上，还有人愿意开门。'
+      ]
+    },
+    luna: {
+      kicker: 'EPILOGUE // LUNA',
+      title: '霓虹之上',
+      role: 'LUNA // 露娜 · 夜行舞者',
+      paragraphs: [
+        'V 先生帝国崩塌那晚，LUNA 没有参加庆功。她把名字留在霓虹花园的碎玻璃上，转身走进第一班地铁。',
+        '几个月后，海边小城开了一间只在午夜营业的舞厅。老板从不露脸，舞池上方却总有一道青色闪电。',
+        '偶尔有人认出她，问她为什么离开。LUNA 踩着节拍，头也不回：我不是离开。我只是把舞台，换到了没有人能买下它的地方。'
+      ]
+    },
+    bruno: {
+      kicker: 'EPILOGUE // BRUNO',
+      title: '码头的新规矩',
+      role: 'BRUNO // 布鲁诺 · 码头重锤',
+      paragraphs: [
+        'V 塔的废墟清完后，码头空了很久。直到 BRUNO 拖着那副旧拳套回来，把「第九码头」的牌子重新钉上。',
+        '新规矩很简单：货可以进，枪不能进；工人可以加班，打手不能收钱。有人不服，BRUNO 就带他去空仓库里谈五分钟。',
+        '后来，孩子们在码头边踢球，老工人在棚下喝茶。BRUNO 坐在吊机上啃苹果，看着远处的城市：我不懂什么新世界。但这个码头，从今天起归活着的人。'
       ]
     }
   };
@@ -628,7 +670,7 @@
     if (dom.titleBest) dom.titleBest.textContent = `BEST ${pad(Math.max(G.score, getBest()), 6)}`;
   }
   function clearOverlays() {
-    [dom.title, dom.settings, dom.difficulty, dom.select, dom.stageCard, dom.pause, dom.result, dom.gameover, dom.bossTalk].forEach(el => show(el, false));
+    [dom.title, dom.settings, dom.difficulty, dom.select, dom.stageCard, dom.pause, dom.result, dom.ending, dom.gameover, dom.bossTalk].forEach(el => show(el, false));
   }
   function blurFocus() {
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
@@ -3560,6 +3602,10 @@
       case 'result':
         if (Input.pressed('confirm') || Input.pressed('attack')) nextFromResult();
         break;
+      case 'ending':
+        if (Input.pressed('confirm') || Input.pressed('attack')) replayFromEnding();
+        if (Input.pressed('pause')) returnToTitleFromEnding();
+        break;
       case 'gameover':
         if (Input.pressed('confirm') || Input.pressed('attack')) retryStage();
         break;
@@ -3610,8 +3656,8 @@
       dom.resultGrade.textContent = grade;
       dom.resultTitle.textContent = '霓虹之城，天亮了';
       dom.resultCopy.textContent = '机枪、铁拳、天翔——三具身体都倒在核心。V 先生的帝国在晨曦中崩塌，城市终于安静下来。';
-      dom.btnNext.querySelector('.btn-main').textContent = '再来一局';
-      dom.btnNext.querySelector('.btn-sub').textContent = 'SELECT FIGHTER';
+      dom.btnNext.querySelector('.btn-main').textContent = '查看结局';
+      dom.btnNext.querySelector('.btn-sub').textContent = 'EPILOGUE';
       G.score += 6000;
       Sound.victory();
     } else {
@@ -3642,13 +3688,48 @@
     if (G.mode !== 'result') return;
     Sound.stopMusic();
     if (G.finalVictory) {
-      G.finalVictory = false;
-      G.score = 0;
-      G.lives = (G.difficulty || DIFFICULTIES.normal).lives;
-      openDifficulty();
+      showEnding();
       return;
     }
     startStage(G.stageIndex + 1);
+  }
+
+  function showEnding() {
+    if (!G.finalVictory) return;
+    const key = G.charKey && CHAR_ENDINGS[G.charKey] ? G.charKey : 'rex';
+    const ending = CHAR_ENDINGS[key];
+    setMode('ending');
+    clearOverlays();
+    show(dom.ending, true);
+    show(dom.hud, false);
+    show(dom.bossUI, false);
+    dom.endingKicker.textContent = ending.kicker;
+    dom.endingTitle.textContent = ending.title;
+    dom.endingRole.textContent = ending.role;
+    dom.endingScore.textContent = `FINAL SCORE ${pad(G.score, 6)}`;
+    dom.endingPortrait.classList.remove('rex', 'luna', 'bruno');
+    dom.endingPortrait.classList.add(key);
+    dom.endingCopy.replaceChildren(...ending.paragraphs.map(text => {
+      const p = document.createElement('p');
+      p.textContent = text;
+      return p;
+    }));
+    Sound.stopMusic();
+    blurFocus();
+  }
+
+  function replayFromEnding() {
+    if (G.mode !== 'ending') return;
+    G.finalVictory = false;
+    G.score = 0;
+    G.lives = (G.difficulty || DIFFICULTIES.normal).lives;
+    openDifficulty();
+  }
+
+  function returnToTitleFromEnding() {
+    if (G.mode !== 'ending') return;
+    G.finalVictory = false;
+    openTitle(true);
   }
 
   function pauseGame() {
@@ -4787,6 +4868,8 @@
     dom.btnResultTitle.addEventListener('click', quitToTitle);
     dom.btnRetry.addEventListener('click', () => { show(dom.gameover, false); retryStage(); });
     dom.btnGameoverTitle.addEventListener('click', quitToTitle);
+    dom.btnEndingReplay.addEventListener('click', replayFromEnding);
+    dom.btnEndingTitle.addEventListener('click', returnToTitleFromEnding);
     dom.btnSound.addEventListener('click', toggleMute);
     dom.btnFullscreen.addEventListener('click', () => {
       try {
@@ -4863,6 +4946,7 @@
     show(dom.hud, false);
     show(dom.bossUI, false);
     show(dom.result, false);
+    show(dom.ending, false);
     show(dom.gameover, false);
     show(dom.stageCard, false);
     updateCharCards();
@@ -4891,7 +4975,7 @@
   }
 
   // Read-only debug handle (useful for testing; harmless in play).
-  window.__NEON_RAGE__ = { G, Input, STAGES, PLAYER_STATS, ENEMY_DATA, startStage, spawnEnemy, startRun, hurtPlayer, hitEnemy, killEnemy, clearBattle, showResult, damageCrate };
+  window.__NEON_RAGE__ = { G, Input, STAGES, PLAYER_STATS, ENEMY_DATA, startStage, spawnEnemy, startRun, hurtPlayer, hitEnemy, killEnemy, clearBattle, showResult, showEnding, damageCrate };
 
   boot();
 })();
