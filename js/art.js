@@ -2054,7 +2054,7 @@
   function drawItem(g, x, y, type, t) {
     const bob = Math.sin(t * 5 + x * 0.2) * 1.4;
     const yy = y + bob;
-    const heal = type === 'apple' || type === 'burger' || type === 'soda' || type === 'medkit';
+    const heal = type === 'apple' || type === 'burger' || type === 'milk' || type === 'steak';
     const money = type === 'cash' || type === 'gold' || type === 'moneybag';
     const upgradeColor = type === 'boostAttack' ? '255,91,107' : type === 'boostDefense' ? '87,227,137' : type === 'boostSpeed' ? '41,231,255' : null;
     const col = upgradeColor ? `rgba(${upgradeColor},` : type === 'moneybag' ? 'rgba(196,137,74,' : heal ? 'rgba(87,227,137,' : money ? 'rgba(255,210,63,' : 'rgba(41,231,255,';
@@ -2077,18 +2077,24 @@
       px(g, x - 6, yy - 3, 12, 3, '#e0aa55');
       px(g, x - 4, yy - 11, 7, 1, '#ffd27c');
       px(g, x - 4, yy - 5, 8, 1, '#b5582f');
-    } else if (type === 'soda') {
-      px(g, x - 4, yy - 12, 8, 13, INK);
-      px(g, x - 3, yy - 11, 6, 11, '#31b7c8');
-      px(g, x - 2, yy - 10, 2, 3, '#c7fbff');
-      px(g, x - 3, yy - 4, 6, 3, '#ff5b6d');
-      px(g, x + 1, yy - 15, 1, 4, '#ffd23f');
-    } else if (type === 'medkit') {
-      px(g, x - 7, yy - 11, 14, 11, INK);
-      px(g, x - 6, yy - 10, 12, 9, '#e8e2d4');
-      px(g, x - 1, yy - 9, 2, 7, '#e23c52');
-      px(g, x - 4, yy - 7, 8, 2, '#e23c52');
-      px(g, x - 5, yy - 10, 3, 1, '#ffffff');
+    } else if (type === 'milk') {
+      // milk carton
+      px(g, x - 5, yy - 12, 10, 13, INK);
+      px(g, x - 4, yy - 11, 8, 11, '#f3ead8');
+      px(g, x - 4, yy - 11, 8, 3, '#62c7e8');
+      px(g, x - 4, yy - 7, 2, 7, '#d8f5ff');
+      px(g, x + 1, yy - 7, 2, 4, '#2c5c92');
+      px(g, x - 2, yy - 13, 4, 2, '#62c7e8');
+      px(g, x + 2, yy - 14, 1, 3, '#f3ead8');
+    } else if (type === 'steak') {
+      // T-bone steak
+      px(g, x - 8, yy - 10, 16, 11, INK);
+      px(g, x - 7, yy - 9, 13, 8, '#8e3f31');
+      px(g, x - 6, yy - 8, 11, 6, '#c85a44');
+      px(g, x - 5, yy - 7, 7, 3, '#e98968');
+      px(g, x + 3, yy - 10, 6, 3, '#f1e3cd');
+      px(g, x + 6, yy - 11, 2, 2, '#fff8e8');
+      px(g, x - 4, yy - 4, 7, 1, '#5b2a22');
     } else if (type === 'cash') {
       px(g, x - 7, yy - 8, 15, 9, INK);
       px(g, x - 6, yy - 8, 13, 7, '#4f9d58');

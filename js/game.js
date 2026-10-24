@@ -132,7 +132,7 @@
       }
     },
     bruno: {
-      name: 'BRUNO', cn: '布鲁诺', hp: 138, speed: 64, runSpeed: 132, power: 1.28, jump: 160, specialCost: 9,
+      name: 'BRUNO', cn: '布鲁诺', hp: 138, speed: 64, runSpeed: 132, power: 1.28, jump: 160, specialCost: 12,
       specialKind: 'groundSlam', specialName: '裂地重砸', specialPose: 'slam',
       combo: [
         { startup: .085, active: .09, recovery: .16, damage: 6, range: 32, kb: 38, pose: 'punch1' },
@@ -370,7 +370,10 @@
         { type: 'crate', x: 1085, y: 244 }, { type: 'barrel', x: 1490, y: 220 },
         { type: 'crate', x: 1670, y: 244 }, { type: 'crate', x: 1780, y: 208 },
         { type: 'barrel', x: 690, y: 238, upgrade: 'speed', upgradeId: 's1-speed' },
-        { type: 'barrel', x: 1950, y: 226, upgrade: 'attack', upgradeId: 's1-attack' }
+        { type: 'barrel', x: 1950, y: 226, upgrade: 'attack', upgradeId: 's1-attack' },
+        { type: 'barrel', x: 320, y: 238, upgrade: 'defense', upgradeId: 's1-defense' },
+        { type: 'barrel', x: 1210, y: 226, upgrade: 'speed', upgradeId: 's1-speed-2' },
+        { type: 'barrel', x: 2160, y: 238, upgrade: 'attack', upgradeId: 's1-attack-2' }
       ],
       pickups: [
         { type: 'burger', x: 640, y: 242 }, { type: 'knife', x: 1130, y: 238 },
@@ -393,10 +396,13 @@
         { type: 'barrel', x: 1330, y: 218 }, { type: 'crate', x: 1700, y: 238 },
         { type: 'crate', x: 1760, y: 208 },
         { type: 'barrel', x: 690, y: 238, upgrade: 'defense', upgradeId: 's2-defense' },
-        { type: 'barrel', x: 1900, y: 226, upgrade: 'speed', upgradeId: 's2-speed' }
+        { type: 'barrel', x: 1900, y: 226, upgrade: 'speed', upgradeId: 's2-speed' },
+        { type: 'barrel', x: 320, y: 238, upgrade: 'attack', upgradeId: 's2-attack' },
+        { type: 'barrel', x: 1210, y: 226, upgrade: 'defense', upgradeId: 's2-defense-2' },
+        { type: 'barrel', x: 2160, y: 238, upgrade: 'speed', upgradeId: 's2-speed-2' }
       ],
       pickups: [
-        { type: 'soda', x: 540, y: 240 }, { type: 'pistol', x: 1250, y: 236 },
+        { type: 'milk', x: 540, y: 240 }, { type: 'pistol', x: 1250, y: 236 },
         { type: 'gold', x: 1600, y: 244 }, { type: 'burger', x: 1850, y: 242 }
       ]
     },
@@ -415,10 +421,14 @@
         { type: 'crate', x: 500, y: 236 }, { type: 'barrel', x: 1000, y: 218 },
         { type: 'crate', x: 1450, y: 240 }, { type: 'crate', x: 1760, y: 208 },
         { type: 'barrel', x: 760, y: 238, upgrade: 'attack', upgradeId: 's3-attack' },
-        { type: 'barrel', x: 1620, y: 226, upgrade: 'defense', upgradeId: 's3-defense' }
+        { type: 'barrel', x: 1620, y: 226, upgrade: 'defense', upgradeId: 's3-defense' },
+        { type: 'barrel', x: 300, y: 238, upgrade: 'speed', upgradeId: 's3-speed' },
+        { type: 'barrel', x: 1100, y: 226, upgrade: 'attack', upgradeId: 's3-attack-2' },
+        { type: 'barrel', x: 1400, y: 238, upgrade: 'defense', upgradeId: 's3-defense-2' },
+        { type: 'barrel', x: 2110, y: 226, upgrade: 'speed', upgradeId: 's3-speed-2' }
       ],
       pickups: [
-        { type: 'medkit', x: 560, y: 240 }, { type: 'pistol', x: 1190, y: 238 },
+        { type: 'steak', x: 560, y: 240 }, { type: 'pistol', x: 1190, y: 238 },
         { type: 'gold', x: 1690, y: 242 }, { type: 'knife', x: 1810, y: 242 }
       ]
     },
@@ -438,10 +448,14 @@
         { type: 'crate', x: 1500, y: 220 }, { type: 'barrel', x: 1960, y: 240 },
         { type: 'crate', x: 2320, y: 208 },
         { type: 'barrel', x: 700, y: 238, upgrade: 'speed', upgradeId: 's4-speed' },
-        { type: 'barrel', x: 1860, y: 226, upgrade: 'attack', upgradeId: 's4-attack' }
+        { type: 'barrel', x: 1860, y: 226, upgrade: 'attack', upgradeId: 's4-attack' },
+        { type: 'barrel', x: 300, y: 238, upgrade: 'defense', upgradeId: 's4-defense' },
+        { type: 'barrel', x: 1100, y: 226, upgrade: 'speed', upgradeId: 's4-speed-2' },
+        { type: 'barrel', x: 1400, y: 238, upgrade: 'attack', upgradeId: 's4-attack-2' },
+        { type: 'barrel', x: 2210, y: 226, upgrade: 'defense', upgradeId: 's4-defense-2' }
       ],
       pickups: [
-        { type: 'medkit', x: 620, y: 240 }, { type: 'pistol', x: 1280, y: 238 },
+        { type: 'steak', x: 620, y: 240 }, { type: 'pistol', x: 1280, y: 238 },
         { type: 'gold', x: 1760, y: 244 }, { type: 'burger', x: 2020, y: 242 }
       ]
     },
@@ -460,10 +474,14 @@
         { type: 'crate', x: 460, y: 236 }, { type: 'barrel', x: 900, y: 218 },
         { type: 'barrel', x: 1380, y: 240 }, { type: 'crate', x: 1800, y: 208 },
         { type: 'crate', x: 2080, y: 242 },
-        { type: 'barrel', x: 1820, y: 226, upgrade: 'defense', upgradeId: 's5-defense' }
+        { type: 'barrel', x: 1820, y: 226, upgrade: 'defense', upgradeId: 's5-defense' },
+        { type: 'barrel', x: 300, y: 238, upgrade: 'speed', upgradeId: 's5-speed' },
+        { type: 'barrel', x: 1050, y: 226, upgrade: 'attack', upgradeId: 's5-attack' },
+        { type: 'barrel', x: 1460, y: 238, upgrade: 'defense', upgradeId: 's5-defense-2' },
+        { type: 'barrel', x: 2200, y: 226, upgrade: 'attack', upgradeId: 's5-attack-2' }
       ],
       pickups: [
-        { type: 'medkit', x: 560, y: 240 }, { type: 'pistol', x: 1120, y: 238 },
+        { type: 'steak', x: 560, y: 240 }, { type: 'pistol', x: 1120, y: 238 },
         { type: 'gold', x: 1580, y: 244 }, { type: 'burger', x: 1860, y: 240 },
         { type: 'knife', x: 2150, y: 242 }
       ]
@@ -1206,7 +1224,7 @@
       announce('CLEAR', 'GO →', '#29e7ff', 1.15);
       G.score += 250;
       if (G.player && (G.player.hp / G.player.maxHp < .55 || Math.random() < .42)) {
-        const healType = G.player.hp / G.player.maxHp < .3 ? 'burger' : 'soda';
+        const healType = G.player.hp / G.player.maxHp < .3 ? 'burger' : 'milk';
         addItem(healType, G.camera.x + W * .48, 238);
       }
       toast('前进。下一波在等你。', 1.4);
@@ -2104,14 +2122,14 @@
 
   function respawnPlayer() {
     const p = G.player;
-    p.hp = p.maxHp;
+    p.hp = Math.round(p.maxHp * .6);
     p.state = 'idle';
     p.stateTime = 0;
     p.deathTimer = 0;
     p.z = 0;
     p.vx = 0;
     p.vz = 0;
-    p.invuln = 2.2;
+    p.invuln = 1.5;
     p.x = clamp(G.camera.x + 54, 20, G.stage.worldW - 20);
     p.y = 232;
     p.weapon = null;
@@ -2147,7 +2165,7 @@
     }
     const dmg = Math.max(1, Math.round(amount * ((G.difficulty || DIFFICULTIES.normal).damageTaken) * defenseDamageMul()));
     p.hp = Math.max(0, p.hp - dmg);
-    p.invuln = comboHit ? (knockdown ? .42 : .1) : .88;
+    p.invuln = comboHit ? (knockdown ? .42 : .1) : .7;
     p.hitFlash = .16;
     p.vy = 0;
     G.stats.hitsTaken++;
@@ -3037,10 +3055,10 @@
   // ————————————————————————————————————————————————
   // ITEMS / CRATES / PROJECTILES
   // ————————————————————————————————————————————————
-  const HEAL_ITEMS = { apple: 24, soda: 18, burger: 40, medkit: 60 };
+  const HEAL_ITEMS = { apple: 24, milk: 18, burger: 40, steak: 60 };
   const SCORE_ITEMS = { cash: 500, moneybag: 1200, gold: 3000 };
   const ITEM_NAMES = {
-    apple: '苹果', soda: '汽水', burger: '汉堡', medkit: '医疗包',
+    apple: '苹果', milk: '牛奶', burger: '汉堡', steak: '牛排',
     cash: '现金', moneybag: '钱袋', gold: '金条',
     pipe: '钢管', knife: '小刀', pistol: '手枪',
     boostSpeed: '疾风芯片', boostAttack: '狂暴芯片', boostDefense: '铁壁芯片'
@@ -3056,13 +3074,13 @@
     const p = G.player;
     const lowHp = p && p.hp / p.maxHp < .45;
     if (lowHp && Math.random() < .55) {
-      return choose(['apple', 'burger', 'medkit', 'soda']);
+      return choose(['apple', 'burger', 'steak', 'milk']);
     }
     const roll = Math.random() * 100;
     if (roll < 14) return 'apple';
     if (roll < 22) return 'burger';
-    if (roll < 30) return 'soda';
-    if (roll < 34) return 'medkit';
+    if (roll < 30) return 'milk';
+    if (roll < 34) return 'steak';
     if (roll < 54) return 'cash';
     if (roll < 62) return 'moneybag';
     if (roll < 65) return 'gold';
@@ -3087,11 +3105,9 @@
         const def = UPGRADE_STATS[c.upgrade];
         if (def) {
           if (c.upgradeId) G.collectedUpgrades.add(c.upgradeId);
-          for (let i = 0; i < def.perLevel; i++) {
-            addItem(def.token, c.x + rand(-8, 8), c.y + rand(-3, 4));
-          }
+          addItem(def.token, c.x + rand(-2, 2), c.y + rand(-2, 2));
           spawnBurst(c.x, c.y, 26, def.color, 9, 55);
-          toast(`${def.name}芯片 ×${def.perLevel}。靠近自动拾取。`, 1.7);
+          toast(`${def.name}芯片 ×1。靠近自动拾取。`, 1.7);
         }
       } else {
         const type = rollCrateLoot();
@@ -3217,7 +3233,7 @@
       return;
     }
     if (e.type === 'siren' && Math.random() < .2) {
-      addItem('soda', e.x, e.y);
+      addItem('milk', e.x, e.y);
       return;
     }
     if (e.type === 'wrecker' && Math.random() < .24) {
@@ -3236,7 +3252,7 @@
       addItem(Math.random() < .65 ? 'cash' : 'moneybag', e.x, e.y);
       return;
     }
-    if (Math.random() < .11) addItem(Math.random() < .5 ? 'soda' : 'apple', e.x, e.y);
+    if (Math.random() < .11) addItem(Math.random() < .5 ? 'milk' : 'apple', e.x, e.y);
   }
 
   function updateProjectiles(dt) {

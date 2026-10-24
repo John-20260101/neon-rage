@@ -303,9 +303,22 @@ button:focus-visible, [tabindex]:focus-visible {
 }
 .logo-cn {
   margin-top: 1.2cqw;
+  display: flex; align-items: center; gap: .75cqw;
   font-family: var(--cn); font-weight: 900;
   font-size: 1.55cqw; letter-spacing: .62em; color: #f4ecdc;
   text-shadow: 0 0 18px rgba(255,46,99,.55);
+}
+.logo-cn .cover-version {
+  display: inline-flex; align-items: center;
+  padding: .16cqw .5cqw .18cqw;
+  border: 1px solid rgba(41,231,255,.6);
+  background: rgba(41,231,255,.1);
+  color: var(--cyan);
+  font-family: var(--mono); font-size: max(8px, .58cqw); font-weight: 700;
+  letter-spacing: .08em; line-height: 1; white-space: nowrap;
+  text-shadow: none;
+  transform: skew(-7deg);
+  box-shadow: 0 0 .8cqw rgba(41,231,255,.22);
 }
 .title-copy {
   margin: 1.25cqw 0 1.5cqw;
