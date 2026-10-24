@@ -154,18 +154,18 @@
   const DIFFICULTIES = {
     easy: {
       key: 'easy', name: 'EASY', cn: '简单', tag: '街头练习', accent: '#57e389',
-      enemyHp: .8, damageTaken: .7, lives: 4,
-      desc: '敌人更脆，拳脚更轻。四条命，足够把整条街走完。'
+      enemyHp: .8, damageTaken: .7, lives: 3,
+      desc: '敌人更脆，拳脚更轻。三条命，足够把整条街走完。'
     },
     normal: {
       key: 'normal', name: 'NORMAL', cn: '普通', tag: '标准街头', accent: '#ffd23f',
-      enemyHp: 1, damageTaken: 1, lives: 3,
-      desc: '原汁原味的清版节奏。三条命，一次完整的霓虹之夜。'
+      enemyHp: 1, damageTaken: 1, lives: 2,
+      desc: '原汁原味的清版节奏。两条命，一次完整的霓虹之夜。'
     },
     hard: {
       key: 'hard', name: 'HARD', cn: '困难', tag: '一命通关', accent: '#ff5b6b',
-      enemyHp: 1.2, damageTaken: 1.4, lives: 2,
-      desc: 'Boss 更硬，拳头更疼，只有两条命。给真正想拆掉 V 塔的人。'
+      enemyHp: 1.2, damageTaken: 1.4, lives: 1,
+      desc: 'Boss 更硬，拳头更疼，只有一条命。给真正想拆掉 V 塔的人。'
     }
   };
 
@@ -508,7 +508,7 @@
     specialFx: [],
     camera: { x: 0, shake: 0 },
     score: 0,
-    lives: 3,
+    lives: 2,
     combo: 0,
     comboTimer: 0,
     maxCombo: 0,
@@ -927,7 +927,7 @@
   }
 
   function setSettingsTab(tab) {
-    if (!['audio', 'controls', 'guide', 'about'].includes(tab)) return;
+    if (!['audio', 'controls', 'rank', 'guide', 'about'].includes(tab)) return;
     G.settingsTab = tab;
     document.querySelectorAll('.settings-tab').forEach(btn => {
       const active = btn.dataset.tab === tab;

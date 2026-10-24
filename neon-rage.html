@@ -752,7 +752,7 @@ body.touch-mode .toast { bottom: 30%; }
 }
 .settings-head p { margin: 0; font-family: var(--cn); font-size: max(8px, .62cqw); color: #91849f; }
 .settings-head .ghost-btn { padding: .5cqw .8cqw; font-size: max(8px, .58cqw); white-space: nowrap; }
-.settings-tabs { display: flex; gap: .35cqw; margin-top: .75cqw; padding-bottom: .5cqw; border-bottom: 1px solid rgba(255,255,255,.1); flex: 0 0 auto; }
+.settings-tabs { display: flex; flex-wrap: wrap; gap: .35cqw; margin-top: .75cqw; padding-bottom: .5cqw; border-bottom: 1px solid rgba(255,255,255,.1); flex: 0 0 auto; }
 .settings-tab {
   border: 1px solid transparent; background: transparent;
   padding: .34cqw .72cqw; cursor: pointer;
@@ -773,6 +773,27 @@ body.touch-mode .toast { bottom: 30%; }
 .settings-panel-title { display: flex; align-items: baseline; gap: .6cqw; margin-bottom: .5cqw; }
 .settings-panel-title b { font-family: var(--mono); font-size: max(8px, .6cqw); letter-spacing: .18em; color: var(--cyan); }
 .settings-panel-title span { font-family: var(--cn); font-size: max(8px, .58cqw); color: #8f829d; }
+.rank-guide { display: grid; gap: .38cqw; margin: .2cqw 0 .65cqw; }
+.rank-row {
+  display: flex; align-items: flex-start; gap: .7cqw;
+  padding: .48cqw .65cqw;
+  border: 1px solid rgba(255,255,255,.11);
+  background: rgba(255,255,255,.025);
+}
+.rank-letter {
+  display: grid; place-items: center; flex: 0 0 auto;
+  width: 2.2cqw; height: 2.2cqw; min-width: 28px; min-height: 28px;
+  border: 1px solid currentColor;
+  font-family: var(--display); font-size: max(18px, 1.5cqw); line-height: 1;
+  background: rgba(255,255,255,.035);
+}
+.rank-letter--s { color: var(--yellow); background: rgba(255,210,63,.1); }
+.rank-letter--a { color: var(--cyan); background: rgba(41,231,255,.09); }
+.rank-letter--b { color: var(--pink); background: rgba(255,46,99,.09); }
+.rank-letter--c { color: #b8aabc; background: rgba(184,170,188,.06); }
+.rank-row > div { display: flex; flex-direction: column; gap: .14cqw; min-width: 0; }
+.rank-row b { font-family: var(--cn); font-size: max(10px, .7cqw); color: var(--paper); letter-spacing: .06em; }
+.rank-row span { font-family: var(--cn); font-size: max(9px, .62cqw); line-height: 1.55; color: #b9acc7; }
 .music-options { display: grid; gap: .4cqw; }
 .music-option {
   display: flex; align-items: center; gap: .65cqw; width: 100%;
@@ -1404,7 +1425,7 @@ body.touch-mode .toast { bottom: 30%; }
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
-            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.7</span></div>
+            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.8</span></div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <div class="cover-actions">
               <button id="btn-start" class="arcade-btn" type="button">
@@ -1456,9 +1477,9 @@ body.touch-mode .toast { bottom: 30%; }
               <div class="diff-stats">
                 <div><span>敌人 HP</span><b>80%</b></div>
                 <div><span>受到伤害</span><b>70%</b></div>
-                <div><span>初始生命</span><b>4</b></div>
+                <div><span>初始生命</span><b>3</b></div>
               </div>
-              <p class="diff-desc">敌人更脆，拳脚更轻。四条命，足够把整条街走完。</p>
+              <p class="diff-desc">敌人更脆，拳脚更轻。三条命，足够把整条街走完。</p>
             </button>
             <button class="difficulty-card" data-diff="normal" type="button" aria-pressed="false">
               <span class="diff-index">02</span>
@@ -1469,9 +1490,9 @@ body.touch-mode .toast { bottom: 30%; }
               <div class="diff-stats">
                 <div><span>敌人 HP</span><b>100%</b></div>
                 <div><span>受到伤害</span><b>100%</b></div>
-                <div><span>初始生命</span><b>3</b></div>
+                <div><span>初始生命</span><b>2</b></div>
               </div>
-              <p class="diff-desc">原汁原味的清版节奏。三条命，一次完整的霓虹之夜。</p>
+              <p class="diff-desc">原汁原味的清版节奏。两条命，一次完整的霓虹之夜。</p>
             </button>
             <button class="difficulty-card" data-diff="hard" type="button" aria-pressed="false">
               <span class="diff-index">03</span>
@@ -1481,9 +1502,9 @@ body.touch-mode .toast { bottom: 30%; }
               <div class="diff-stats">
                 <div><span>敌人 HP</span><b>120%</b></div>
                 <div><span>受到伤害</span><b>140%</b></div>
-                <div><span>初始生命</span><b>2</b></div>
+                <div><span>初始生命</span><b>1</b></div>
               </div>
-              <p class="diff-desc">Boss 更硬，拳头更疼，只有两条命。给真正想拆掉 V 塔的人。</p>
+              <p class="diff-desc">Boss 更硬，拳头更疼，只有一条命。给真正想拆掉 V 塔的人。</p>
             </button>
           </div>
           <div class="select-footer difficulty-footer">
@@ -1509,6 +1530,7 @@ body.touch-mode .toast { bottom: 30%; }
             <div class="settings-tabs" role="tablist" aria-label="设置分类">
               <button class="settings-tab is-active" data-tab="audio" type="button" role="tab" aria-selected="true">声音</button>
               <button class="settings-tab" data-tab="controls" type="button" role="tab" aria-selected="false">操作</button>
+              <button class="settings-tab" data-tab="rank" type="button" role="tab" aria-selected="false">评级</button>
               <button class="settings-tab" data-tab="guide" type="button" role="tab" aria-selected="false">生存守则</button>
               <button class="settings-tab" data-tab="about" type="button" role="tab" aria-selected="false">关于</button>
             </div>
@@ -1542,10 +1564,32 @@ body.touch-mode .toast { bottom: 30%; }
                   <div><kbd>→ → + J</kbd><span>冲刺技（火 / 电 / 尘）</span></div>
                   <div><kbd>J</kbd><span>连击 / 使用武器</span></div>
                   <div><kbd>K</kbd><span>跳跃 / 空中踢</span></div>
-                  <div><kbd>L</kbd><span>必杀（消耗生命）</span></div>
+                  <div><kbd>L</kbd><span>必杀（消耗体力）</span></div>
                   <div><kbd>E</kbd><span>抓取 / 投掷 / 拾取道具</span></div>
                   <div><kbd>ESC</kbd><span>暂停</span></div>
                 </div>
+              </section>
+              <section class="settings-panel" data-panel="rank">
+                <div class="settings-panel-title"><b>SCORE RANK</b><span>评级</span></div>
+                <div class="rank-guide">
+                  <div class="rank-row">
+                    <span class="rank-letter rank-letter--s">S</span>
+                    <div><b>霓虹传说</b><span>5–7 分。快速通关、极少受击，并打出高连击。</span></div>
+                  </div>
+                  <div class="rank-row">
+                    <span class="rank-letter rank-letter--a">A</span>
+                    <div><b>街区王牌</b><span>3–4 分。节奏稳定，只挨了少量拳脚。</span></div>
+                  </div>
+                  <div class="rank-row">
+                    <span class="rank-letter rank-letter--b">B</span>
+                    <div><b>合格清道夫</b><span>2 分。完成了清场，但还有明显提升空间。</span></div>
+                  </div>
+                  <div class="rank-row">
+                    <span class="rank-letter rank-letter--c">C</span>
+                    <div><b>惨胜</b><span>0–1 分。付出了不少代价，先保住性命再谈漂亮。</span></div>
+                  </div>
+                </div>
+                <p class="settings-note">评级分：通关时间 &lt;2:10 +2、&lt;3:10 +1；受击 ≤1 +3、≤3 +2、≤6 +1；最高连击 ≥20 +2、≥12 +1。S ≥5，A ≥3，B = 2，C ≤1。</p>
               </section>
               <section class="settings-panel" data-panel="guide">
                 <div class="settings-panel-title"><b>STREET WISDOM</b><span>生存守则</span></div>
@@ -1554,7 +1598,7 @@ body.touch-mode .toast { bottom: 30%; }
                   <li><b>双击前方向并按住可以跑动。</b>跑动中按 <kbd>J</kbd> 直接放冲刺技：REX 带火焰，LUNA 带闪电，BRUNO 带烟尘。</li>
                   <li><b>敌人头顶有血条。</b>血条变黄、闪红时说明快倒了，优先补刀；Boss 的血量看屏幕顶部。</li>
                   <li><b>抓取后按 J 膝击，按 K 投掷。</b>把打手砸向同伴，能连带击倒。</li>
-                  <li><b>必杀会扣自己的血。</b>REX「烈焰升龙」范围最大，LUNA「雷光贯线」贯穿前方一条线，BRUNO「裂地重砸」震开周身；被围住时再用。</li>
+                  <li><b>必杀会消耗体力。</b>REX「烈焰升龙」范围最大，LUNA「雷光贯线」贯穿前方一条线，BRUNO「裂地重砸」震开周身；被围住时再用。</li>
                   <li><b>木箱和普通油桶能打碎。</b>苹果、牛奶、汉堡和牛排回血；钢管、小刀、手枪都能上手。</li>
                   <li><b>发光的强化油桶</b>会掉出 1 枚属性芯片。全场共 27 个强化油桶；速、攻、防各 3 级，每级需要吃 3 枚。</li>
                   <li><b>手枪只有 6 发。</b>按 <kbd>J</kbd> 射击，子弹可以打断敌人；打空后自动丢掉。</li>
@@ -1662,7 +1706,7 @@ body.touch-mode .toast { bottom: 30%; }
               <div><kbd>WASD</kbd> / <kbd>方向键</kbd><span>移动</span></div>
               <div><kbd>J</kbd><span>连击</span></div>
               <div><kbd>K</kbd><span>跳跃</span></div>
-              <div><kbd>L</kbd><span>必杀（耗血）</span></div>
+              <div><kbd>L</kbd><span>必杀（耗体力）</span></div>
               <div><kbd>E</kbd><span>抓取 / 投掷 / 拾取道具</span></div>
               <div><kbd>→ →</kbd><span>跑动（第二下按住）</span></div>
               <div><kbd>→ → + J</kbd><span>角色冲刺技</span></div>
@@ -4716,18 +4760,18 @@ body.touch-mode .toast { bottom: 30%; }
   const DIFFICULTIES = {
     easy: {
       key: 'easy', name: 'EASY', cn: '简单', tag: '街头练习', accent: '#57e389',
-      enemyHp: .8, damageTaken: .7, lives: 4,
-      desc: '敌人更脆，拳脚更轻。四条命，足够把整条街走完。'
+      enemyHp: .8, damageTaken: .7, lives: 3,
+      desc: '敌人更脆，拳脚更轻。三条命，足够把整条街走完。'
     },
     normal: {
       key: 'normal', name: 'NORMAL', cn: '普通', tag: '标准街头', accent: '#ffd23f',
-      enemyHp: 1, damageTaken: 1, lives: 3,
-      desc: '原汁原味的清版节奏。三条命，一次完整的霓虹之夜。'
+      enemyHp: 1, damageTaken: 1, lives: 2,
+      desc: '原汁原味的清版节奏。两条命，一次完整的霓虹之夜。'
     },
     hard: {
       key: 'hard', name: 'HARD', cn: '困难', tag: '一命通关', accent: '#ff5b6b',
-      enemyHp: 1.2, damageTaken: 1.4, lives: 2,
-      desc: 'Boss 更硬，拳头更疼，只有两条命。给真正想拆掉 V 塔的人。'
+      enemyHp: 1.2, damageTaken: 1.4, lives: 1,
+      desc: 'Boss 更硬，拳头更疼，只有一条命。给真正想拆掉 V 塔的人。'
     }
   };
 
@@ -5070,7 +5114,7 @@ body.touch-mode .toast { bottom: 30%; }
     specialFx: [],
     camera: { x: 0, shake: 0 },
     score: 0,
-    lives: 3,
+    lives: 2,
     combo: 0,
     comboTimer: 0,
     maxCombo: 0,
@@ -5489,7 +5533,7 @@ body.touch-mode .toast { bottom: 30%; }
   }
 
   function setSettingsTab(tab) {
-    if (!['audio', 'controls', 'guide', 'about'].includes(tab)) return;
+    if (!['audio', 'controls', 'rank', 'guide', 'about'].includes(tab)) return;
     G.settingsTab = tab;
     document.querySelectorAll('.settings-tab').forEach(btn => {
       const active = btn.dataset.tab === tab;

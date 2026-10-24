@@ -742,7 +742,7 @@ body.touch-mode .toast { bottom: 30%; }
 }
 .settings-head p { margin: 0; font-family: var(--cn); font-size: max(8px, .62cqw); color: #91849f; }
 .settings-head .ghost-btn { padding: .5cqw .8cqw; font-size: max(8px, .58cqw); white-space: nowrap; }
-.settings-tabs { display: flex; gap: .35cqw; margin-top: .75cqw; padding-bottom: .5cqw; border-bottom: 1px solid rgba(255,255,255,.1); flex: 0 0 auto; }
+.settings-tabs { display: flex; flex-wrap: wrap; gap: .35cqw; margin-top: .75cqw; padding-bottom: .5cqw; border-bottom: 1px solid rgba(255,255,255,.1); flex: 0 0 auto; }
 .settings-tab {
   border: 1px solid transparent; background: transparent;
   padding: .34cqw .72cqw; cursor: pointer;
@@ -763,6 +763,27 @@ body.touch-mode .toast { bottom: 30%; }
 .settings-panel-title { display: flex; align-items: baseline; gap: .6cqw; margin-bottom: .5cqw; }
 .settings-panel-title b { font-family: var(--mono); font-size: max(8px, .6cqw); letter-spacing: .18em; color: var(--cyan); }
 .settings-panel-title span { font-family: var(--cn); font-size: max(8px, .58cqw); color: #8f829d; }
+.rank-guide { display: grid; gap: .38cqw; margin: .2cqw 0 .65cqw; }
+.rank-row {
+  display: flex; align-items: flex-start; gap: .7cqw;
+  padding: .48cqw .65cqw;
+  border: 1px solid rgba(255,255,255,.11);
+  background: rgba(255,255,255,.025);
+}
+.rank-letter {
+  display: grid; place-items: center; flex: 0 0 auto;
+  width: 2.2cqw; height: 2.2cqw; min-width: 28px; min-height: 28px;
+  border: 1px solid currentColor;
+  font-family: var(--display); font-size: max(18px, 1.5cqw); line-height: 1;
+  background: rgba(255,255,255,.035);
+}
+.rank-letter--s { color: var(--yellow); background: rgba(255,210,63,.1); }
+.rank-letter--a { color: var(--cyan); background: rgba(41,231,255,.09); }
+.rank-letter--b { color: var(--pink); background: rgba(255,46,99,.09); }
+.rank-letter--c { color: #b8aabc; background: rgba(184,170,188,.06); }
+.rank-row > div { display: flex; flex-direction: column; gap: .14cqw; min-width: 0; }
+.rank-row b { font-family: var(--cn); font-size: max(10px, .7cqw); color: var(--paper); letter-spacing: .06em; }
+.rank-row span { font-family: var(--cn); font-size: max(9px, .62cqw); line-height: 1.55; color: #b9acc7; }
 .music-options { display: grid; gap: .4cqw; }
 .music-option {
   display: flex; align-items: center; gap: .65cqw; width: 100%;
