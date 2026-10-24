@@ -61,7 +61,9 @@
     stageCn: $('stage-cn'),
     stageDesc: $('stage-desc'),
     pause: $('pause-screen'),
+    pausePortrait: $('pause-portrait'),
     result: $('result-screen'),
+    resultPortrait: $('result-portrait'),
     resultKicker: $('result-kicker'),
     resultGrade: $('result-grade'),
     resultTitle: $('result-title'),
@@ -759,7 +761,10 @@
     dom.bossTalkRole.textContent = line.role || '';
     dom.bossTalkText.textContent = line.text;
     dom.bossTalkProgress.textContent = `${t.index + 1} / ${t.data.lines.length}`;
-    drawBossTalkPortrait(line.char);
+    if (dom.bossTalkPortrait) {
+      dom.bossTalkPortrait.classList.remove('boss-razor', 'boss-titan', 'boss-vector', 'boss-raven', 'boss-nyx', 'boss-vprime');
+      dom.bossTalkPortrait.classList.add(`boss-${line.char}`);
+    }
   }
 
   function beginBossTalk(key) {
@@ -1067,6 +1072,10 @@
     dom.stageTitle.textContent = stage.title;
     dom.stageCn.textContent = stage.cn;
     dom.stageDesc.textContent = stage.desc;
+    if (dom.stageCard) {
+      dom.stageCard.classList.remove('stage-card--01', 'stage-card--02', 'stage-card--03', 'stage-card--04', 'stage-card--05');
+      dom.stageCard.classList.add(`stage-card--${stage.number}`);
+    }
     if (dom.stageKicker) dom.stageKicker.textContent = `NEO CITY // ${(G.difficulty || DIFFICULTIES.normal).name} // CRIME DISTRICT`;
     dom.hudName.textContent = PLAYER_STATS[G.charKey].name;
     dom.hudStage.textContent = `STAGE ${stage.number} · ${(G.difficulty || DIFFICULTIES.normal).name}`;
@@ -3579,6 +3588,10 @@
     G.finalVictory = final;
     setMode('result');
     clearOverlays();
+    if (dom.resultPortrait) {
+      dom.resultPortrait.classList.remove('rex', 'luna', 'bruno');
+      dom.resultPortrait.classList.add(G.charKey || 'rex');
+    }
     show(dom.result, true);
     show(dom.hud, false);
     show(dom.bossUI, false);
@@ -3642,6 +3655,10 @@
     if (G.mode !== 'playing') return;
     if (dom.pauseDifficulty) dom.pauseDifficulty.textContent = (G.difficulty || DIFFICULTIES.normal).name;
     setMode('paused');
+    if (dom.pausePortrait) {
+      dom.pausePortrait.classList.remove('rex', 'luna', 'bruno');
+      dom.pausePortrait.classList.add(G.charKey || 'rex');
+    }
     show(dom.pause, true);
     show(dom.hud, false);
     Sound.setPaused(true);
