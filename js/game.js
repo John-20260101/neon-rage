@@ -22,6 +22,7 @@
     hpMeter: document.querySelector('.hp-meter'),
     hudWeapon: $('hud-weapon'),
     hudSpecial: $('hud-special'),
+    hudOverdrive: $('hud-overdrive'),
     hudUpgrades: $('hud-upgrades'),
     upgSpeed: $('upg-speed'),
     upgAttack: $('upg-attack'),
@@ -87,6 +88,9 @@
     gameoverScore: $('gameover-score'),
     gameoverStage: $('gameover-stage'),
     toast: $('toast'),
+    superBanner: $('super-banner'),
+    superBannerName: $('super-banner-name'),
+    superBannerEn: $('super-banner-en'),
     damageFlash: $('damage-flash'),
     touch: $('touch-controls'),
     rotate: $('rotate-hint'),
@@ -159,6 +163,30 @@
     }
   };
 
+
+  const SUPER_MOVES = {
+    rex: {
+      key: 'rex', name: '零号通缉令', en: 'ZERO WARRANT', color: '#ff7a1e',
+      total: 3.0, invuln: 3.4, kind: 'rex', range: 300,
+      pulses: [
+        { at: .55, damage: 30 }, { at: 1.05, damage: 26 }, { at: 1.85, damage: 28 }
+      ]
+    },
+    luna: {
+      key: 'luna', name: '雷狱圆舞', en: 'THUNDER WALTZ', color: '#8ff6ff',
+      total: 2.9, invuln: 3.3, kind: 'luna', radius: 360,
+      pulses: [
+        { at: .45, damage: 24 }, { at: .95, damage: 24 }, { at: 1.55, damage: 24 }
+      ]
+    },
+    bruno: {
+      key: 'bruno', name: '陨星断岳', en: 'METEOR BREAKER', color: '#ffd34d',
+      total: 3.2, invuln: 3.6, kind: 'bruno', radius: 170,
+      pulses: [
+        { at: 1.35, damage: 40 }, { at: 1.70, damage: 35 }, { at: 2.25, damage: 25 }
+      ]
+    }
+  };
 
   const DIFFICULTY_ORDER = ['easy', 'normal', 'hard'];
   const DIFFICULTIES = {
@@ -492,7 +520,8 @@
       ],
       pickups: [
         { type: 'burger', x: 640, y: 242 }, { type: 'knife', x: 1130, y: 238 },
-        { type: 'moneybag', x: 1600, y: 244 }, { type: 'apple', x: 1860, y: 244 }
+        { type: 'moneybag', x: 1600, y: 244 }, { type: 'apple', x: 1860, y: 244 },
+        { type: 'overdrive', x: 1320, y: 244 }
       ]
     },
     {
@@ -518,7 +547,8 @@
       ],
       pickups: [
         { type: 'milk', x: 540, y: 240 }, { type: 'pistol', x: 1250, y: 236 },
-        { type: 'gold', x: 1600, y: 244 }, { type: 'burger', x: 1850, y: 242 }
+        { type: 'gold', x: 1600, y: 244 }, { type: 'burger', x: 1850, y: 242 },
+        { type: 'overdrive', x: 1080, y: 242 }
       ]
     },
     {
@@ -544,7 +574,8 @@
       ],
       pickups: [
         { type: 'steak', x: 560, y: 240 }, { type: 'pistol', x: 1190, y: 238 },
-        { type: 'gold', x: 1690, y: 242 }, { type: 'knife', x: 1810, y: 242 }
+        { type: 'gold', x: 1690, y: 242 }, { type: 'knife', x: 1810, y: 242 },
+        { type: 'overdrive', x: 1250, y: 242 }
       ]
     },
     {
@@ -571,7 +602,8 @@
       ],
       pickups: [
         { type: 'steak', x: 620, y: 240 }, { type: 'pistol', x: 1280, y: 238 },
-        { type: 'gold', x: 1760, y: 244 }, { type: 'burger', x: 2020, y: 242 }
+        { type: 'gold', x: 1760, y: 244 }, { type: 'burger', x: 2020, y: 242 },
+        { type: 'overdrive', x: 1600, y: 242 }
       ]
     },
     {
@@ -598,7 +630,8 @@
       pickups: [
         { type: 'steak', x: 560, y: 240 }, { type: 'pistol', x: 1120, y: 238 },
         { type: 'gold', x: 1580, y: 244 }, { type: 'burger', x: 1860, y: 240 },
-        { type: 'knife', x: 2150, y: 242 }
+        { type: 'knife', x: 2150, y: 242 },
+        { type: 'overdrive', x: 1200, y: 242 }
       ]
     }
   ];
@@ -651,6 +684,7 @@
     muted: false,
     finalVictory: false,
     introTimer: 0,
+    superBannerTimer: 0,
     lastMode: 'title'
   };
 
@@ -742,6 +776,7 @@
   }
   function clearOverlays() {
     [dom.title, dom.settings, dom.difficulty, dom.select, dom.stageCard, dom.pause, dom.result, dom.ending, dom.gameover, dom.bossTalk].forEach(el => show(el, false));
+    hideSuperBanner();
   }
   function blurFocus() {
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
@@ -763,6 +798,7 @@
     else if (p.weapon === 'knife') dom.hudWeapon.textContent = `KNIFE ${Math.max(0, p.weaponDur)}/10`;
     else dom.hudWeapon.textContent = `PIPE ${Math.max(0, p.weaponDur)}/12`;
     dom.hudSpecial.textContent = `必杀 -${PLAYER_STATS[p.charKey].specialCost} HP`;
+    if (dom.hudOverdrive) dom.hudOverdrive.textContent = `◈ 超必杀 ×${p.overdrive || 0}`;
     if (dom.hudUpgrades) {
       const ups = G.upgrades || makeUpgradeState();
       const any = UPGRADE_ORDER.some(k => ups[k].level > 0 || ups[k].progress > 0);
@@ -832,6 +868,7 @@
       heldEnemy: null, grabTimer: 0,
       grabbedBy: null, throwDamage: 0, throwFromX: 0,
       invuln: 1.2, hitFlash: 0, deathTimer: 0,
+      overdrive: 0, lastDownTapAt: -10, superWindow: 0, superPulse: 0, superMove: null, superDir: 1,
       downTimer: 0, bounced: false,
       kneeHits: 0,
       comboStep: 0, queuedAttack: false, comboBuffer: 0,
@@ -1410,6 +1447,14 @@
     return best;
   }
 
+  function bufferSuperInput(p, dt) {
+    if (Input.pressed('down')) {
+      if (G.time - p.lastDownTapAt < .28) p.superWindow = .45;
+      p.lastDownTapAt = G.time;
+    }
+    if (p.superWindow > 0) p.superWindow = Math.max(0, p.superWindow - dt);
+  }
+
   function updatePlayer(dt) {
     const p = G.player;
     if (!p) return;
@@ -1438,12 +1483,15 @@
     if (p.state === 'run') { updateRun(dt); return; }
     if (p.state === 'dashattack') { updatePlayerDashAttack(dt); return; }
     if (p.state === 'attack') { updatePlayerAttack(dt); return; }
+    if (p.state === 'super') { updatePlayerSuper(dt); return; }
     if (p.state === 'special') { updatePlayerSpecial(dt); return; }
     if (p.state === 'grab') { updatePlayerGrab(dt); return; }
     if (p.state === 'throw') {
       if (p.stateTime > .18) { p.state = 'idle'; p.stateTime = 0; }
       return;
     }
+
+    bufferSuperInput(p, dt);
 
     // double-tap forward: the second press starts a sustained run
     let tapDir = 0;
@@ -1475,6 +1523,11 @@
     if (p.dashReady > 0 && p.dashCooldown <= 0 && Input.consumeAttack()) { startDashAttack(); return; }
     if (Input.consumeAttack()) { startPlayerAttack(); return; }
     if (Input.pressed('jump')) { startPlayerJump(); return; }
+    if (p.superWindow > 0 && Input.pressed('special')) {
+      p.superWindow = 0;
+      startSuperSpecial();
+      return;
+    }
     if (Input.pressed('special')) { startPlayerSpecial(); return; }
     if (Input.pressed('grab')) { tryGrabOrPickup(); return; }
   }
@@ -1684,6 +1737,12 @@
     const p = G.player;
     const st = PLAYER_STATS[p.charKey];
     p.runTime += dt;
+    bufferSuperInput(p, dt);
+    if (p.superWindow > 0 && Input.pressed('special')) {
+      p.superWindow = 0;
+      startSuperSpecial();
+      return;
+    }
     const dir = p.facing;
     const held = dir > 0 ? Input.down('right') : Input.down('left');
     const turned = (dir > 0 && Input.pressed('left')) || (dir < 0 && Input.pressed('right'));
@@ -2066,6 +2125,147 @@
       p.specialStruck = false;
       p.specialHits = null;
       p.specialDir = p.facing;
+    }
+  }
+
+  function showSuperBanner(move, key) {
+    if (!dom.superBanner) return;
+    dom.superBanner.classList.remove('rex', 'luna', 'bruno');
+    dom.superBanner.classList.add(key);
+    if (dom.superBannerName) dom.superBannerName.textContent = move.name;
+    if (dom.superBannerEn) dom.superBannerEn.textContent = move.en;
+    show(dom.superBanner, true);
+    dom.superBanner.classList.add('show');
+    G.superBannerTimer = 1.6;
+  }
+
+  function hideSuperBanner() {
+    if (!dom.superBanner) return;
+    dom.superBanner.classList.remove('show');
+    show(dom.superBanner, false);
+    G.superBannerTimer = 0;
+  }
+
+  function spawnSuperPulseFx(p, move) {
+    const dir = p.superDir || p.facing;
+    if (move.kind === 'rex') {
+      for (let i = 0; i < 4; i++) {
+        G.specialFx.push({ kind: 'flame', x: p.x + dir * (28 + i * 68), y: p.y, dir, life: .58, maxLife: .58 });
+      }
+      G.effects.push({ x: p.x + dir * 120, y: p.y, radius: 16, maxRadius: 150, life: .5, maxLife: .5, color: '#ff7a1e', width: 4 });
+      spawnBurst(p.x + dir * 50, p.y, 28, '#ff7a1e', 20, 95);
+      spawnBurst(p.x + dir * 120, p.y, 26, '#ffd34d', 12, 65);
+      G.flash = Math.max(G.flash, .28);
+      shake(9);
+      Sound.flameBurst(true);
+    } else if (move.kind === 'luna') {
+      G.specialFx.push({ kind: 'beam', x: p.x, y: p.y, dir: 1, len: 360, life: .38, maxLife: .38 });
+      G.specialFx.push({ kind: 'beam', x: p.x, y: p.y, dir: -1, len: 360, life: .38, maxLife: .38 });
+      G.effects.push({ x: p.x, y: p.y, radius: 12, maxRadius: 132, life: .42, maxLife: .42, color: '#8ff6ff', width: 3 });
+      spawnBurst(p.x, p.y, 26, '#8ff6ff', 20, 100);
+      spawnBurst(p.x, p.y, 20, '#ffffff', 12, 70);
+      G.flash = Math.max(G.flash, .42);
+      shake(8);
+      Sound.thunder(true);
+    } else {
+      G.specialFx.push({ kind: 'slam', x: p.x, y: p.y, life: .7, maxLife: .7 });
+      G.effects.push({ x: p.x, y: p.y, radius: 20, maxRadius: 150, life: .55, maxLife: .55, color: '#ffd34d', width: 5 });
+      G.effects.push({ x: p.x, y: p.y, radius: 30, maxRadius: 110, life: .42, maxLife: .42, color: '#ff7a1e', width: 3 });
+      spawnDust(p.x, p.y, 22);
+      spawnBurst(p.x, p.y, 14, '#a08a73', 24, 120);
+      G.flash = Math.max(G.flash, .3);
+      shake(13);
+      Sound.quake(true);
+    }
+  }
+
+  function applySuperPulse(p, move, pulse) {
+    const dir = p.superDir || p.facing;
+    const color = move.color;
+    const hits = [];
+    for (const e of G.enemies) {
+      if (!e || e.dead) continue;
+      let inRange = false;
+      if (move.kind === 'rex') {
+        const dx = (e.x - p.x) * dir;
+        inRange = dx >= -30 && dx <= move.range && Math.abs(e.y - p.y) <= 48 && (e.z || 0) <= 58;
+      } else {
+        inRange = Math.hypot(e.x - p.x, (e.y - p.y) * 1.1) <= move.radius && (e.z || 0) <= 70;
+      }
+      if (!inRange) continue;
+      hits.push(e);
+      hitEnemy(e, pulse.damage * p.power, e.x >= p.x ? 1 : -1, { kb: move.kind === 'bruno' ? 240 : 180, knockdown: true, color });
+    }
+    for (const c of G.crates) {
+      if (!c || c.dead) continue;
+      let inRange = false;
+      if (move.kind === 'rex') {
+        const dx = (c.x - p.x) * dir;
+        inRange = dx >= -20 && dx <= move.range && Math.abs(c.y - p.y) <= 48;
+      } else {
+        inRange = Math.hypot(c.x - p.x, (c.y - p.y) * 1.1) <= move.radius;
+      }
+      if (inRange) damageCrate(c, pulse.damage * 1.4);
+    }
+    spawnSuperPulseFx(p, move);
+    if (hits.length) Sound.dashHit();
+  }
+
+  function startSuperSpecial() {
+    const p = G.player;
+    const move = SUPER_MOVES[p.charKey];
+    if (!move) return false;
+    if ((p.overdrive || 0) <= 0) {
+      toast('需要超必杀核心。先找到发光的超必杀核心。', 2.0);
+      return false;
+    }
+    p.overdrive--;
+    p.dashReady = 0;
+    p.state = 'super';
+    p.stateTime = 0;
+    p.superMove = move;
+    p.superPulse = 0;
+    p.superDir = p.facing;
+    p.invuln = Math.max(p.invuln, move.invuln);
+    p.vx = 0;
+    p.vy = 0;
+    p.attack = null;
+    p.pose = 'special';
+    showSuperBanner(move, p.charKey);
+    spawnSuperPulseFx(p, move);
+    Sound.special();
+    G.flash = Math.max(G.flash, .55);
+    shake(10);
+    updateHud();
+    return true;
+  }
+
+  function updatePlayerSuper(dt) {
+    const p = G.player;
+    const move = p.superMove;
+    if (!move) {
+      p.state = 'idle';
+      p.stateTime = 0;
+      return;
+    }
+    const t = p.stateTime;
+    p.pose = move.kind === 'rex'
+      ? (t < .55 ? 'special' : t < 1.85 ? 'uppercut' : 'punch2')
+      : move.kind === 'luna'
+        ? (t < 1.55 ? 'special' : 'kick')
+        : (t < 1.35 ? 'slam' : 'special');
+    while (p.superPulse < move.pulses.length && t >= move.pulses[p.superPulse].at) {
+      applySuperPulse(p, move, move.pulses[p.superPulse]);
+      p.superPulse++;
+    }
+    if (t >= move.total) {
+      p.state = 'idle';
+      p.stateTime = 0;
+      p.pose = 'idle';
+      p.superMove = null;
+      p.superPulse = 0;
+      p.invuln = Math.max(p.invuln, .4);
+      updateHud();
     }
   }
 
@@ -3224,7 +3424,8 @@
     apple: '苹果', milk: '牛奶', burger: '汉堡', steak: '牛排',
     cash: '现金', moneybag: '钱袋', gold: '金条',
     pipe: '钢管', knife: '小刀', pistol: '手枪',
-    boostSpeed: '疾风芯片', boostAttack: '狂暴芯片', boostDefense: '铁壁芯片'
+    boostSpeed: '疾风芯片', boostAttack: '狂暴芯片', boostDefense: '铁壁芯片',
+    overdrive: '超必杀核心'
   };
 
   function addItem(type, x, y, extra) {
@@ -3337,6 +3538,26 @@
       return;
     }
     const p = G.player;
+    if (item.type === 'overdrive') {
+      const oi = G.items.indexOf(item);
+      if (oi >= 0) G.items.splice(oi, 1);
+      if ((p.overdrive || 0) >= 1) {
+        G.score += 300;
+        spawnFloater(p.x, p.y, 34, '+300', '#cba9ff');
+        spawnBurst(p.x, p.y, 20, '#cba9ff', 8, 42);
+        Sound.coin();
+        toast('超必杀核心已满，转化为 +300 分。', 1.3);
+      } else {
+        p.overdrive = 1;
+        spawnFloater(p.x, p.y, 38, 'OVERDRIVE!', '#cba9ff');
+        spawnBurst(p.x, p.y, 30, '#a56cff', 10, 55);
+        G.flash = Math.max(G.flash, .18);
+        Sound.select();
+        toast('超必杀核心 ×1。下下+L 释放超必杀。', 2.0);
+      }
+      updateHud();
+      return;
+    }
     const heal = HEAL_ITEMS[item.type];
     if (heal && p.hp >= p.maxHp) {
       toast('血量已满，这个先留着。', 1.2);
@@ -3668,6 +3889,10 @@
       if (G.toastTimer <= 0) dom.toast.classList.remove('show');
     }
     G.flash = Math.max(0, G.flash - dt * 5.5);
+    if (G.superBannerTimer > 0) {
+      G.superBannerTimer -= dt;
+      if (G.superBannerTimer <= 0) hideSuperBanner();
+    }
 
     switch (G.mode) {
       case 'title':
@@ -4079,6 +4304,7 @@
         else if (p.attack.timer > d.startup + d.active) ext = Math.max(.2, 1 - (p.attack.timer - d.startup - d.active) / d.recovery * .8);
         return { pose: d.pose, ext };
       }
+      if (p.state === 'super') return { pose: p.pose || 'special', ext: 1 };
       if (p.state === 'special') return { pose: PLAYER_STATS[p.charKey].specialPose || 'special', ext: 1 };
       if (p.state === 'grab') return { pose: 'grab', ext: 1 };
       if (p.state === 'throw') return { pose: 'throw', ext: 1 };
@@ -5063,6 +5289,7 @@
     show(dom.ending, false);
     show(dom.gameover, false);
     show(dom.stageCard, false);
+    hideSuperBanner();
     updateCharCards();
     updateBestLabel();
     resetHud();

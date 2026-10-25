@@ -2057,7 +2057,7 @@
     const heal = type === 'apple' || type === 'burger' || type === 'milk' || type === 'steak';
     const money = type === 'cash' || type === 'gold' || type === 'moneybag';
     const upgradeColor = type === 'boostAttack' ? '255,91,107' : type === 'boostDefense' ? '87,227,137' : type === 'boostSpeed' ? '41,231,255' : null;
-    const col = upgradeColor ? `rgba(${upgradeColor},` : type === 'moneybag' ? 'rgba(196,137,74,' : heal ? 'rgba(87,227,137,' : money ? 'rgba(255,210,63,' : 'rgba(41,231,255,';
+    const col = upgradeColor ? `rgba(${upgradeColor},` : type === 'moneybag' ? 'rgba(196,137,74,' : type === 'overdrive' ? 'rgba(165,108,255,' : heal ? 'rgba(87,227,137,' : money ? 'rgba(255,210,63,' : 'rgba(41,231,255,';
     g.save();
     const grd = g.createRadialGradient(x, yy - 7, 1, x, yy - 7, 17);
     grd.addColorStop(0, col + '.26)');
@@ -2095,6 +2095,16 @@
       px(g, x + 3, yy - 10, 6, 3, '#f1e3cd');
       px(g, x + 6, yy - 11, 2, 2, '#fff8e8');
       px(g, x - 4, yy - 4, 7, 1, '#5b2a22');
+    } else if (type === 'overdrive') {
+      // overdrive core: a violet prism with a gold core
+      px(g, x - 6, yy - 13, 12, 15, INK);
+      px(g, x - 5, yy - 12, 10, 12, '#3b1a58');
+      px(g, x - 4, yy - 11, 8, 10, '#a56cff');
+      px(g, x - 2, yy - 9, 4, 6, '#fff3b0');
+      px(g, x - 1, yy - 8, 2, 4, '#fffdf0');
+      px(g, x - 4, yy - 2, 8, 2, '#6d38b8');
+      px(g, x - 7, yy - 11, 2, 4, '#cba9ff');
+      px(g, x + 5, yy - 6, 2, 3, '#ffd34d');
     } else if (type === 'cash') {
       px(g, x - 7, yy - 8, 15, 9, INK);
       px(g, x - 6, yy - 8, 13, 7, '#4f9d58');
