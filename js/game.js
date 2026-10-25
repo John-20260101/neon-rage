@@ -3488,6 +3488,10 @@
     if (!p || p.state === 'dead') return;
     for (let i = G.items.length - 1; i >= 0; i--) {
       const item = G.items[i];
+      if (item.type === 'overdrive' && Math.abs(item.x - p.x) < 15 && Math.abs(item.y - p.y) < 12) {
+        pickupItem(item);
+        continue;
+      }
       const stat = UPGRADE_TOKEN_STAT[item.type];
       if (!stat) continue;
       if (Math.abs(item.x - p.x) < 15 && Math.abs(item.y - p.y) < 12) {
