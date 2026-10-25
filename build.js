@@ -18,6 +18,13 @@ css = css.replace(/url\(["']?(images\/[^"')]+)["']?\)/g, (match, rel) => {
   if (!mime) throw new Error(`Unsupported image asset type: ${rel}`);
   return `url("data:${mime};base64,${fs.readFileSync(file).toString('base64')}")`;
 });
+// Inline the lazily loaded move-demo GIFs referenced by data-gif.
+html = html.replace(/data-gif="(images\/demos\/[^"]+\.gif)"/g, (match, rel) => {
+  const file = path.join(root, rel);
+  if (!fs.existsSync(file)) throw new Error(`Missing demo asset: ${rel}`);
+  return `data-gif="data:image/gif;base64,${fs.readFileSync(file).toString('base64')}"`;
+});
+
 const scripts = ['js/audio.js', 'js/art.js', 'js/game.js'];
 
 html = html.replace(
