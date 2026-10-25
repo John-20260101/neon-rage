@@ -188,22 +188,26 @@
     }
   };
 
+  const WAVE_BASE_MULTIPLIER = 1.5;
+  const MAX_WAVE_ENEMIES = 10;
+  const WAVE_COUNT_FACTORS = [0.65, 0.90, 1.15, 1.35, 1.00, 0.65];
+
   const DIFFICULTY_ORDER = ['easy', 'normal', 'hard'];
   const DIFFICULTIES = {
     easy: {
       key: 'easy', name: 'EASY', cn: '简单', tag: '街头练习', accent: '#57e389',
-      enemyHp: .8, damageTaken: .7, lives: 3,
-      desc: '敌人更脆，拳脚更轻。三条命，足够把整条街走完。'
+      enemyHp: .8, damageTaken: .7, lives: 3, enemyCountMul: .8, bossAdds: 0, bossAddDelay: 0, bossAddInterval: 0,
+      desc: '敌人更脆，拳脚更轻，数量更少。三条命，足够把整条街走完；Boss 战没有杂兵。'
     },
     normal: {
       key: 'normal', name: 'NORMAL', cn: '普通', tag: '标准街头', accent: '#ffd23f',
-      enemyHp: 1, damageTaken: 1, lives: 2,
-      desc: '原汁原味的清版节奏。两条命，一次完整的霓虹之夜。'
+      enemyHp: 1, damageTaken: 1, lives: 2, enemyCountMul: 1, bossAdds: 2, bossAddDelay: 6, bossAddInterval: 7,
+      desc: '原汁原味的清版节奏，敌人数量标准。两条命，一次完整的霓虹之夜；Boss 战有少量杂兵。'
     },
     hard: {
       key: 'hard', name: 'HARD', cn: '困难', tag: '一命通关', accent: '#ff5b6b',
-      enemyHp: 1.2, damageTaken: 1.4, lives: 1,
-      desc: 'Boss 更硬，拳头更疼，只有一条命。给真正想拆掉 V 塔的人。'
+      enemyHp: 1.2, damageTaken: 1.4, lives: 1, enemyCountMul: 1.35, bossAdds: 4, bossAddDelay: 5, bossAddInterval: 5.5,
+      desc: 'Boss 更硬，拳头更疼，敌人更多，Boss 战杂兵密集。只有一条命，给真正想拆掉 V 塔的人。'
     }
   };
 
@@ -501,11 +505,14 @@
       number: '01', title: 'DOCKSIDE 9', cn: '第九码头',
       desc: '雨把整座城市洗成霓虹色。今晚，码头不接货，只接拳头。',
       goal: '清空第九码头', worldW: 2460, music: 'stage1', bossMusic: 'bossRazor',
+      bossAddPool: ['punk', 'kicker', 'boxer'],
       waves: [
         { at: 300, spawns: [['punk', 210], ['punk', 242]] },
         { at: 760, spawns: [['punk', 204], ['boxer', 238], ['kicker', 218], ['siren', 248]] },
         { at: 1240, spawns: [['whip', 206], ['brute', 236], ['blade', 220], ['punk', 246], ['wrecker', 228]] },
         { at: 1710, spawns: [['boxer', 204], ['whip', 232], ['siren', 222], ['punk', 244], ['brute', 218]] },
+        { at: 1825, spawns: [['punk', 212], ['blade', 238], ['kicker', 224]] },
+        { at: 1935, spawns: [['boxer', 208], ['whip', 242], ['siren', 220], ['brute', 232]] },
         { at: 2070, boss: 'razor', spawns: [['razor', 230]] }
       ],
       props: [
@@ -528,11 +535,14 @@
       number: '02', title: 'LINE 07', cn: '七号轻轨',
       desc: '末班车已经停运。站台上等你的，是一整队带刀的人。',
       goal: '夺回七号轻轨', worldW: 2520, music: 'stage2', bossMusic: 'bossTitan',
+      bossAddPool: ['blade', 'kicker', 'gunner'],
       waves: [
         { at: 290, spawns: [['blade', 212], ['boxer', 240]] },
         { at: 720, spawns: [['kicker', 204], ['gunner', 238], ['viper', 220]] },
         { at: 1180, spawns: [['brute', 228], ['whip', 206], ['siren', 244], ['punk', 218]] },
         { at: 1630, spawns: [['gunner', 206], ['boxer', 240], ['brute', 220], ['viper', 246], ['wrecker', 214]] },
+        { at: 1750, spawns: [['kicker', 206], ['gunner', 240], ['viper', 222]] },
+        { at: 1880, spawns: [['blade', 210], ['brute', 242], ['whip', 224], ['boxer', 236]] },
         { at: 2010, boss: 'titan', spawns: [['titan', 230]] }
       ],
       props: [
@@ -555,11 +565,14 @@
       number: '03', title: 'V-TOWER ROOF', cn: 'V 塔天台',
       desc: '天快亮了。城市最高的地方，V 先生的影子守在门前。',
       goal: '击溃 V 先生的代理人', worldW: 2500, music: 'stage3', bossMusic: 'bossVector',
+      bossAddPool: ['brute', 'viper', 'siren'],
       waves: [
         { at: 280, spawns: [['kicker', 208], ['boxer', 238]] },
         { at: 700, spawns: [['brute', 226], ['gunner', 206], ['viper', 244]] },
         { at: 1130, spawns: [['blade', 204], ['boxer', 238], ['siren', 220], ['punk', 246], ['wrecker', 232]] },
         { at: 1570, spawns: [['brute', 214], ['viper', 242], ['boxer', 226], ['gunner', 246]] },
+        { at: 1685, spawns: [['boxer', 208], ['siren', 240], ['brute', 222]] },
+        { at: 1815, spawns: [['gunner', 206], ['viper', 238], ['blade', 220], ['whip', 244]] },
         { at: 1960, boss: 'vector', spawns: [['vector', 230]] }
       ],
       props: [
@@ -582,11 +595,14 @@
       number: '04', title: 'NEON GARDEN', cn: '霓虹花园',
       desc: '塔顶的私人会所还在营业。两位女招待，等你跳最后一支舞。',
       goal: '击溃双子守卫', worldW: 2700, music: 'stage4', bossMusic: 'twin',
+      bossAddPool: ['boxer', 'whip', 'viper'],
       waves: [
         { at: 300, spawns: [['punk', 210], ['blade', 242]] },
         { at: 760, spawns: [['siren', 204], ['viper', 238], ['boxer', 218]] },
         { at: 1220, spawns: [['brute', 228], ['whip', 206], ['gunner', 244], ['siren', 220]] },
         { at: 1680, spawns: [['boxer', 204], ['blade', 238], ['viper', 220], ['siren', 246], ['wrecker', 214]] },
+        { at: 1840, spawns: [['punk', 210], ['whip', 240], ['siren', 222]] },
+        { at: 1995, spawns: [['boxer', 206], ['viper', 238], ['brute', 220], ['kicker', 244]] },
         { at: 2140, boss: 'twin', spawns: [['raven', 224, 'left'], ['nyx', 246, 'right']] }
       ],
       props: [
@@ -610,11 +626,14 @@
       number: '05', title: 'V-TOWER CORE', cn: 'V 塔核心',
       desc: '电梯停在地下三百层。塔的心脏里，V 先生给自己留了三具身体。',
       goal: '终结 V 先生', worldW: 2600, music: 'stage5', bossMusic: 'final',
+      bossAddPool: ['siren', 'gunner', 'wrecker'],
       waves: [
         { at: 290, spawns: [['blade', 208], ['boxer', 240]] },
         { at: 700, spawns: [['siren', 204], ['viper', 238], ['gunner', 220]] },
         { at: 1100, spawns: [['brute', 226], ['whip', 206], ['boxer', 244], ['siren', 218]] },
         { at: 1500, spawns: [['siren', 204], ['viper', 242], ['gunner', 222], ['blade', 246], ['wrecker', 232]] },
+        { at: 1625, spawns: [['blade', 208], ['siren', 240], ['gunner', 222]] },
+        { at: 1765, spawns: [['viper', 206], ['brute', 238], ['wrecker', 220], ['boxer', 244]] },
         { at: 1950, boss: 'final', spawns: [['vprime', 230]] }
       ],
       props: [
@@ -666,6 +685,9 @@
     boss: null,
     boss2: null,
     bossDefeated: false,
+    bossAddsRemaining: 0,
+    bossAddsSpawned: 0,
+    bossAddTimer: 0,
     stageClearTimer: 0,
     finishing: false,
     stageTime: 0,
@@ -1366,9 +1388,33 @@
     return e;
   }
 
+  function buildWaveSpawns(wave, waveIndex) {
+    if (wave.boss) return wave.spawns || [];
+    const base = wave.spawns || [];
+    if (!base.length) return [];
+    const diff = G.difficulty || DIFFICULTIES.normal;
+    const factor = WAVE_COUNT_FACTORS[Math.min(waveIndex, WAVE_COUNT_FACTORS.length - 1)] || 1;
+    const raw = base.length * WAVE_BASE_MULTIPLIER * factor * (diff.enemyCountMul || 1);
+    let target = diff.key === 'hard' ? Math.ceil(raw) : diff.key === 'easy' ? Math.floor(raw) : Math.round(raw);
+    target = clamp(target, 1, MAX_WAVE_ENEMIES);
+    const list = base.slice(0, target).map(entry => entry.slice());
+    let extraIndex = 0;
+    while (list.length < target) {
+      const src = base[extraIndex % base.length];
+      const yOffset = ((extraIndex % 3) - 1) * 8;
+      const side = extraIndex % 2 === 0 ? 'left' : 'right';
+      list.push([src[0], clamp(src[1] + yOffset, 200, 252), side]);
+      extraIndex++;
+    }
+    return list;
+  }
+
   function startWave(wave) {
-    const spawnList = wave.spawns || [];
+    const spawnList = buildWaveSpawns(wave, G.waveIndex);
     const isBoss = !!wave.boss;
+    G.bossAddsRemaining = 0;
+    G.bossAddsSpawned = 0;
+    G.bossAddTimer = 0;
     let camX;
     if (isBoss) {
       camX = clamp(G.player.x - 198, 0, G.stage.worldW - W);
@@ -1398,6 +1444,10 @@
       else if (wave.boss === 'final') announce('WARNING', 'V-PRIME // 最终形态', '#ff2e63', 2.6);
       Sound.playTrack(BOSS_TRACKS[wave.boss] || G.stage.bossMusic || 'boss');
       G.finishing = false;
+      const diff = G.difficulty || DIFFICULTIES.normal;
+      G.bossAddsRemaining = diff.bossAdds || 0;
+      G.bossAddsSpawned = 0;
+      G.bossAddTimer = diff.bossAddDelay || 0;
       beginBossTalk(wave.boss);
     }
     updateHud();
@@ -3405,6 +3455,7 @@
         announce('K.O.', `${e.def.name} // DOWN — 1 LEFT`, '#ffd23f', 2.2);
       } else {
         // dramatic finish
+        dismissBossAdds();
         G.flash = .8;
         G.hitstop = .22;
         announce('K.O.', `${e.def.name} // DOWN`, '#ffd23f', 2.8);
@@ -3784,7 +3835,50 @@
   // ————————————————————————————————————————————————
   // UPDATE FLOW
   // ————————————————————————————————————————————————
+  function updateBossAdds(dt) {
+    if (!G.battle || !G.battle.boss || G.bossTalk || G.bossAddsRemaining <= 0) return;
+    if (!G.player || G.player.state === 'dead') return;
+    const anyBoss = [G.boss, G.boss2].some(b => b && !b.dead);
+    if (!anyBoss) return;
+    G.bossAddTimer -= dt;
+    if (G.bossAddTimer > 0) return;
+    const pool = G.stage.bossAddPool || [];
+    if (!pool.length) {
+      G.bossAddsRemaining = 0;
+      return;
+    }
+    const type = pool[G.bossAddsSpawned % pool.length];
+    const fromLeft = G.bossAddsSpawned % 2 === 0;
+    const x = fromLeft ? G.battle.camX - 20 : G.battle.camX + W + 20;
+    spawnEnemy(type, x, rand(212, 244), { side: fromLeft ? 'left' : 'right' });
+    G.battle.remaining++;
+    G.bossAddsSpawned++;
+    G.bossAddsRemaining--;
+    const diff = G.difficulty || DIFFICULTIES.normal;
+    G.bossAddTimer = diff.bossAddInterval || 7;
+  }
+
+  function dismissBossAdds() {
+    G.bossAddsRemaining = 0;
+    G.bossAddTimer = 0;
+    if (G.battle) G.battle.remaining = 0;
+    for (const e of G.enemies) {
+      if (!e || e.boss || e.dead) continue;
+      e.dead = true;
+      e.state = 'dead';
+      e.deadTimer = 0;
+      e.hp = 0;
+      e.attack = null;
+      e.attacking = false;
+      e.vx = 0;
+      e.vy = 0;
+      e.vz = 24;
+      spawnBurst(e.x, e.y, 12, '#ffd34d', 8, 48);
+    }
+  }
+
   function updateBattle(dt) {
+    if (G.battle && G.battle.boss) updateBossAdds(dt);
     if (!G.battle) {
       if (!G.finishing && G.player && G.player.state !== 'dead') {
         const wave = G.stage.waves[G.waveIndex];
@@ -5320,7 +5414,7 @@
   }
 
   // Read-only debug handle (useful for testing; harmless in play).
-  window.__NEON_RAGE__ = { G, Input, STAGES, PLAYER_STATS, ENEMY_DATA, BOSS_TALK, POST_BOSS_TALK, startStage, spawnEnemy, startRun, hurtPlayer, hitEnemy, killEnemy, clearBattle, showResult, showEnding, beginBossTalk, advanceBossTalk, endBossTalk, damageCrate };
+  window.__NEON_RAGE__ = { G, Input, STAGES, PLAYER_STATS, ENEMY_DATA, DIFFICULTIES, BOSS_TALK, POST_BOSS_TALK, startStage, spawnEnemy, startRun, hurtPlayer, hitEnemy, killEnemy, clearBattle, showResult, showEnding, beginBossTalk, advanceBossTalk, endBossTalk, buildWaveSpawns, updateBossAdds, dismissBossAdds, damageCrate };
 
   boot();
 })();
