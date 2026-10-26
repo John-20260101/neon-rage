@@ -236,6 +236,7 @@
   const MUSIC_PACK_LABELS = {
     classic: 'NEON CLASSIC', midnight: 'MIDNIGHT DRIVE', steel: 'STEEL PULSE'
   };
+  const MUSIC_PACK_ORDER = Object.keys(MUSIC_PACK_LABELS);
   const BOSS_TRACKS = {
     razor: 'bossRazor', titan: 'bossTitan', vector: 'bossVector',
     twin: 'twin', house: 'bossHouse', final: 'final'
@@ -839,6 +840,7 @@
       const action = this.map[e.code];
       if (!action) return;
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Enter'].includes(e.code)) e.preventDefault();
+      if (G.mode === 'settings' && (e.code === 'KeyW' || e.code === 'KeyS')) e.preventDefault();
       this.set(action, down);
     }
   };
@@ -1210,6 +1212,14 @@
     Sound.menu();
   }
 
+  function cycleMusicPack(step) {
+    const current = Sound.musicPackKey || 'classic';
+    const index = Math.max(0, MUSIC_PACK_ORDER.indexOf(current));
+    const next = MUSIC_PACK_ORDER[(index + step + MUSIC_PACK_ORDER.length) % MUSIC_PACK_ORDER.length];
+    ensureAudio();
+    selectMusicPack(next);
+  }
+
   function setSettingsTab(tab) {
     if (!['audio', 'controls', 'rank', 'guide', 'about'].includes(tab)) return;
     G.settingsTab = tab;
@@ -1223,6 +1233,8 @@
     });
     if (dom.settingsBody) dom.settingsBody.scrollTop = 0;
     syncMoveDemoGifs(tab);
+    const musicHint = document.getElementById('settings-hint-music');
+    if (musicHint) musicHint.hidden = tab !== 'audio';
     Sound.menu();
   }
 
@@ -4195,17 +4207,22 @@
       case 'title':
         if (Input.pressed('confirm')) openDifficulty();
         break;
-      case 'settings':
+      case 'settings': {
+        const tabs = Array.from(document.querySelectorAll('.settings-tab')).map(btn => btn.dataset.tab);
         if (Input.pressed('pause')) openTitle(true);
-        if (Input.pressed('left')) {
-          const tabs = ['audio', 'controls', 'guide', 'about'];
-          setSettingsTab(tabs[(tabs.indexOf(G.settingsTab) + 3) % 4]);
+        const tabIndex = tabs.indexOf(G.settingsTab);
+        if (tabIndex >= 0 && Input.pressed('left')) {
+          setSettingsTab(tabs[(tabIndex + tabs.length - 1) % tabs.length]);
         }
-        if (Input.pressed('right')) {
-          const tabs = ['audio', 'controls', 'guide', 'about'];
-          setSettingsTab(tabs[(tabs.indexOf(G.settingsTab) + 1) % 4]);
+        if (tabIndex >= 0 && Input.pressed('right')) {
+          setSettingsTab(tabs[(tabIndex + 1) % tabs.length]);
+        }
+        if (G.settingsTab === 'audio') {
+          if (Input.pressed('up')) cycleMusicPack(-1);
+          if (Input.pressed('down')) cycleMusicPack(1);
         }
         break;
+      }
       case 'difficulty':
         if (Input.pressed('left') || Input.pressed('up')) selectDifficulty(DIFFICULTY_ORDER[(DIFFICULTY_ORDER.indexOf(G.selectedDifficulty) + 2) % 3], true);
         if (Input.pressed('right') || Input.pressed('down')) selectDifficulty(DIFFICULTY_ORDER[(DIFFICULTY_ORDER.indexOf(G.selectedDifficulty) + 1) % 3], true);
