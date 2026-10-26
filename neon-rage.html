@@ -1661,7 +1661,7 @@ body.touch-mode .toast { bottom: 30%; }
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
-            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.20</span></div>
+            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.21</span></div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <div class="cover-actions">
               <button id="btn-start" class="arcade-btn" type="button">
@@ -7857,15 +7857,19 @@ body.touch-mode .toast { bottom: 30%; }
 
   function startDharmaFx(p, move) {
     if (!p || !move) return;
+    const palette = p.charKey === 'luna'
+      ? { color: '#5d6bff', accent: '#a54dff' }
+      : p.charKey === 'bruno'
+        ? { color: '#ffc21a', accent: '#ffe066' }
+        : { color: '#ff2a12', accent: '#ff7a1e' };
     G.dharma = {
       age: 0,
       x: p.x,
       y: p.y,
       facing: p.superDir || p.facing || 1,
-      char: p.char,
-      color: move.color,
-      pose: p.pose || 'special',
-      ext: 1,
+      charKey: p.charKey,
+      color: palette.color,
+      accent: palette.accent,
       scale: move.kind === 'bruno' ? 3.8 : move.kind === 'luna' ? 3.25 : 3.4,
       seed: rand(0, Math.PI * 2)
     };
@@ -7881,7 +7885,6 @@ body.touch-mode .toast { bottom: 30%; }
       fx.x += (p.x - fx.x) * follow;
       fx.y += (p.y - fx.y) * follow;
       fx.facing = p.superDir || p.facing || fx.facing;
-      fx.pose = p.pose || 'special';
     }
     if (fx.age >= DHARMA_TOTAL) G.dharma = null;
   }
@@ -10626,6 +10629,283 @@ body.touch-mode .toast { bottom: 30%; }
     }
   }
 
+  function strokeDharma(path, color, alpha, width) {
+    if (!path || alpha <= 0) return;
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = alpha * .1;
+    ctx.lineWidth = width * 4.5;
+    ctx.stroke(path);
+    ctx.globalAlpha = alpha * .84;
+    ctx.lineWidth = width;
+    ctx.stroke(path);
+    ctx.restore();
+  }
+
+  function drawDharmaCrow(fx, age, alpha) {
+    const flap = Math.sin(age * 2.8 + fx.seed) * 2.2;
+    const primary = fx.color;
+    const accent = fx.accent || fx.color;
+    const sun = new Path2D();
+    const body = new Path2D();
+    const detail = new Path2D();
+
+    // The sun sits behind the crow's head; a thin ring and short rays keep
+    // the three-legged silhouette readable instead of turning into a disc.
+    sun.moveTo(24, -43);
+    sun.arc(0, -43, 24, 0, Math.PI * 2);
+    for (let i = 0; i < 10; i++) {
+      const a = i * Math.PI / 5 + age * .1;
+      sun.moveTo(Math.cos(a) * 27, -43 + Math.sin(a) * 27);
+      sun.lineTo(Math.cos(a) * 31, -43 + Math.sin(a) * 31);
+    }
+
+    // Body, head, sharp beak and three legs.
+    body.moveTo(0, -20);
+    body.bezierCurveTo(-10, -22, -12, -31, 0, -37);
+    body.bezierCurveTo(12, -31, 10, -22, 0, -20);
+    body.moveTo(6.2, -43);
+    body.arc(0, -43, 6.2, 0, Math.PI * 2);
+    body.moveTo(-2.2, -39);
+    body.lineTo(0, -32.5);
+    body.lineTo(2.2, -39);
+    for (const s of [-1, 1]) {
+      body.moveTo(s * 7, -31);
+      body.bezierCurveTo(s * 16, -42, s * 30, -51 + flap, s * 46, -44 + flap);
+      body.bezierCurveTo(s * 43, -37, s * 37, -32, s * 29, -28);
+      body.bezierCurveTo(s * 21, -24, s * 13, -22, s * 7, -21);
+      for (let i = 0; i < 3; i++) {
+        detail.moveTo(s * (10 + i * 3.5), -26 - i * 1.8);
+        detail.bezierCurveTo(s * (20 + i * 5), -33 - i * 2 + flap, s * (32 + i * 3), -38 - i * 1.5 + flap, s * (41 + i), -43 - i + flap);
+      }
+      // Three pointed primary feathers at each wing tip.
+      for (let i = 0; i < 3; i++) {
+        detail.moveTo(s * (44 - i * 4), -44 + i * 3 + flap);
+        detail.bezierCurveTo(s * (50 - i * 4), -47 + i * 3 + flap, s * (53 - i * 5), -43 + i * 3 + flap, s * (49 - i * 5), -38 + i * 3.2 + flap);
+      }
+      // Tail feathers flank the three legs.
+      body.moveTo(0, -21);
+      body.bezierCurveTo(s * 4, -13, s * 9, -4, s * 14, 2);
+    }
+    for (const x of [-8, 0, 8]) {
+      body.moveTo(x * .55, -20);
+      body.lineTo(x, -5);
+      body.moveTo(x, -5);
+      body.lineTo(x - 3.5, 0);
+      body.moveTo(x, -5);
+      body.lineTo(x, 0);
+      body.moveTo(x, -5);
+      body.lineTo(x + 3.5, 0);
+    }
+
+    // Flame crest, wing tips and small flame curls around the head.
+    detail.moveTo(-3.5, -48);
+    detail.bezierCurveTo(-7, -54, -3, -57, 0, -59);
+    detail.moveTo(0, -48);
+    detail.bezierCurveTo(0, -54, 2, -57, 5, -55);
+    detail.moveTo(3.5, -47);
+    detail.bezierCurveTo(6, -51, 9, -51, 8, -47);
+    detail.moveTo(-9, -32);
+    detail.bezierCurveTo(-14, -35, -18, -34, -20, -30);
+    detail.moveTo(9, -32);
+    detail.bezierCurveTo(14, -35, 18, -34, 20, -30);
+
+    strokeDharma(sun, primary, alpha * .36, .6);
+    strokeDharma(body, primary, alpha, 1.2);
+    strokeDharma(detail, accent, alpha * .82, .75);
+
+    ctx.save();
+    ctx.globalAlpha = alpha * .95;
+    ctx.fillStyle = '#ffe6b0';
+    ctx.fillRect(-2.9, -44.3, 1.2, 1.2);
+    ctx.fillRect(1.7, -44.3, 1.2, 1.2);
+    ctx.restore();
+  }
+
+  function drawDharmaDragon(fx, age, alpha) {
+    const primary = fx.color;
+    const accent = fx.accent || fx.color;
+    const wing = new Path2D();
+    const body = new Path2D();
+    const detail = new Path2D();
+
+    wing.moveTo(2, -27);
+    wing.bezierCurveTo(-9, -43, -26, -51, -43, -47);
+    wing.bezierCurveTo(-39, -39, -34, -33, -25, -28);
+    wing.bezierCurveTo(-17, -24, -8, -23, -2, -24);
+    wing.moveTo(-2, -29);
+    wing.bezierCurveTo(-12, -42, -21, -48, -29, -47);
+    wing.bezierCurveTo(-25, -40, -19, -35, -11, -31);
+
+    // Head, serpentine body and curled tail.
+    body.moveTo(20, -38);
+    body.bezierCurveTo(13, -33, 9, -27, 1, -24);
+    body.bezierCurveTo(-9, -21, -19, -24, -28, -28);
+    body.bezierCurveTo(-37, -32, -43, -26, -41, -18);
+    body.bezierCurveTo(-39, -10, -30, -7, -21, -11);
+    body.bezierCurveTo(-12, -15, -4, -13, 0, -7);
+    body.bezierCurveTo(3, -3, 2, 1, -3, 2);
+    body.moveTo(20, -38);
+    body.lineTo(27, -37);
+    body.lineTo(31, -34);
+    body.lineTo(27, -31);
+    body.lineTo(19, -32);
+    body.moveTo(21, -34);
+    body.bezierCurveTo(24, -31, 28, -31, 30, -33);
+    body.moveTo(18, -42);
+    body.bezierCurveTo(15, -48, 12, -51, 8, -52);
+    body.moveTo(21, -43);
+    body.bezierCurveTo(22, -49, 24, -52, 27, -52);
+    body.moveTo(-41, -18);
+    body.bezierCurveTo(-49, -15, -51, -7, -45, -3);
+    body.bezierCurveTo(-39, 1, -30, 0, -25, -4);
+    body.moveTo(-10, -12);
+    body.lineTo(-13, -3);
+    body.moveTo(-13, -3);
+    body.lineTo(-16, 0);
+    body.moveTo(-13, -3);
+    body.lineTo(-10, 0);
+    body.moveTo(4, -8);
+    body.lineTo(2, 0);
+    body.moveTo(2, 0);
+    body.lineTo(-1, 2);
+    body.moveTo(2, 0);
+    body.lineTo(5, 2);
+
+    // Belly line, whiskers, spines, wing ribs and tail fin.
+    detail.moveTo(16, -35);
+    detail.bezierCurveTo(10, -30, 7, -25, 0, -22);
+    detail.bezierCurveTo(-9, -19, -18, -22, -27, -26);
+    detail.moveTo(30, -35);
+    detail.bezierCurveTo(38, -34, 43, -30, 46, -26);
+    detail.moveTo(28, -33);
+    detail.bezierCurveTo(36, -29, 40, -23, 42, -18);
+    for (let i = 0; i < 4; i++) {
+      detail.moveTo(-6 - i * 5, -29 + i * 1.5);
+      detail.lineTo(-12 - i * 5, -34 + i * 1.2);
+    }
+    for (let i = 0; i < 3; i++) {
+      detail.moveTo(-2 - i * 6, -39 - i * 1.5);
+      detail.lineTo(-7 - i * 6, -45 - i * 1.8);
+    }
+    for (let i = 0; i < 4; i++) {
+      detail.moveTo(-45 + i * 1.5, -4);
+      detail.lineTo(-49 + i * 2.5, -9 - i * 2);
+    }
+    for (let i = 0; i < 3; i++) {
+      detail.moveTo(13 - i * 7, -32 + i * 1.5);
+      detail.quadraticCurveTo(10 - i * 7, -29 + i * 1.5, 7 - i * 7, -29 + i * 1.5);
+    }
+
+    strokeDharma(wing, accent, alpha * .85, 1.15);
+    strokeDharma(body, primary, alpha, 1.35);
+    strokeDharma(detail, accent, alpha * .75, .8);
+
+    ctx.save();
+    ctx.globalAlpha = alpha * .95;
+    ctx.fillStyle = '#e7f2ff';
+    ctx.fillRect(22.4, -39.2, 1.2, 1.2);
+    ctx.restore();
+  }
+
+  function drawDharmaYuqiang(fx, age, alpha) {
+    const flap = Math.sin(age * 2.4 + fx.seed) * 2;
+    const primary = fx.color;
+    const accent = fx.accent || fx.color;
+    const body = new Path2D();
+    const detail = new Path2D();
+    const snakes = new Path2D();
+
+    // Bird wings.
+    for (const s of [-1, 1]) {
+      body.moveTo(s * 6, -30);
+      body.bezierCurveTo(s * 18, -42, s * 34, -48, s * 47, -41 + flap);
+      body.bezierCurveTo(s * 42, -34, s * 37, -30, s * 29, -27);
+      body.bezierCurveTo(s * 21, -24, s * 12, -23, s * 6, -24);
+      for (let i = 0; i < 3; i++) {
+        detail.moveTo(s * (10 + i * 5), -26 - i * 1.5);
+        detail.bezierCurveTo(s * (20 + i * 5), -31 - i * 2 + flap, s * (31 + i * 4), -35 - i * 2 + flap, s * (40 + i * 2), -39 - i * 1.5 + flap);
+      }
+      // Two ear snakes.
+      snakes.moveTo(s * 5, -42);
+      snakes.bezierCurveTo(s * 12, -40, s * 15, -32, s * 12, -24);
+      snakes.bezierCurveTo(s * 10, -20, s * 11, -16, s * 14, -14);
+      snakes.moveTo(s * 14, -14);
+      snakes.arc(s * 14, -14, 1.5, 0, Math.PI * 2);
+    }
+
+    // Torso, human face, hair and beard.
+    body.moveTo(-6, -34);
+    body.bezierCurveTo(-8, -27, -7, -20, 0, -18);
+    body.bezierCurveTo(7, -20, 8, -27, 6, -34);
+    body.moveTo(5.5, -40);
+    body.arc(0, -40, 5.5, 0, Math.PI * 2);
+    body.moveTo(-5, -43);
+    body.bezierCurveTo(-7, -48, -3, -51, 0, -52);
+    body.bezierCurveTo(3, -51, 7, -48, 5, -43);
+    body.moveTo(0, -51);
+    body.bezierCurveTo(-2, -55, 2, -57, 5, -53);
+    body.moveTo(-4, -20);
+    body.lineTo(-6, -3);
+    body.moveTo(-6, -3);
+    body.lineTo(-9, 0);
+    body.moveTo(-6, -3);
+    body.lineTo(-4, 0);
+    body.moveTo(-6, -3);
+    body.lineTo(-6, 0);
+    body.moveTo(4, -20);
+    body.lineTo(6, -3);
+    body.moveTo(6, -3);
+    body.lineTo(3, 0);
+    body.moveTo(6, -3);
+    body.lineTo(6, 0);
+    body.moveTo(6, -3);
+    body.lineTo(9, 0);
+
+    // Face features.
+    detail.moveTo(-3, -41);
+    detail.lineTo(-1.8, -41);
+    detail.moveTo(1.8, -41);
+    detail.lineTo(3, -41);
+    detail.moveTo(0, -40);
+    detail.lineTo(0, -37);
+    detail.lineTo(1.3, -37);
+    detail.moveTo(-2.5, -34);
+    detail.quadraticCurveTo(0, -33, 2.5, -34);
+    detail.moveTo(-3, -33);
+    detail.bezierCurveTo(-4, -28, -1, -26, 0, -23);
+    detail.bezierCurveTo(1, -26, 4, -28, 3, -33);
+
+    // Two snakes under the feet and wind arcs.
+    snakes.moveTo(-20, 1);
+    snakes.bezierCurveTo(-12, -3, -4, 2, 2, -1);
+    snakes.bezierCurveTo(8, -3, 12, 1, 18, -1);
+    snakes.moveTo(-18, 2);
+    snakes.bezierCurveTo(-10, -1, -2, 3, 5, 0);
+    snakes.bezierCurveTo(10, -2, 14, 1, 19, 0);
+    detail.moveTo(-30, -36);
+    detail.bezierCurveTo(-24, -45, -14, -48, -6, -45);
+    detail.moveTo(30, -36);
+    detail.bezierCurveTo(24, -45, 14, -48, 6, -45);
+    detail.moveTo(-22, -23);
+    detail.bezierCurveTo(-15, -19, -8, -19, -3, -21);
+    detail.moveTo(22, -23);
+    detail.bezierCurveTo(15, -19, 8, -19, 3, -21);
+
+    strokeDharma(body, primary, alpha, 1.2);
+    strokeDharma(detail, accent, alpha * .8, .8);
+    strokeDharma(snakes, accent, alpha * .9, .72);
+
+    ctx.save();
+    ctx.globalAlpha = alpha * .95;
+    ctx.fillStyle = '#fffbe0';
+    ctx.fillRect(-2.6, -41.2, 1.1, 1.1);
+    ctx.fillRect(1.5, -41.2, 1.1, 1.1);
+    ctx.restore();
+  }
+
   function colorWithAlpha(hex, alpha) {
     const raw = String(hex || '#ffffff').replace('#', '');
     const full = raw.length === 3 ? raw.split('').map(ch => ch + ch).join('') : raw;
@@ -10646,8 +10926,9 @@ body.touch-mode .toast { bottom: 30%; }
     const scale = fx.scale * (.82 + rise * .18) * (1 + Math.sin(age * 2.15 + fx.seed) * .014);
     const sx = Math.round(fx.x - G.camera.x);
     const sy = Math.round(fx.y);
+    const k = scale * .9;
     const color = fx.color;
-    const haloY = sy - 43 * scale;
+    const haloY = sy - 40 * k;
 
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
@@ -10713,15 +10994,15 @@ body.touch-mode .toast { bottom: 30%; }
       ctx.stroke();
     }
 
-    // The giant itself. Art.drawFighter keeps the current pose and silhouette,
-    // so the effect reads as the fighter's own dharma rather than a stock sprite.
-    ctx.globalCompositeOperation = 'source-over';
+    // The dharma creature, drawn as luminous line art over the aura.
     ctx.globalAlpha = 1;
-    Art.drawFighter(ctx, {
-      x: sx, y: sy, z: 0, facing: fx.facing || 1, scale,
-      char: fx.char, pose: fx.pose || 'special', ext: fx.ext == null ? 1 : fx.ext,
-      anim: age * .55, alpha: .25 * alpha, rim: color
-    });
+    ctx.save();
+    ctx.translate(sx, sy);
+    ctx.scale((fx.facing || 1) * k, k);
+    if (fx.charKey === 'luna') drawDharmaDragon(fx, age, alpha);
+    else if (fx.charKey === 'bruno') drawDharmaYuqiang(fx, age, alpha);
+    else drawDharmaCrow(fx, age, alpha);
+    ctx.restore();
 
     // A handful of deterministic motes; no per-frame particle allocation.
     ctx.globalCompositeOperation = 'lighter';
