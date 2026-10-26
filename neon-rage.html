@@ -253,23 +253,42 @@ button:focus-visible, [tabindex]:focus-visible {
 .hud-combo.hot b { color: var(--pink); text-shadow: 0 0 10px rgba(255,46,99,.8); }
 
 .boss-ui {
-  position: absolute; z-index: 15; top: 5.6cqw; left: 50%; transform: translateX(-50%);
-  width: 38cqw; min-width: 220px; pointer-events: none;
-  background: rgba(4,2,10,.78); border: 1px solid rgba(255,46,99,.4);
-  padding: .5cqw .7cqw .65cqw;
+  position: absolute; z-index: 15; top: max(38px, 5.6cqw); left: 50%; transform: translateX(-50%);
+  width: min(42cqw, 620px); min-width: 250px; pointer-events: none;
+  background: rgba(4,2,10,.8); border: 1px solid rgba(255,46,99,.4);
+  padding: .45cqw .6cqw .55cqw;
   box-shadow: 0 0 20px rgba(255,46,99,.15);
 }
-.boss-ui-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1cqw; padding-bottom: .25cqw; }
-.boss-ui-head span { font-size: max(10px, .64cqw); letter-spacing: .17em; color: #ffd08a; }
-.boss-ui-head b { font-size: max(11px, .92cqw); letter-spacing: .15em; color: #fff6e8; }
+.boss-row { display: flex; align-items: stretch; gap: .55cqw; }
+.boss-avatar {
+  width: 3.5cqw; height: 4.1cqw; min-width: 34px; min-height: 40px;
+  flex: 0 0 auto; display: block;
+  background-color: #0b0710; background-position: center; background-size: cover;
+  border: 1px solid rgba(255,46,99,.55); box-shadow: 0 0 10px rgba(255,46,99,.18);
+}
+.boss-row-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.boss-ui-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1cqw; padding-bottom: .2cqw; }
+.boss-ui-head span { font-size: max(10px, .64cqw); letter-spacing: .17em; color: #ffd08a; white-space: nowrap; }
+.boss-ui-head b { font-size: max(11px, .92cqw); letter-spacing: .15em; color: #fff6e8; flex: 1 1 auto; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.boss-bar-row { display: flex; align-items: center; gap: .45cqw; }
+.boss-bar-row .boss-meter { flex: 1 1 auto; min-width: 0; }
 .boss-meter { height: max(8px, .72cqw); border-color: rgba(255,46,99,.7); background-image: repeating-linear-gradient(90deg, transparent 0 9%, rgba(0,0,0,.38) 9% 10%); }
 .boss-meter i { background: linear-gradient(90deg, #ff2e63, #ff5b7d 55%, #ffd23f); box-shadow: 0 0 14px rgba(255,46,99,.85); }
+.boss-hp {
+  flex: 0 0 auto; min-width: 5.4em; text-align: right;
+  font-family: var(--mono); font-weight: 700; font-size: max(9px, .62cqw); font-variant-numeric: tabular-nums;
+  letter-spacing: .03em; color: #ffd08a; white-space: nowrap;
+}
+.boss-hp.low { color: #ff8b9e; text-shadow: 0 0 8px rgba(255,46,99,.7); }
 .boss-row + .boss-row {
   margin-top: .45cqw; padding-top: .4cqw;
   border-top: 1px solid rgba(255,46,99,.25);
 }
+.boss-row-2 .boss-avatar { border-color: rgba(41,231,255,.55); box-shadow: 0 0 10px rgba(41,231,255,.16); }
 .boss-row-2 .boss-meter { border-color: rgba(41,231,255,.6); }
 .boss-row-2 .boss-meter i { background: linear-gradient(90deg, #29e7ff, #7ef4ff 55%, #ffd23f); box-shadow: 0 0 14px rgba(41,231,255,.8); }
+.boss-row-2 .boss-hp { color: #a9f5ff; }
+.boss-row-2 .boss-hp.low { color: #ff9aad; }
 
 /* ————— title ————— */
 .overlay { position: absolute; inset: 0; z-index: 20; }
@@ -1267,6 +1286,11 @@ body.touch-mode .toast { bottom: 30%; }
   .upg-row > span { width: 1.5cqw; height: 1.5cqw; min-width: 6px; min-height: 6px; font-size: max(6px, .85cqw); }
 }
 
+@media (max-width: 620px) {
+  .boss-ui-head span { display: none; }
+  .boss-ui-head b { text-align: left; }
+}
+
 @media (hover: none) and (pointer: coarse) {
   .manual { margin-top: 16px; }
   .hud-name-row b { font-size: 1.7cqw; }
@@ -1282,9 +1306,12 @@ body.touch-mode .toast { bottom: 30%; }
   .select-help { display: none !important; }
   body.touch-mode .select-footer { justify-content: flex-end; }
   .toast { font-size: max(10px, 1.3cqw); bottom: 27%; }
-  .boss-ui { top: 7.2cqw; width: 48cqw; }
-  .boss-ui-head span { font-size: max(10px, .95cqw); }
-  .boss-ui-head b { font-size: max(11px, 1.25cqw); }
+  .boss-ui { top: clamp(44px, 9.6cqw, 92px); width: min(52cqw, 620px); min-width: 260px; }
+  .boss-avatar { min-width: 38px; min-height: 44px; }
+  .boss-ui-head { gap: .6cqw; }
+  .boss-ui-head span { font-size: max(9px, .85cqw); letter-spacing: .08em; }
+  .boss-ui-head b { font-size: max(11px, 1.25cqw); letter-spacing: .08em; }
+  .boss-hp { font-size: max(9px, .8cqw); min-width: 4.9em; }
   .char-tag { font-size: max(8px, .95cqw); }
   .char-name { font-size: 2.5cqw; }
   .char-name em { font-size: max(9px, 1.15cqw); }
@@ -1642,12 +1669,24 @@ body.touch-mode .toast { bottom: 30%; }
 
         <div id="boss-ui" class="boss-ui is-hidden">
           <div class="boss-row">
-            <div class="boss-ui-head"><span>WARNING // BOSS</span><b id="boss-name">RAZOR</b></div>
-            <div class="meter boss-meter"><i id="boss-fill"></i></div>
+            <div id="boss-avatar" class="boss-avatar boss-portrait" aria-hidden="true"></div>
+            <div class="boss-row-main">
+              <div class="boss-ui-head"><span>WARNING // BOSS</span><b id="boss-name">RAZOR</b></div>
+              <div class="boss-bar-row">
+                <div class="meter boss-meter"><i id="boss-fill"></i></div>
+                <span id="boss-hp" class="boss-hp">215 / 215</span>
+              </div>
+            </div>
           </div>
           <div id="boss-row-2" class="boss-row boss-row-2 is-hidden">
-            <div class="boss-ui-head"><span>WARNING // BOSS 2</span><b id="boss-name-2">NYX</b></div>
-            <div class="meter boss-meter"><i id="boss-fill-2"></i></div>
+            <div id="boss-avatar-2" class="boss-avatar boss-portrait" aria-hidden="true"></div>
+            <div class="boss-row-main">
+              <div class="boss-ui-head"><span>WARNING // BOSS 2</span><b id="boss-name-2">NYX</b></div>
+              <div class="boss-bar-row">
+                <div class="meter boss-meter"><i id="boss-fill-2"></i></div>
+                <span id="boss-hp-2" class="boss-hp">205 / 205</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1661,7 +1700,7 @@ body.touch-mode .toast { bottom: 30%; }
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
-            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.22</span></div>
+            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.23</span></div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <div class="cover-actions">
               <button id="btn-start" class="arcade-btn" type="button">
@@ -4041,6 +4080,41 @@ body.touch-mode .toast { bottom: 30%; }
     g.fillRect(0, 0, w, h);
   }
 
+  // A head-and-shoulders crop used by enemy HUD nameplates. Rendering the
+  // existing fighter at a larger scale keeps every enemy portrait consistent
+  // with its in-game sprite without adding a second asset set.
+  function drawHeadPortrait(g, w, h, charOrKey, t) {
+    const c = typeof charOrKey === 'string' ? (CHARS[charOrKey] || CHARS.rex) : (charOrKey || CHARS.rex);
+    const m = metrics(c);
+    const scale = (w * .78) / Math.max(1, m.headW);
+    const headCenterY = h * .5;
+    const feetY = headCenterY + scale * (m.height - m.headH / 2);
+
+    g.save();
+    g.beginPath();
+    g.rect(0, 0, w, h);
+    g.clip();
+
+    const bg = g.createRadialGradient(w / 2, h * .4, 1, w / 2, h * .55, w * .9);
+    bg.addColorStop(0, mix(c.colors.accent, '#24101c', .62));
+    bg.addColorStop(1, '#0b0710');
+    g.fillStyle = bg;
+    g.fillRect(0, 0, w, h);
+
+    drawFighter(g, {
+      x: w / 2 - scale, y: feetY, z: 0, facing: 1, scale,
+      char: c, pose: 'idle', anim: (t || 0) * .8, ext: 0, rim: c.colors.accent
+    });
+
+    const fade = g.createLinearGradient(0, 0, 0, h);
+    fade.addColorStop(0, 'rgba(5,3,10,0)');
+    fade.addColorStop(.72, 'rgba(5,3,10,.08)');
+    fade.addColorStop(1, 'rgba(5,3,10,.7)');
+    g.fillStyle = fade;
+    g.fillRect(0, 0, w, h);
+    g.restore();
+  }
+
   // ————————————————————————————————————————————————
   // BACKGROUNDS
   // ————————————————————————————————————————————————
@@ -5416,7 +5490,7 @@ body.touch-mode .toast { bottom: 30%; }
   }
 
   window.Art = {
-    CHARS, drawFighter, drawShadow, drawPreview, drawHudPortrait,
+    CHARS, drawFighter, drawShadow, drawPreview, drawHudPortrait, drawHeadPortrait,
     buildStage, drawBackground, drawItem, drawCrate
   };
 })();
@@ -5458,11 +5532,15 @@ body.touch-mode .toast { bottom: 30%; }
     hudCombo: $('hud-combo'),
     hudComboWrap: document.querySelector('.hud-combo'),
     bossUI: $('boss-ui'),
+    bossAvatar: $('boss-avatar'),
     bossName: $('boss-name'),
     bossFill: $('boss-fill'),
+    bossHp: $('boss-hp'),
     bossRow2: $('boss-row-2'),
+    bossAvatar2: $('boss-avatar-2'),
     bossName2: $('boss-name-2'),
     bossFill2: $('boss-fill-2'),
+    bossHp2: $('boss-hp-2'),
     bossTalk: $('boss-talk'),
     bossTalkKicker: $('boss-talk-kicker'),
     bossTalkPortrait: $('boss-talk-portrait'),
@@ -5722,6 +5800,9 @@ body.touch-mode .toast { bottom: 30%; }
   };
 
   const STAGE_BOSS_KEYS = ['razor', 'titan', 'vector', 'twin', 'house', 'final'];
+
+  const BOSS_PORTRAIT_KEYS = ['razor', 'titan', 'vector', 'raven', 'nyx', 'house', 'vprime'];
+  const ENEMY_HEAD_CACHE = new Map();
 
   const BOSS_TALK = {
     razor: {
@@ -6339,6 +6420,15 @@ body.touch-mode .toast { bottom: 30%; }
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
   }
 
+  function setBossAvatar(el, key) {
+    if (!el) return;
+    const safe = BOSS_PORTRAIT_KEYS.includes(key) ? key : 'razor';
+    if (el.dataset.bossKey === safe) return;
+    el.classList.remove(...BOSS_PORTRAIT_KEYS.map(k => `boss-${k}`));
+    el.classList.add(`boss-${safe}`);
+    el.dataset.bossKey = safe;
+  }
+
   function updateHud() {
     const p = G.player;
     if (!p) return;
@@ -6380,11 +6470,19 @@ body.touch-mode .toast { bottom: 30%; }
     if (aliveBosses.length) {
       const b1 = aliveBosses[0];
       const b2 = aliveBosses[1];
-      dom.bossFill.style.transform = `scaleX(${clamp(b1.hp / b1.maxHp, 0, 1)})`;
+      const r1 = clamp(b1.hp / b1.maxHp, 0, 1);
+      dom.bossFill.style.transform = `scaleX(${r1})`;
       dom.bossName.textContent = `${b1.def.name} // ${b1.def.cn}${b1.phase ? ` · P${b1.phase}` : ''}`;
+      setBossAvatar(dom.bossAvatar, b1.type);
+      dom.bossHp.textContent = `${Math.max(0, Math.ceil(b1.hp))} / ${b1.maxHp}`;
+      dom.bossHp.classList.toggle('low', r1 <= .25);
       if (b2) {
-        dom.bossFill2.style.transform = `scaleX(${clamp(b2.hp / b2.maxHp, 0, 1)})`;
+        const r2 = clamp(b2.hp / b2.maxHp, 0, 1);
+        dom.bossFill2.style.transform = `scaleX(${r2})`;
         dom.bossName2.textContent = `${b2.def.name} // ${b2.def.cn}${b2.phase ? ` · P${b2.phase}` : ''}`;
+        setBossAvatar(dom.bossAvatar2, b2.type);
+        dom.bossHp2.textContent = `${Math.max(0, Math.ceil(b2.hp))} / ${b2.maxHp}`;
+        dom.bossHp2.classList.toggle('low', r2 <= .25);
         show(dom.bossRow2, true);
       } else {
         show(dom.bossRow2, false);
@@ -9110,6 +9208,7 @@ body.touch-mode .toast { bottom: 30%; }
     const dmg = Math.max(1, Math.round(damage));
     e.hp -= dmg;
     e.hitFlash = .12;
+    e.hudFocusUntil = G.time + 2.4;
     e.attack = null;
     e.attacking = false;
     G.combo++;
@@ -11077,37 +11176,165 @@ body.touch-mode .toast { bottom: 30%; }
     ctx.restore();
   }
 
+  function getEnemyHead(type) {
+    let head = ENEMY_HEAD_CACHE.get(type);
+    if (head) return head;
+    head = document.createElement('canvas');
+    head.width = 24;
+    head.height = 24;
+    const g = head.getContext('2d');
+    g.imageSmoothingEnabled = false;
+    Art.drawHeadPortrait(g, 24, 24, makeEnemyChar(type), 0);
+    ENEMY_HEAD_CACHE.set(type, head);
+    return head;
+  }
+
+  function selectEnemyFocus() {
+    if (!G.player) return null;
+    let hit = null;
+    let hitTime = -1;
+    for (const e of G.enemies) {
+      if (e.dead || e.boss || e.state === 'wait') continue;
+      if ((e.hudFocusUntil || 0) > G.time && (e.hudFocusUntil || 0) > hitTime) {
+        hit = e;
+        hitTime = e.hudFocusUntil;
+      }
+    }
+    if (hit) return hit;
+
+    // With no fresh hit, keep a readable portrait on the nearest enemy the
+    // player is actually engaging, while every other enemy keeps a numeric bar.
+    let near = null;
+    let nearDist = Infinity;
+    for (const e of G.enemies) {
+      if (e.dead || e.boss || e.state === 'wait') continue;
+      const dx = Math.abs(e.x - G.player.x);
+      const dy = Math.abs(e.y - G.player.y);
+      if (dx > 105 || dy > 28) continue;
+      const d = dx + dy * 2;
+      if (d < nearDist) {
+        nearDist = d;
+        near = e;
+      }
+    }
+    return near;
+  }
+
+  function drawEnemyHpText(e, barX, barY, barW, barH, ratio) {
+    const hpText = String(Math.max(0, Math.ceil(e.hp)));
+    ctx.font = 'bold 8px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(8,5,13,.95)';
+    ctx.strokeText(hpText, barX + barW / 2, barY + barH / 2 + .5);
+    ctx.fillStyle = ratio <= .3 ? '#ffe0a0' : '#fff6e8';
+    ctx.fillText(hpText, barX + barW / 2, barY + barH / 2 + .5);
+  }
+
+  function drawEnemyBar(e, sx, textOnly) {
+    if (e.dead || e.state === 'wait' || e.boss) return;
+    if (sx < -24 || sx > W + 24) return;
+    const sc = e.scale || 1;
+    const ratio = clamp(e.hp / e.maxHp, 0, 1);
+    if (ratio <= 0) return;
+    const barW = 20;
+    const barH = 8;
+    const x = Math.round(sx - barW / 2);
+    const y = Math.round(e.y - (e.z || 0) - 46 * sc - 4);
+    let col = '#ff4b5e';
+    if (ratio <= .3) col = '#ffb03a';
+    if (ratio <= .14) col = Math.floor(G.time * 12) % 2 ? '#ffe36e' : '#ff4b5e';
+
+    ctx.save();
+    if (textOnly) {
+      drawEnemyHpText(e, x, y, barW, barH, ratio);
+      ctx.restore();
+      return;
+    }
+    ctx.fillStyle = 'rgba(8,5,13,.9)';
+    ctx.fillRect(x - 1, y - 1, barW + 2, barH + 2);
+    ctx.fillStyle = '#4a2431';
+    ctx.fillRect(x, y, barW, barH);
+    ctx.fillStyle = col;
+    ctx.fillRect(x, y, Math.max(2, Math.round(barW * ratio)), barH);
+    ctx.fillStyle = 'rgba(255,255,255,.35)';
+    ctx.fillRect(x, y, Math.max(2, Math.round(barW * ratio)), 1);
+    ctx.fillStyle = 'rgba(8,5,13,.55)';
+    for (let i = 1; i < 4; i++) ctx.fillRect(x + Math.round((barW * i) / 4), y, 1, barH);
+    ctx.restore();
+  }
+
+  function drawEnemyFocusPlate(e, sx) {
+    if (e.dead || e.state === 'wait' || e.boss) return;
+    if (sx < -36 || sx > W + 36) return;
+    const sc = e.scale || 1;
+    const ratio = clamp(e.hp / e.maxHp, 0, 1);
+    if (ratio <= 0) return;
+    const accent = (e.char && e.char.colors && e.char.colors.accent) || '#ff4b5e';
+    const barW = 26;
+    const barH = 5;
+    const headSize = 12;
+    const groupW = 40;
+    const groupH = 17;
+    const groupX = Math.round(sx - groupW / 2);
+    const groupY = Math.round(e.y - (e.z || 0) - 46 * sc - 4) - 11;
+    const barX = groupX + headSize + 2;
+    const barY = groupY + 12;
+    const fillW = Math.max(3, Math.round(barW * ratio));
+    let col = '#ff4b5e';
+    if (ratio <= .3) col = '#ffb03a';
+    if (ratio <= .14) col = Math.floor(G.time * 12) % 2 ? '#ffe36e' : '#ff4b5e';
+
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = 'rgba(8,5,13,.92)';
+    ctx.fillRect(groupX - 1, groupY - 1, groupW + 2, groupH + 2);
+    ctx.strokeStyle = accent;
+    ctx.globalAlpha = .85;
+    ctx.strokeRect(groupX - .5, groupY - .5, groupW + 1, groupH + 1);
+    ctx.globalAlpha = 1;
+
+    ctx.drawImage(getEnemyHead(e.type), groupX, groupY + 4, headSize, headSize);
+    ctx.strokeStyle = accent;
+    ctx.strokeRect(groupX + .5, groupY + 4.5, headSize - 1, headSize - 1);
+
+    ctx.fillStyle = 'rgba(0,0,0,.92)';
+    ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
+    ctx.fillStyle = '#4a2431';
+    ctx.fillRect(barX, barY, barW, barH);
+    ctx.fillStyle = col;
+    ctx.fillRect(barX, barY, fillW, barH);
+    ctx.fillStyle = 'rgba(255,255,255,.42)';
+    ctx.fillRect(barX, barY, fillW, 1);
+    ctx.fillStyle = 'rgba(8,5,13,.55)';
+    for (let i = 1; i < 4; i++) ctx.fillRect(barX + Math.round((barW * i) / 4), barY, 1, barH);
+
+    ctx.font = 'bold 8px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(8,5,13,.95)';
+    const hpText = `${Math.max(0, Math.ceil(e.hp))}/${e.maxHp}`;
+    ctx.strokeText(hpText, barX + barW / 2, groupY + 6);
+    ctx.fillStyle = ratio <= .3 ? '#ffe0a0' : '#fff6e8';
+    ctx.fillText(hpText, barX + barW / 2, groupY + 6);
+    ctx.restore();
+  }
+
   function drawEnemyHealthBars() {
     if (G.mode !== 'playing' && G.mode !== 'paused' && G.mode !== 'intro') return;
+    const focus = selectEnemyFocus();
     for (const e of G.enemies) {
-      if (e.dead || e.state === 'wait' || e.boss) continue;
-      const sx = e.x - G.camera.x;
-      if (sx < -32 || sx > W + 32) continue;
-      const sc = e.scale || 1;
-      const w = Math.round(20 * sc);
-      const h = 3;
-      const x = Math.round(sx - w / 2);
-      const y = Math.round(e.y - (e.z || 0) - 46 * sc - 4);
-      const ratio = clamp(e.hp / e.maxHp, 0, 1);
-      if (ratio <= 0) continue;
-      const fillW = Math.max(3, Math.round(w * ratio));
-      ctx.save();
-      ctx.fillStyle = 'rgba(8,5,13,.92)';
-      ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
-      ctx.fillStyle = '#4a2431';
-      ctx.fillRect(x, y, w, h);
-      let col = '#ff4b5e';
-      if (ratio <= .3) col = '#ffb03a';
-      if (ratio <= .14) col = Math.floor(G.time * 12) % 2 ? '#ffe36e' : '#ff4b5e';
-      ctx.fillStyle = col;
-      ctx.fillRect(x, y, fillW, h);
-      ctx.fillStyle = 'rgba(255,255,255,.42)';
-      ctx.fillRect(x, y, fillW, 1);
-      // quarter notches keep the tiny bar readable at 480p
-      ctx.fillStyle = 'rgba(8,5,13,.55)';
-      for (let i = 1; i < 4; i++) ctx.fillRect(x + Math.round((w * i) / 4), y, 1, h);
-      ctx.restore();
+      if (e === focus) continue;
+      drawEnemyBar(e, e.x - G.camera.x, false);
     }
+    // Labels are a second pass so a nearby bar background cannot clip them.
+    for (const e of G.enemies) {
+      if (e === focus) continue;
+      drawEnemyBar(e, e.x - G.camera.x, true);
+    }
+    if (focus) drawEnemyFocusPlate(focus, focus.x - G.camera.x);
   }
 
   function renderWorld(t) {

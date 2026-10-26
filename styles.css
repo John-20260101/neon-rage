@@ -243,23 +243,42 @@ button:focus-visible, [tabindex]:focus-visible {
 .hud-combo.hot b { color: var(--pink); text-shadow: 0 0 10px rgba(255,46,99,.8); }
 
 .boss-ui {
-  position: absolute; z-index: 15; top: 5.6cqw; left: 50%; transform: translateX(-50%);
-  width: 38cqw; min-width: 220px; pointer-events: none;
-  background: rgba(4,2,10,.78); border: 1px solid rgba(255,46,99,.4);
-  padding: .5cqw .7cqw .65cqw;
+  position: absolute; z-index: 15; top: max(38px, 5.6cqw); left: 50%; transform: translateX(-50%);
+  width: min(42cqw, 620px); min-width: 250px; pointer-events: none;
+  background: rgba(4,2,10,.8); border: 1px solid rgba(255,46,99,.4);
+  padding: .45cqw .6cqw .55cqw;
   box-shadow: 0 0 20px rgba(255,46,99,.15);
 }
-.boss-ui-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1cqw; padding-bottom: .25cqw; }
-.boss-ui-head span { font-size: max(10px, .64cqw); letter-spacing: .17em; color: #ffd08a; }
-.boss-ui-head b { font-size: max(11px, .92cqw); letter-spacing: .15em; color: #fff6e8; }
+.boss-row { display: flex; align-items: stretch; gap: .55cqw; }
+.boss-avatar {
+  width: 3.5cqw; height: 4.1cqw; min-width: 34px; min-height: 40px;
+  flex: 0 0 auto; display: block;
+  background-color: #0b0710; background-position: center; background-size: cover;
+  border: 1px solid rgba(255,46,99,.55); box-shadow: 0 0 10px rgba(255,46,99,.18);
+}
+.boss-row-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.boss-ui-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1cqw; padding-bottom: .2cqw; }
+.boss-ui-head span { font-size: max(10px, .64cqw); letter-spacing: .17em; color: #ffd08a; white-space: nowrap; }
+.boss-ui-head b { font-size: max(11px, .92cqw); letter-spacing: .15em; color: #fff6e8; flex: 1 1 auto; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.boss-bar-row { display: flex; align-items: center; gap: .45cqw; }
+.boss-bar-row .boss-meter { flex: 1 1 auto; min-width: 0; }
 .boss-meter { height: max(8px, .72cqw); border-color: rgba(255,46,99,.7); background-image: repeating-linear-gradient(90deg, transparent 0 9%, rgba(0,0,0,.38) 9% 10%); }
 .boss-meter i { background: linear-gradient(90deg, #ff2e63, #ff5b7d 55%, #ffd23f); box-shadow: 0 0 14px rgba(255,46,99,.85); }
+.boss-hp {
+  flex: 0 0 auto; min-width: 5.4em; text-align: right;
+  font-family: var(--mono); font-weight: 700; font-size: max(9px, .62cqw); font-variant-numeric: tabular-nums;
+  letter-spacing: .03em; color: #ffd08a; white-space: nowrap;
+}
+.boss-hp.low { color: #ff8b9e; text-shadow: 0 0 8px rgba(255,46,99,.7); }
 .boss-row + .boss-row {
   margin-top: .45cqw; padding-top: .4cqw;
   border-top: 1px solid rgba(255,46,99,.25);
 }
+.boss-row-2 .boss-avatar { border-color: rgba(41,231,255,.55); box-shadow: 0 0 10px rgba(41,231,255,.16); }
 .boss-row-2 .boss-meter { border-color: rgba(41,231,255,.6); }
 .boss-row-2 .boss-meter i { background: linear-gradient(90deg, #29e7ff, #7ef4ff 55%, #ffd23f); box-shadow: 0 0 14px rgba(41,231,255,.8); }
+.boss-row-2 .boss-hp { color: #a9f5ff; }
+.boss-row-2 .boss-hp.low { color: #ff9aad; }
 
 /* ————— title ————— */
 .overlay { position: absolute; inset: 0; z-index: 20; }
@@ -1257,6 +1276,11 @@ body.touch-mode .toast { bottom: 30%; }
   .upg-row > span { width: 1.5cqw; height: 1.5cqw; min-width: 6px; min-height: 6px; font-size: max(6px, .85cqw); }
 }
 
+@media (max-width: 620px) {
+  .boss-ui-head span { display: none; }
+  .boss-ui-head b { text-align: left; }
+}
+
 @media (hover: none) and (pointer: coarse) {
   .manual { margin-top: 16px; }
   .hud-name-row b { font-size: 1.7cqw; }
@@ -1272,9 +1296,12 @@ body.touch-mode .toast { bottom: 30%; }
   .select-help { display: none !important; }
   body.touch-mode .select-footer { justify-content: flex-end; }
   .toast { font-size: max(10px, 1.3cqw); bottom: 27%; }
-  .boss-ui { top: 7.2cqw; width: 48cqw; }
-  .boss-ui-head span { font-size: max(10px, .95cqw); }
-  .boss-ui-head b { font-size: max(11px, 1.25cqw); }
+  .boss-ui { top: clamp(44px, 9.6cqw, 92px); width: min(52cqw, 620px); min-width: 260px; }
+  .boss-avatar { min-width: 38px; min-height: 44px; }
+  .boss-ui-head { gap: .6cqw; }
+  .boss-ui-head span { font-size: max(9px, .85cqw); letter-spacing: .08em; }
+  .boss-ui-head b { font-size: max(11px, 1.25cqw); letter-spacing: .08em; }
+  .boss-hp { font-size: max(9px, .8cqw); min-width: 4.9em; }
   .char-tag { font-size: max(8px, .95cqw); }
   .char-name { font-size: 2.5cqw; }
   .char-name em { font-size: max(9px, 1.15cqw); }

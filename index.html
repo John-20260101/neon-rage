@@ -107,12 +107,24 @@
 
         <div id="boss-ui" class="boss-ui is-hidden">
           <div class="boss-row">
-            <div class="boss-ui-head"><span>WARNING // BOSS</span><b id="boss-name">RAZOR</b></div>
-            <div class="meter boss-meter"><i id="boss-fill"></i></div>
+            <div id="boss-avatar" class="boss-avatar boss-portrait" aria-hidden="true"></div>
+            <div class="boss-row-main">
+              <div class="boss-ui-head"><span>WARNING // BOSS</span><b id="boss-name">RAZOR</b></div>
+              <div class="boss-bar-row">
+                <div class="meter boss-meter"><i id="boss-fill"></i></div>
+                <span id="boss-hp" class="boss-hp">215 / 215</span>
+              </div>
+            </div>
           </div>
           <div id="boss-row-2" class="boss-row boss-row-2 is-hidden">
-            <div class="boss-ui-head"><span>WARNING // BOSS 2</span><b id="boss-name-2">NYX</b></div>
-            <div class="meter boss-meter"><i id="boss-fill-2"></i></div>
+            <div id="boss-avatar-2" class="boss-avatar boss-portrait" aria-hidden="true"></div>
+            <div class="boss-row-main">
+              <div class="boss-ui-head"><span>WARNING // BOSS 2</span><b id="boss-name-2">NYX</b></div>
+              <div class="boss-bar-row">
+                <div class="meter boss-meter"><i id="boss-fill-2"></i></div>
+                <span id="boss-hp-2" class="boss-hp">205 / 205</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -126,7 +138,7 @@
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
-            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.22</span></div>
+            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.23</span></div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <div class="cover-actions">
               <button id="btn-start" class="arcade-btn" type="button">

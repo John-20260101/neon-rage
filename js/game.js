@@ -33,11 +33,15 @@
     hudCombo: $('hud-combo'),
     hudComboWrap: document.querySelector('.hud-combo'),
     bossUI: $('boss-ui'),
+    bossAvatar: $('boss-avatar'),
     bossName: $('boss-name'),
     bossFill: $('boss-fill'),
+    bossHp: $('boss-hp'),
     bossRow2: $('boss-row-2'),
+    bossAvatar2: $('boss-avatar-2'),
     bossName2: $('boss-name-2'),
     bossFill2: $('boss-fill-2'),
+    bossHp2: $('boss-hp-2'),
     bossTalk: $('boss-talk'),
     bossTalkKicker: $('boss-talk-kicker'),
     bossTalkPortrait: $('boss-talk-portrait'),
@@ -297,6 +301,9 @@
   };
 
   const STAGE_BOSS_KEYS = ['razor', 'titan', 'vector', 'twin', 'house', 'final'];
+
+  const BOSS_PORTRAIT_KEYS = ['razor', 'titan', 'vector', 'raven', 'nyx', 'house', 'vprime'];
+  const ENEMY_HEAD_CACHE = new Map();
 
   const BOSS_TALK = {
     razor: {
@@ -914,6 +921,15 @@
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
   }
 
+  function setBossAvatar(el, key) {
+    if (!el) return;
+    const safe = BOSS_PORTRAIT_KEYS.includes(key) ? key : 'razor';
+    if (el.dataset.bossKey === safe) return;
+    el.classList.remove(...BOSS_PORTRAIT_KEYS.map(k => `boss-${k}`));
+    el.classList.add(`boss-${safe}`);
+    el.dataset.bossKey = safe;
+  }
+
   function updateHud() {
     const p = G.player;
     if (!p) return;
@@ -955,11 +971,19 @@
     if (aliveBosses.length) {
       const b1 = aliveBosses[0];
       const b2 = aliveBosses[1];
-      dom.bossFill.style.transform = `scaleX(${clamp(b1.hp / b1.maxHp, 0, 1)})`;
+      const r1 = clamp(b1.hp / b1.maxHp, 0, 1);
+      dom.bossFill.style.transform = `scaleX(${r1})`;
       dom.bossName.textContent = `${b1.def.name} // ${b1.def.cn}${b1.phase ? ` · P${b1.phase}` : ''}`;
+      setBossAvatar(dom.bossAvatar, b1.type);
+      dom.bossHp.textContent = `${Math.max(0, Math.ceil(b1.hp))} / ${b1.maxHp}`;
+      dom.bossHp.classList.toggle('low', r1 <= .25);
       if (b2) {
-        dom.bossFill2.style.transform = `scaleX(${clamp(b2.hp / b2.maxHp, 0, 1)})`;
+        const r2 = clamp(b2.hp / b2.maxHp, 0, 1);
+        dom.bossFill2.style.transform = `scaleX(${r2})`;
         dom.bossName2.textContent = `${b2.def.name} // ${b2.def.cn}${b2.phase ? ` · P${b2.phase}` : ''}`;
+        setBossAvatar(dom.bossAvatar2, b2.type);
+        dom.bossHp2.textContent = `${Math.max(0, Math.ceil(b2.hp))} / ${b2.maxHp}`;
+        dom.bossHp2.classList.toggle('low', r2 <= .25);
         show(dom.bossRow2, true);
       } else {
         show(dom.bossRow2, false);
@@ -3685,6 +3709,7 @@
     const dmg = Math.max(1, Math.round(damage));
     e.hp -= dmg;
     e.hitFlash = .12;
+    e.hudFocusUntil = G.time + 2.4;
     e.attack = null;
     e.attacking = false;
     G.combo++;
@@ -5652,37 +5677,165 @@
     ctx.restore();
   }
 
+  function getEnemyHead(type) {
+    let head = ENEMY_HEAD_CACHE.get(type);
+    if (head) return head;
+    head = document.createElement('canvas');
+    head.width = 24;
+    head.height = 24;
+    const g = head.getContext('2d');
+    g.imageSmoothingEnabled = false;
+    Art.drawHeadPortrait(g, 24, 24, makeEnemyChar(type), 0);
+    ENEMY_HEAD_CACHE.set(type, head);
+    return head;
+  }
+
+  function selectEnemyFocus() {
+    if (!G.player) return null;
+    let hit = null;
+    let hitTime = -1;
+    for (const e of G.enemies) {
+      if (e.dead || e.boss || e.state === 'wait') continue;
+      if ((e.hudFocusUntil || 0) > G.time && (e.hudFocusUntil || 0) > hitTime) {
+        hit = e;
+        hitTime = e.hudFocusUntil;
+      }
+    }
+    if (hit) return hit;
+
+    // With no fresh hit, keep a readable portrait on the nearest enemy the
+    // player is actually engaging, while every other enemy keeps a numeric bar.
+    let near = null;
+    let nearDist = Infinity;
+    for (const e of G.enemies) {
+      if (e.dead || e.boss || e.state === 'wait') continue;
+      const dx = Math.abs(e.x - G.player.x);
+      const dy = Math.abs(e.y - G.player.y);
+      if (dx > 105 || dy > 28) continue;
+      const d = dx + dy * 2;
+      if (d < nearDist) {
+        nearDist = d;
+        near = e;
+      }
+    }
+    return near;
+  }
+
+  function drawEnemyHpText(e, barX, barY, barW, barH, ratio) {
+    const hpText = String(Math.max(0, Math.ceil(e.hp)));
+    ctx.font = 'bold 8px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(8,5,13,.95)';
+    ctx.strokeText(hpText, barX + barW / 2, barY + barH / 2 + .5);
+    ctx.fillStyle = ratio <= .3 ? '#ffe0a0' : '#fff6e8';
+    ctx.fillText(hpText, barX + barW / 2, barY + barH / 2 + .5);
+  }
+
+  function drawEnemyBar(e, sx, textOnly) {
+    if (e.dead || e.state === 'wait' || e.boss) return;
+    if (sx < -24 || sx > W + 24) return;
+    const sc = e.scale || 1;
+    const ratio = clamp(e.hp / e.maxHp, 0, 1);
+    if (ratio <= 0) return;
+    const barW = 20;
+    const barH = 8;
+    const x = Math.round(sx - barW / 2);
+    const y = Math.round(e.y - (e.z || 0) - 46 * sc - 4);
+    let col = '#ff4b5e';
+    if (ratio <= .3) col = '#ffb03a';
+    if (ratio <= .14) col = Math.floor(G.time * 12) % 2 ? '#ffe36e' : '#ff4b5e';
+
+    ctx.save();
+    if (textOnly) {
+      drawEnemyHpText(e, x, y, barW, barH, ratio);
+      ctx.restore();
+      return;
+    }
+    ctx.fillStyle = 'rgba(8,5,13,.9)';
+    ctx.fillRect(x - 1, y - 1, barW + 2, barH + 2);
+    ctx.fillStyle = '#4a2431';
+    ctx.fillRect(x, y, barW, barH);
+    ctx.fillStyle = col;
+    ctx.fillRect(x, y, Math.max(2, Math.round(barW * ratio)), barH);
+    ctx.fillStyle = 'rgba(255,255,255,.35)';
+    ctx.fillRect(x, y, Math.max(2, Math.round(barW * ratio)), 1);
+    ctx.fillStyle = 'rgba(8,5,13,.55)';
+    for (let i = 1; i < 4; i++) ctx.fillRect(x + Math.round((barW * i) / 4), y, 1, barH);
+    ctx.restore();
+  }
+
+  function drawEnemyFocusPlate(e, sx) {
+    if (e.dead || e.state === 'wait' || e.boss) return;
+    if (sx < -36 || sx > W + 36) return;
+    const sc = e.scale || 1;
+    const ratio = clamp(e.hp / e.maxHp, 0, 1);
+    if (ratio <= 0) return;
+    const accent = (e.char && e.char.colors && e.char.colors.accent) || '#ff4b5e';
+    const barW = 26;
+    const barH = 5;
+    const headSize = 12;
+    const groupW = 40;
+    const groupH = 17;
+    const groupX = Math.round(sx - groupW / 2);
+    const groupY = Math.round(e.y - (e.z || 0) - 46 * sc - 4) - 11;
+    const barX = groupX + headSize + 2;
+    const barY = groupY + 12;
+    const fillW = Math.max(3, Math.round(barW * ratio));
+    let col = '#ff4b5e';
+    if (ratio <= .3) col = '#ffb03a';
+    if (ratio <= .14) col = Math.floor(G.time * 12) % 2 ? '#ffe36e' : '#ff4b5e';
+
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = 'rgba(8,5,13,.92)';
+    ctx.fillRect(groupX - 1, groupY - 1, groupW + 2, groupH + 2);
+    ctx.strokeStyle = accent;
+    ctx.globalAlpha = .85;
+    ctx.strokeRect(groupX - .5, groupY - .5, groupW + 1, groupH + 1);
+    ctx.globalAlpha = 1;
+
+    ctx.drawImage(getEnemyHead(e.type), groupX, groupY + 4, headSize, headSize);
+    ctx.strokeStyle = accent;
+    ctx.strokeRect(groupX + .5, groupY + 4.5, headSize - 1, headSize - 1);
+
+    ctx.fillStyle = 'rgba(0,0,0,.92)';
+    ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
+    ctx.fillStyle = '#4a2431';
+    ctx.fillRect(barX, barY, barW, barH);
+    ctx.fillStyle = col;
+    ctx.fillRect(barX, barY, fillW, barH);
+    ctx.fillStyle = 'rgba(255,255,255,.42)';
+    ctx.fillRect(barX, barY, fillW, 1);
+    ctx.fillStyle = 'rgba(8,5,13,.55)';
+    for (let i = 1; i < 4; i++) ctx.fillRect(barX + Math.round((barW * i) / 4), barY, 1, barH);
+
+    ctx.font = 'bold 8px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(8,5,13,.95)';
+    const hpText = `${Math.max(0, Math.ceil(e.hp))}/${e.maxHp}`;
+    ctx.strokeText(hpText, barX + barW / 2, groupY + 6);
+    ctx.fillStyle = ratio <= .3 ? '#ffe0a0' : '#fff6e8';
+    ctx.fillText(hpText, barX + barW / 2, groupY + 6);
+    ctx.restore();
+  }
+
   function drawEnemyHealthBars() {
     if (G.mode !== 'playing' && G.mode !== 'paused' && G.mode !== 'intro') return;
+    const focus = selectEnemyFocus();
     for (const e of G.enemies) {
-      if (e.dead || e.state === 'wait' || e.boss) continue;
-      const sx = e.x - G.camera.x;
-      if (sx < -32 || sx > W + 32) continue;
-      const sc = e.scale || 1;
-      const w = Math.round(20 * sc);
-      const h = 3;
-      const x = Math.round(sx - w / 2);
-      const y = Math.round(e.y - (e.z || 0) - 46 * sc - 4);
-      const ratio = clamp(e.hp / e.maxHp, 0, 1);
-      if (ratio <= 0) continue;
-      const fillW = Math.max(3, Math.round(w * ratio));
-      ctx.save();
-      ctx.fillStyle = 'rgba(8,5,13,.92)';
-      ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
-      ctx.fillStyle = '#4a2431';
-      ctx.fillRect(x, y, w, h);
-      let col = '#ff4b5e';
-      if (ratio <= .3) col = '#ffb03a';
-      if (ratio <= .14) col = Math.floor(G.time * 12) % 2 ? '#ffe36e' : '#ff4b5e';
-      ctx.fillStyle = col;
-      ctx.fillRect(x, y, fillW, h);
-      ctx.fillStyle = 'rgba(255,255,255,.42)';
-      ctx.fillRect(x, y, fillW, 1);
-      // quarter notches keep the tiny bar readable at 480p
-      ctx.fillStyle = 'rgba(8,5,13,.55)';
-      for (let i = 1; i < 4; i++) ctx.fillRect(x + Math.round((w * i) / 4), y, 1, h);
-      ctx.restore();
+      if (e === focus) continue;
+      drawEnemyBar(e, e.x - G.camera.x, false);
     }
+    // Labels are a second pass so a nearby bar background cannot clip them.
+    for (const e of G.enemies) {
+      if (e === focus) continue;
+      drawEnemyBar(e, e.x - G.camera.x, true);
+    }
+    if (focus) drawEnemyFocusPlate(focus, focus.x - G.camera.x);
   }
 
   function renderWorld(t) {

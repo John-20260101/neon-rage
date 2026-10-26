@@ -1092,6 +1092,41 @@
     g.fillRect(0, 0, w, h);
   }
 
+  // A head-and-shoulders crop used by enemy HUD nameplates. Rendering the
+  // existing fighter at a larger scale keeps every enemy portrait consistent
+  // with its in-game sprite without adding a second asset set.
+  function drawHeadPortrait(g, w, h, charOrKey, t) {
+    const c = typeof charOrKey === 'string' ? (CHARS[charOrKey] || CHARS.rex) : (charOrKey || CHARS.rex);
+    const m = metrics(c);
+    const scale = (w * .78) / Math.max(1, m.headW);
+    const headCenterY = h * .5;
+    const feetY = headCenterY + scale * (m.height - m.headH / 2);
+
+    g.save();
+    g.beginPath();
+    g.rect(0, 0, w, h);
+    g.clip();
+
+    const bg = g.createRadialGradient(w / 2, h * .4, 1, w / 2, h * .55, w * .9);
+    bg.addColorStop(0, mix(c.colors.accent, '#24101c', .62));
+    bg.addColorStop(1, '#0b0710');
+    g.fillStyle = bg;
+    g.fillRect(0, 0, w, h);
+
+    drawFighter(g, {
+      x: w / 2 - scale, y: feetY, z: 0, facing: 1, scale,
+      char: c, pose: 'idle', anim: (t || 0) * .8, ext: 0, rim: c.colors.accent
+    });
+
+    const fade = g.createLinearGradient(0, 0, 0, h);
+    fade.addColorStop(0, 'rgba(5,3,10,0)');
+    fade.addColorStop(.72, 'rgba(5,3,10,.08)');
+    fade.addColorStop(1, 'rgba(5,3,10,.7)');
+    g.fillStyle = fade;
+    g.fillRect(0, 0, w, h);
+    g.restore();
+  }
+
   // ————————————————————————————————————————————————
   // BACKGROUNDS
   // ————————————————————————————————————————————————
@@ -2467,7 +2502,7 @@
   }
 
   window.Art = {
-    CHARS, drawFighter, drawShadow, drawPreview, drawHudPortrait,
+    CHARS, drawFighter, drawShadow, drawPreview, drawHudPortrait, drawHeadPortrait,
     buildStage, drawBackground, drawItem, drawCrate
   };
 })();
