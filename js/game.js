@@ -5210,11 +5210,15 @@
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.strokeStyle = color;
-    ctx.globalAlpha = alpha * .1;
-    ctx.lineWidth = width * 4.5;
+    // B+C: a soft body pass, a mid volume pass, then a crisp rim.
+    ctx.globalAlpha = alpha * .055;
+    ctx.lineWidth = width * 7;
     ctx.stroke(path);
-    ctx.globalAlpha = alpha * .84;
-    ctx.lineWidth = width;
+    ctx.globalAlpha = alpha * .095;
+    ctx.lineWidth = width * 3.4;
+    ctx.stroke(path);
+    ctx.globalAlpha = alpha * .86;
+    ctx.lineWidth = width * 1.05;
     ctx.stroke(path);
     ctx.restore();
   }
@@ -5489,6 +5493,12 @@
     return `rgba(${(value >> 16) & 255},${(value >> 8) & 255},${value & 255},${alpha})`;
   }
 
+  function drawDharmaCreature(fx, age, alpha) {
+    if (fx.charKey === 'luna') drawDharmaDragon(fx, age, alpha);
+    else if (fx.charKey === 'bruno') drawDharmaYuqiang(fx, age, alpha);
+    else drawDharmaCrow(fx, age, alpha);
+  }
+
   function drawDharmaFx() {
     const fx = G.dharma;
     if (!fx) return;
@@ -5506,13 +5516,37 @@
     const haloY = sy - 40 * k;
 
     ctx.save();
+
+    // Contact shadow and an inner volume: the apparition should sit on the
+    // street rather than float like a flat decal.
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = alpha * .45;
+    const contact = ctx.createRadialGradient(sx, sy, 1, sx, sy, 38 * scale);
+    contact.addColorStop(0, 'rgba(0,0,0,.52)');
+    contact.addColorStop(.5, 'rgba(0,0,0,.2)');
+    contact.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = contact;
+    ctx.beginPath();
+    ctx.ellipse(sx, sy, 38 * scale, 7 * scale, 0, 0, Math.PI * 2);
+    ctx.fill();
+
     ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = 1;
+    const coreY = sy - 28 * k;
+    const core = ctx.createRadialGradient(sx, coreY, 2, sx, coreY, 46 * k);
+    core.addColorStop(0, colorWithAlpha(color, .12 * alpha));
+    core.addColorStop(.55, colorWithAlpha(color, .042 * alpha));
+    core.addColorStop(1, colorWithAlpha(color, 0));
+    ctx.fillStyle = core;
+    ctx.beginPath();
+    ctx.ellipse(sx, coreY, 32 * k, 43 * k, 0, 0, Math.PI * 2);
+    ctx.fill();
 
     // Torso-length aura column: a soft, non-blocking backlight behind the fighter.
     const auraY = sy - 31 * scale;
     const aura = ctx.createRadialGradient(sx, auraY, 4, sx, auraY, 32 * scale);
-    aura.addColorStop(0, colorWithAlpha(color, .2 * alpha));
-    aura.addColorStop(.45, colorWithAlpha(color, .065 * alpha));
+    aura.addColorStop(0, colorWithAlpha(color, .18 * alpha));
+    aura.addColorStop(.45, colorWithAlpha(color, .055 * alpha));
     aura.addColorStop(1, colorWithAlpha(color, 0));
     ctx.fillStyle = aura;
     ctx.beginPath();
@@ -5521,7 +5555,7 @@
 
     const column = ctx.createLinearGradient(sx, sy, sx, sy - 56 * scale);
     column.addColorStop(0, colorWithAlpha(color, 0));
-    column.addColorStop(.55, colorWithAlpha(color, .1 * alpha));
+    column.addColorStop(.55, colorWithAlpha(color, .085 * alpha));
     column.addColorStop(1, colorWithAlpha(color, 0));
     ctx.fillStyle = column;
     ctx.fillRect(sx - 8 * scale, sy - 56 * scale, 16 * scale, 56 * scale);
@@ -5569,20 +5603,44 @@
       ctx.stroke();
     }
 
+    // Volumetric shafts, kept behind the creature and deliberately faint.
+    ctx.save();
+    const rayY = sy - 32 * k;
+    for (let i = 0; i < 10; i++) {
+      const a = fx.seed + i * Math.PI / 5 + age * .08;
+      const spread = .022;
+      ctx.globalAlpha = alpha * .015;
+      ctx.fillStyle = i % 3 === 0 ? '#fff5d2' : color;
+      ctx.beginPath();
+      ctx.moveTo(sx, rayY);
+      ctx.lineTo(sx + Math.cos(a - spread) * W * 1.35, rayY + Math.sin(a - spread) * W * 1.35);
+      ctx.lineTo(sx + Math.cos(a + spread) * W * 1.35, rayY + Math.sin(a + spread) * W * 1.35);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.restore();
+
+    // A low ground reflection ties the body to the wet asphalt.
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.translate(sx, sy + 2);
+    ctx.scale((fx.facing || 1) * k, -k * .34);
+    ctx.globalAlpha = 1;
+    drawDharmaCreature(fx, age, alpha * .085);
+    ctx.restore();
+
     // The dharma creature, drawn as luminous line art over the aura.
     ctx.globalAlpha = 1;
     ctx.save();
     ctx.translate(sx, sy);
     ctx.scale((fx.facing || 1) * k, k);
-    if (fx.charKey === 'luna') drawDharmaDragon(fx, age, alpha);
-    else if (fx.charKey === 'bruno') drawDharmaYuqiang(fx, age, alpha);
-    else drawDharmaCrow(fx, age, alpha);
+    drawDharmaCreature(fx, age, alpha);
     ctx.restore();
 
     // A handful of deterministic motes; no per-frame particle allocation.
     ctx.globalCompositeOperation = 'lighter';
-    for (let i = 0; i < 7; i++) {
-      const p = (age * .18 + i / 7) % 1;
+    for (let i = 0; i < 11; i++) {
+      const p = (age * .18 + i / 11) % 1;
       const ang = fx.seed + i * 1.7 + age * .3;
       const dist = (10 + p * 34) * scale;
       const px = sx + Math.cos(ang) * dist;
