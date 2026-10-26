@@ -420,6 +420,18 @@ button:focus-visible, [tabindex]:focus-visible {
 .arcade-btn.compact .btn-sub { font-size: .48cqw; }
 .arcade-btn.compact::after { font-size: 2cqw; right: 1cqw; }
 
+.cover-archive {
+  display: inline-flex; align-items: baseline; gap: .55cqw;
+  margin-top: .9cqw; padding-bottom: .18cqw;
+  border-bottom: 1px solid rgba(41,231,255,.35);
+  font-family: var(--mono); font-size: max(8px, .52cqw);
+  letter-spacing: .14em; color: #b9adc7;
+  transition: color .2s, border-color .2s;
+}
+.cover-archive span { font-family: var(--cn); font-size: max(8px, .7cqw); letter-spacing: .06em; color: var(--cyan); }
+.cover-archive:hover { color: var(--yellow); border-color: var(--yellow); }
+.cover-archive:hover span { color: var(--pink); }
+
 .title-meta {
   display: flex; gap: 1.5cqw; flex-wrap: wrap;
   margin-top: 1.8cqw;
@@ -1235,6 +1247,8 @@ body.touch-mode .toast { bottom: 30%; }
 @media (max-width: 700px) {
   .cover-ribbon { margin-bottom: .55cqw; padding: .2cqw .5cqw; font-size: max(7px, .95cqw); }
   .cover-next { font-size: max(7px, .9cqw); margin-top: .45cqw; }
+  .cover-archive { margin-top: .55cqw; font-size: max(7px, .48cqw); }
+  .cover-archive span { font-size: max(7px, .62cqw); }
   .title-copy { font-size: max(8px, 1.5cqw); margin: .8cqw 0 1cqw; }
   .difficulty-screen { padding: 1.6cqw 1.4cqw 1.1cqw; gap: .55cqw; }
   .difficulty-head .eyebrow { font-size: .9cqw; }

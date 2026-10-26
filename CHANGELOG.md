@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.2.26 — 2026-10-26
+
+- 新增全人物档案页 `roster.html`：收录 3 名可操作斗士、7 名 Boss、10 名街头敌兵，共 20 名角色。
+- 页面采用 NEO CITY 人事档案 / 案件卷宗视觉：CRT 暗色底、纸张色标题、金色与阵营强调色；不引入框架或外部依赖。
+- 支持 PLAYABLE / BOSSES / STREET 筛选、阵营计数、卡片档案弹层、上一名/下一名、`←` `→` 翻页、`Esc` 关闭、焦点恢复与滚动锁定。
+- 档案内容复用游戏内真实数据：HP / ATK / SPD / RNG、关卡、威胁等级、招式与人物台词；斗士立绘从封面 keyart 裁切，Boss 与敌兵复用已入库头像，关卡横幅复用现有 WebP。
+- 游戏封面新增 `ROSTER ARCHIVE // 全人物档案` 入口；档案页提供返回游戏入口。
+- 更新 README 与版本号；单文件版 `neon-rage.html` 重新构建。
+
 ## v0.2.25 — 2026-10-26
 
 - 十名普通敌兵的目标栏改用 gpt-image-2.5 生成头像：PUNK、BLADE、BRUTE、KICKER、BOXER、LASH、GUNNER、SIREN、VIPER、WRECKER。

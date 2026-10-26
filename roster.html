@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#07050d" />
+  <meta name="description" content="NEON RAGE 霓虹怒火全人物档案：3 名可操作斗士、7 名 Boss、10 名街头敌兵。" />
+  <title>NEON RAGE // 全人物档案</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f2ead9'/%3E%3Ctext x='32' y='44' font-family='Arial Black' font-size='30' text-anchor='middle' fill='%2305040a'%3ENR%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="roster.css" />
+</head>
+<body>
+  <div class="page-noise" aria-hidden="true"></div>
+  <div class="page-scanlines" aria-hidden="true"></div>
+
+  <header class="site-head">
+    <a class="brand" href="index.html" aria-label="返回 NEON RAGE 游戏">
+      <span class="brand-mark"><b>NR</b><small>199X</small></span>
+      <span class="brand-copy">
+        <b>NEON RAGE</b>
+        <em>霓虹怒火 // ROSTER ARCHIVE</em>
+      </span>
+    </a>
+    <div class="head-meta" aria-hidden="true">
+      <span>NEO CITY</span><i>/</i><span>PERSONNEL FILE</span><i>/</i><span>20 SUBJECTS</span>
+    </div>
+    <nav class="head-nav" aria-label="页面导航">
+      <a href="#roster">全部档案</a>
+      <a href="index.html">返回游戏 <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-art" aria-hidden="true"></div>
+      <div class="hero-veil" aria-hidden="true"></div>
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="dot"></span> CLASSIFIED // NEO CITY 199X</div>
+        <h1 id="hero-title">
+          <span class="hero-all">ALL</span>
+          <span class="hero-fighters">FIGHTERS</span>
+        </h1>
+        <p class="hero-cn">全 人 物 档 案</p>
+        <p class="hero-lead">三条清街的路，二十张被霓虹照过的脸。<br />从第九码头到 V 塔核心，所有斗士、庄家与街头打手，一次归档。</p>
+        <div class="hero-actions">
+          <a class="btn-solid" href="#roster">浏览档案 <span>↓</span></a>
+          <a class="btn-ghost" href="index.html">进入游戏 <span>↗</span></a>
+        </div>
+      </div>
+
+      <aside class="hero-index" aria-label="档案统计">
+        <div class="index-top">
+          <span>ARCHIVE INDEX</span>
+          <span class="index-live"><i></i> ONLINE</span>
+        </div>
+        <div class="index-row">
+          <span class="index-no">01</span>
+          <b>PLAYABLE</b>
+          <em>03</em>
+        </div>
+        <div class="index-row">
+          <span class="index-no">02</span>
+          <b>BOSSES</b>
+          <em>07</em>
+        </div>
+        <div class="index-row">
+          <span class="index-no">03</span>
+          <b>STREET</b>
+          <em>10</em>
+        </div>
+        <div class="index-total">
+          <span>TOTAL SUBJECTS</span>
+          <b>20</b>
+        </div>
+        <div class="index-stamp" aria-hidden="true">
+          <span>NEO CITY</span>
+          <span>TRUTH</span>
+          <span>JUSTICE</span>
+        </div>
+      </aside>
+
+      <div class="hero-side-label" aria-hidden="true">PERSONNEL // CLASSIFIED // PERSONNEL // CLASSIFIED</div>
+      <div class="hero-scroll" aria-hidden="true"><span>SCROLL</span><i></i></div>
+    </section>
+
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span>SYNDICATE CONTROL: 89%</span><i>//</i>
+        <span>POLICE RESPONSE: 0%</span><i>//</i>
+        <span>STREET JUSTICE: ONLINE</span><i>//</i>
+        <span>20 SUBJECTS ON FILE</span><i>//</i>
+        <span>SYNDICATE CONTROL: 89%</span><i>//</i>
+        <span>POLICE RESPONSE: 0%</span><i>//</i>
+        <span>STREET JUSTICE: ONLINE</span><i>//</i>
+        <span>20 SUBJECTS ON FILE</span><i>//</i>
+      </div>
+    </div>
+
+    <section class="roster" id="roster" aria-labelledby="roster-title">
+      <div class="roster-head">
+        <div class="roster-title-wrap">
+          <div class="eyebrow"><span class="dot"></span> NEO CITY PERSONNEL ARCHIVE</div>
+          <h2 id="roster-title">人物档案 <span>/ ROSTER</span></h2>
+          <p>三种活法，七道闸门，十个不想让你走到明天的街头打手。</p>
+        </div>
+        <div class="roster-note">
+          <span>FILE STATUS</span>
+          <b>DECLASSIFIED</b>
+          <em>点击任意档案查看完整资料</em>
+        </div>
+      </div>
+
+      <div class="filter-bar" id="filter-bar" role="tablist" aria-label="人物筛选">
+        <button class="filter-btn is-active" type="button" data-filter="all" role="tab" aria-selected="true">
+          <span>ALL</span><b>20</b>
+        </button>
+        <button class="filter-btn" type="button" data-filter="playable" role="tab" aria-selected="false">
+          <span>PLAYABLE</span><b>03</b>
+        </button>
+        <button class="filter-btn" type="button" data-filter="boss" role="tab" aria-selected="false">
+          <span>BOSSES</span><b>07</b>
+        </button>
+        <button class="filter-btn" type="button" data-filter="street" role="tab" aria-selected="false">
+          <span>STREET</span><b>10</b>
+        </button>
+        <div class="filter-hint" id="filter-hint" aria-live="polite">显示全部 20 名角色</div>
+      </div>
+
+      <section class="section-block" id="section-playable" data-section="playable" aria-labelledby="playable-title">
+        <div class="section-head">
+          <div class="section-label">
+            <span class="section-no">01</span>
+            <div>
+              <h3 id="playable-title">清街者 <span>// PLAYABLE</span></h3>
+              <p>三条路，三种节奏。选一个，把今晚的账收完。</p>
+            </div>
+          </div>
+          <span class="section-count">03 FILES</span>
+        </div>
+        <div class="player-grid" id="playable-grid"></div>
+      </section>
+
+      <section class="section-block" id="section-boss" data-section="boss" aria-labelledby="boss-title">
+        <div class="section-head">
+          <div class="section-label">
+            <span class="section-no">02</span>
+            <div>
+              <h3 id="boss-title">V 先生麾下 <span>// BOSSES</span></h3>
+              <p>七道闸门。每一道都替 V 先生收过钱，也收过命。</p>
+            </div>
+          </div>
+          <span class="section-count">07 FILES</span>
+        </div>
+        <div class="boss-grid" id="boss-grid"></div>
+      </section>
+
+      <section class="section-block" id="section-street" data-section="street" aria-labelledby="street-title">
+        <div class="section-head">
+          <div class="section-label">
+            <span class="section-no">03</span>
+            <div>
+              <h3 id="street-title">街头打手 <span>// STREET</span></h3>
+              <p>V 先生的外围人手。单看只是麻烦，凑在一起就是一条街。</p>
+            </div>
+          </div>
+          <span class="section-count">10 FILES</span>
+        </div>
+        <div class="enemy-grid" id="street-grid"></div>
+      </section>
+
+      <div class="empty-state" id="empty-state" hidden>
+        <span>NO FILES FOUND</span>
+        <p>这个筛选条件下没有档案。</p>
+      </div>
+    </section>
+
+    <section class="closing" aria-label="返回游戏">
+      <div class="closing-no" aria-hidden="true">20 / 20</div>
+      <div class="closing-copy">
+        <div class="eyebrow"><span class="dot"></span> END OF FILE</div>
+        <h2>档案看完了。<br /><span>今晚，谁去清街？</span></h2>
+        <p>选一个斗士，从第九码头开始。V 塔顶层还有三具身体在等你。</p>
+      </div>
+      <a class="btn-solid closing-btn" href="index.html">进入游戏 <span>↗</span></a>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div>
+      <span class="foot-mark">NR</span>
+      <p>NEON RAGE // 霓虹怒火<br /><em>原创 16-bit 风格横版清关动作游戏</em></p>
+    </div>
+    <div class="foot-meta">
+      <span>3 PLAYABLE</span>
+      <span>7 BOSSES</span>
+      <span>10 STREET</span>
+      <span>6 STAGES</span>
+      <span>v0.2.26</span>
+    </div>
+    <a href="index.html">BACK TO GAME <span>↗</span></a>
+  </footer>
+
+  <div class="dossier" id="dossier" aria-hidden="true">
+    <div class="dossier-backdrop" data-close></div>
+    <section class="dossier-panel" role="dialog" aria-modal="true" aria-labelledby="dossier-name" aria-describedby="dossier-bio">
+      <button class="dossier-close" id="dossier-close" type="button" aria-label="关闭档案">关闭 <span>ESC</span></button>
+      <div class="dossier-layout">
+        <div class="dossier-visual" id="dossier-visual">
+          <div class="dossier-stage" id="dossier-stage" aria-hidden="true"></div>
+          <div class="dossier-art" id="dossier-art"></div>
+          <div class="dossier-visual-meta" id="dossier-visual-meta"></div>
+        </div>
+        <div class="dossier-content" id="dossier-content">
+          <div class="dossier-kicker" id="dossier-kicker"></div>
+          <div class="dossier-title-row">
+            <div>
+              <h2 id="dossier-name"></h2>
+              <p class="dossier-role" id="dossier-role"></p>
+            </div>
+            <span class="dossier-threat" id="dossier-threat"></span>
+          </div>
+          <div class="dossier-tags" id="dossier-tags"></div>
+          <blockquote class="dossier-quote" id="dossier-quote"></blockquote>
+          <div class="dossier-bio" id="dossier-bio"></div>
+          <div class="dossier-stats" id="dossier-stats"></div>
+          <div class="dossier-abilities">
+            <div class="dossier-subhead"><span>FIELD NOTES</span><em>战斗记录</em></div>
+            <div class="ability-list" id="dossier-abilities"></div>
+          </div>
+          <div class="dossier-footer">
+            <div class="dossier-nav">
+              <button type="button" id="dossier-prev">← PREV</button>
+              <span id="dossier-count"></span>
+              <button type="button" id="dossier-next">NEXT →</button>
+            </div>
+            <a href="index.html">进入游戏 <span>↗</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <noscript>
+    <div class="noscript">这个档案页需要启用 JavaScript 才能展开人物资料。</div>
+  </noscript>
+
+  <script src="roster.js"></script>
+</body>
+</html>
