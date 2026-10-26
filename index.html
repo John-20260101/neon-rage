@@ -126,7 +126,7 @@
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
-            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.18</span></div>
+            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.19</span></div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <div class="cover-actions">
               <button id="btn-start" class="arcade-btn" type="button">
@@ -259,6 +259,19 @@
                   </button>
                 </div>
                 <p id="settings-music-status" class="settings-note">当前：NEON CLASSIC</p>
+                <div class="audio-mix">
+                  <div class="audio-mix-head"><b>MIX</b><span>音量</span></div>
+                  <label class="mix-row" for="music-volume">
+                    <span>音乐</span>
+                    <input id="music-volume" class="mix-range" type="range" min="0" max="100" step="1" value="70" aria-label="音乐音量">
+                    <output id="music-volume-value" for="music-volume">70%</output>
+                  </label>
+                  <label class="mix-row" for="sfx-volume">
+                    <span>音效</span>
+                    <input id="sfx-volume" class="mix-range" type="range" min="0" max="100" step="1" value="80" aria-label="音效音量">
+                    <output id="sfx-volume-value" for="sfx-volume">80%</output>
+                  </label>
+                </div>
               </section>
               <section class="settings-panel" data-panel="controls">
                 <div class="settings-panel-title"><b>HOW TO FIGHT</b><span>操作</span></div>

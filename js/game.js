@@ -51,6 +51,10 @@
     settingsBody: $('settings-body'),
     settingsMusicStatus: $('settings-music-status'),
     musicOptions: document.querySelectorAll('.music-option'),
+    musicVolume: $('music-volume'),
+    sfxVolume: $('sfx-volume'),
+    musicVolumeValue: $('music-volume-value'),
+    sfxVolumeValue: $('sfx-volume-value'),
     difficulty: $('difficulty-screen'),
     difficultyGrid: $('difficulty-grid'),
     select: $('select-screen'),
@@ -233,6 +237,9 @@
     boostSpeed: 'speed', boostAttack: 'attack', boostDefense: 'defense'
   };
   const MUSIC_SETTINGS_KEY = 'neonRageMusicPack';
+  const MUSIC_VOLUME_KEY = 'neonRageMusicVolume';
+  const SFX_VOLUME_KEY = 'neonRageSfxVolume';
+  const MUTE_SETTINGS_KEY = 'neonRageMuted';
   const MUSIC_PACK_LABELS = {
     classic: 'NEON CLASSIC', midnight: 'MIDNIGHT DRIVE', steel: 'STEEL PULSE'
   };
@@ -839,7 +846,8 @@
       if (e.repeat && down) return;
       const action = this.map[e.code];
       if (!action) return;
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Enter'].includes(e.code)) e.preventDefault();
+      const rangeFocused = !!(document.activeElement && document.activeElement.matches && document.activeElement.matches('input[type="range"]'));
+      if (!rangeFocused && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Enter'].includes(e.code)) e.preventDefault();
       if (G.mode === 'settings' && (e.code === 'KeyW' || e.code === 'KeyS')) e.preventDefault();
       this.set(action, down);
     }
@@ -1177,6 +1185,53 @@
     Sound.playTrack('select');
     Sound.menu();
     blurFocus();
+  }
+
+  function readStoredVolume(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw === null) return fallback;
+      const value = Number(raw);
+      return Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : fallback;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
+  function loadAudioSettings() {
+    const music = readStoredVolume(MUSIC_VOLUME_KEY, 0.7);
+    const sfx = readStoredVolume(SFX_VOLUME_KEY, 0.8);
+    let muted = false;
+    try { muted = localStorage.getItem(MUTE_SETTINGS_KEY) === '1'; } catch (e) { /* storage unavailable */ }
+    Sound.setMusicVolume(music);
+    Sound.setSfxVolume(sfx);
+    Sound.setMuted(muted);
+    G.muted = muted;
+    updateVolumeUI();
+  }
+
+  function updateVolumeUI() {
+    const music = Math.round(Sound.musicVolume * 100);
+    const sfx = Math.round(Sound.sfxVolume * 100);
+    if (dom.musicVolume) dom.musicVolume.value = String(music);
+    if (dom.sfxVolume) dom.sfxVolume.value = String(sfx);
+    if (dom.musicVolumeValue) dom.musicVolumeValue.textContent = `${music}%`;
+    if (dom.sfxVolumeValue) dom.sfxVolumeValue.textContent = `${sfx}%`;
+    if (dom.soundBtn) dom.soundBtn.textContent = G.muted ? '♪ OFF' : '♪ ON';
+  }
+
+  function setMusicVolume(value) {
+    const next = Math.max(0, Math.min(1, Number(value) || 0));
+    Sound.setMusicVolume(next);
+    try { localStorage.setItem(MUSIC_VOLUME_KEY, String(next)); } catch (e) { /* ignore */ }
+    updateVolumeUI();
+  }
+
+  function setSfxVolume(value) {
+    const next = Math.max(0, Math.min(1, Number(value) || 0));
+    Sound.setSfxVolume(next);
+    try { localStorage.setItem(SFX_VOLUME_KEY, String(next)); } catch (e) { /* ignore */ }
+    updateVolumeUI();
   }
 
   function loadMusicPack() {
@@ -3487,7 +3542,8 @@
       G.flash = Math.max(G.flash, .38);
       shake(8);
       announce('PHASE 2', 'HEAVY COMBAT // 暴走', '#ff5b3d', 2.2);
-      Sound.special();
+      Sound.setIntensity(0.45);
+      Sound.phaseStinger();
       updateHud();
       return true;
     }
@@ -3515,7 +3571,8 @@
       G.flash = Math.max(G.flash, .45);
       shake(10);
       announce('PHASE 3', 'SKY BREAKER // 天翔', '#ffd34d', 2.4);
-      Sound.special();
+      Sound.setIntensity(1);
+      Sound.phaseStinger();
       updateHud();
       return true;
     }
@@ -3545,7 +3602,8 @@
       G.flash = Math.max(G.flash, .4);
       shake(9);
       announce('PHASE 2', 'PLACE YOUR BETS // 下注', '#ffd34d', 2.2);
-      Sound.special();
+      Sound.setIntensity(0.45);
+      Sound.phaseStinger();
       updateHud();
       return true;
     }
@@ -3570,7 +3628,8 @@
       G.flash = Math.max(G.flash, .5);
       shake(12);
       announce('PHASE 3', 'THE HOUSE ALWAYS WINS // 庄家通吃', '#ff4f6d', 2.4);
-      Sound.special();
+      Sound.setIntensity(1);
+      Sound.phaseStinger();
       updateHud();
       return true;
     }
@@ -4210,14 +4269,15 @@
       case 'settings': {
         const tabs = Array.from(document.querySelectorAll('.settings-tab')).map(btn => btn.dataset.tab);
         if (Input.pressed('pause')) openTitle(true);
+        const mixFocused = !!(document.activeElement && document.activeElement.matches && document.activeElement.matches('input[type="range"]'));
         const tabIndex = tabs.indexOf(G.settingsTab);
-        if (tabIndex >= 0 && Input.pressed('left')) {
+        if (!mixFocused && tabIndex >= 0 && Input.pressed('left')) {
           setSettingsTab(tabs[(tabIndex + tabs.length - 1) % tabs.length]);
         }
-        if (tabIndex >= 0 && Input.pressed('right')) {
+        if (!mixFocused && tabIndex >= 0 && Input.pressed('right')) {
           setSettingsTab(tabs[(tabIndex + 1) % tabs.length]);
         }
-        if (G.settingsTab === 'audio') {
+        if (!mixFocused && G.settingsTab === 'audio') {
           if (Input.pressed('up')) cycleMusicPack(-1);
           if (Input.pressed('down')) cycleMusicPack(1);
         }
@@ -5454,7 +5514,8 @@
     G.muted = !G.muted;
     Sound.ensure();
     Sound.setMuted(G.muted);
-    dom.soundBtn.textContent = G.muted ? '♪ OFF' : '♪ ON';
+    try { localStorage.setItem(MUTE_SETTINGS_KEY, G.muted ? '1' : '0'); } catch (e) { /* ignore */ }
+    updateVolumeUI();
     if (!G.muted && G.mode !== 'title') Sound.ensure();
   }
 
@@ -5502,6 +5563,18 @@
         selectMusicPack(option.dataset.pack);
       });
     });
+    if (dom.musicVolume) {
+      dom.musicVolume.addEventListener('input', (e) => {
+        ensureAudio();
+        setMusicVolume(Number(e.target.value) / 100);
+      });
+    }
+    if (dom.sfxVolume) {
+      dom.sfxVolume.addEventListener('input', (e) => {
+        ensureAudio();
+        setSfxVolume(Number(e.target.value) / 100);
+      });
+    }
     dom.btnSettingsClose.addEventListener('click', () => { Sound.menu(); openTitle(true); });
     dom.btnSettingsBack.addEventListener('click', () => { Sound.menu(); openTitle(true); });
     dom.difficultyGrid.addEventListener('click', (e) => {
@@ -5621,6 +5694,7 @@
   function boot() {
     G.titleVisuals = Art.buildStage(0, 2460);
     loadMusicPack();
+    loadAudioSettings();
     bindEvents();
     setMode('title');
     show(dom.title, true);
