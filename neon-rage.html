@@ -252,6 +252,35 @@ button:focus-visible, [tabindex]:focus-visible {
 .hud-combo b { font-size: max(11px, 1.15cqw); color: var(--cyan); letter-spacing: .08em; font-weight: 400; }
 .hud-combo.hot b { color: var(--pink); text-shadow: 0 0 10px rgba(255,46,99,.8); }
 
+.enemy-ui {
+  position: absolute; z-index: 14; top: 2.5cqw; right: 6.2cqw;
+  width: min(34.5cqw, 520px); min-width: 250px;
+  display: flex; align-items: center; gap: .5cqw;
+  pointer-events: none;
+  background: rgba(4,2,10,.76); border: 1px solid var(--enemy-accent, #ff4b5e);
+  padding: .35cqw .5cqw;
+  box-shadow: 0 0 16px rgba(255,46,99,.13);
+}
+.enemy-portrait {
+  width: 3.2cqw; height: 3.2cqw; min-width: 42px; min-height: 42px;
+  flex: 0 0 auto; display: block;
+  background: #0b0710; border: 1px solid rgba(255,255,255,.2);
+  image-rendering: pixelated;
+}
+.enemy-ui-main { flex: 1 1 auto; min-width: 0; }
+.enemy-ui-head { display: flex; justify-content: space-between; align-items: baseline; gap: .7cqw; padding-bottom: .18cqw; }
+.enemy-ui-head span { font-size: max(9px, .55cqw); letter-spacing: .15em; color: #ffd08a; white-space: nowrap; }
+.enemy-ui-head b { font-size: max(10px, .72cqw); letter-spacing: .08em; color: #fff6e8; flex: 1 1 auto; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.enemy-bar-row { display: flex; align-items: center; gap: .4cqw; }
+.enemy-meter { flex: 1 1 auto; min-width: 0; height: max(7px, .58cqw); border-color: var(--enemy-accent, #ff4b5e); }
+.enemy-meter i { background: linear-gradient(90deg, var(--enemy-accent, #ff4b5e), #ffd23f); box-shadow: 0 0 10px rgba(255,46,99,.42); }
+.enemy-hp {
+  flex: 0 0 auto; min-width: 4.6em; text-align: right;
+  font-family: var(--mono); font-weight: 700; font-size: max(9px, .58cqw);
+  font-variant-numeric: tabular-nums; letter-spacing: .02em; color: #ffe0a0; white-space: nowrap;
+}
+.enemy-hp.low { color: #ff8b9e; text-shadow: 0 0 8px rgba(255,46,99,.7); }
+
 .boss-ui {
   position: absolute; z-index: 15; top: max(38px, 5.6cqw); left: 50%; transform: translateX(-50%);
   width: min(42cqw, 620px); min-width: 250px; pointer-events: none;
@@ -1286,6 +1315,13 @@ body.touch-mode .toast { bottom: 30%; }
   .upg-row > span { width: 1.5cqw; height: 1.5cqw; min-width: 6px; min-height: 6px; font-size: max(6px, .85cqw); }
 }
 
+@media (max-width: 760px) {
+  .enemy-ui { top: clamp(52px, 11.5cqw, 76px); left: 3cqw; right: 3cqw; width: auto; min-width: 0; }
+  .enemy-ui-head span { display: none; }
+  .enemy-ui-head b { text-align: left; }
+  .enemy-portrait { min-width: 38px; min-height: 38px; }
+}
+
 @media (max-width: 620px) {
   .boss-ui-head span { display: none; }
   .boss-ui-head b { text-align: left; }
@@ -1667,6 +1703,17 @@ body.touch-mode .toast { bottom: 30%; }
           </div>
         </div>
 
+        <div id="enemy-ui" class="enemy-ui is-hidden" aria-hidden="true">
+          <canvas id="enemy-portrait" class="enemy-portrait" width="48" height="48"></canvas>
+          <div class="enemy-ui-main">
+            <div class="enemy-ui-head"><span>TARGET // 敌兵</span><b id="enemy-name">PUNK</b></div>
+            <div class="enemy-bar-row">
+              <div class="meter enemy-meter"><i id="enemy-fill"></i></div>
+              <span id="enemy-hp" class="enemy-hp">20 / 20</span>
+            </div>
+          </div>
+        </div>
+
         <div id="boss-ui" class="boss-ui is-hidden">
           <div class="boss-row">
             <div id="boss-avatar" class="boss-avatar boss-portrait" aria-hidden="true"></div>
@@ -1700,7 +1747,7 @@ body.touch-mode .toast { bottom: 30%; }
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
-            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.23</span></div>
+            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.24</span></div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <div class="cover-actions">
               <button id="btn-start" class="arcade-btn" type="button">
@@ -5541,6 +5588,11 @@ body.touch-mode .toast { bottom: 30%; }
     bossName2: $('boss-name-2'),
     bossFill2: $('boss-fill-2'),
     bossHp2: $('boss-hp-2'),
+    enemyUI: $('enemy-ui'),
+    enemyPortrait: $('enemy-portrait'),
+    enemyName: $('enemy-name'),
+    enemyFill: $('enemy-fill'),
+    enemyHp: $('enemy-hp'),
     bossTalk: $('boss-talk'),
     bossTalkKicker: $('boss-talk-kicker'),
     bossTalkPortrait: $('boss-talk-portrait'),
@@ -5802,7 +5854,6 @@ body.touch-mode .toast { bottom: 30%; }
   const STAGE_BOSS_KEYS = ['razor', 'titan', 'vector', 'twin', 'house', 'final'];
 
   const BOSS_PORTRAIT_KEYS = ['razor', 'titan', 'vector', 'raven', 'nyx', 'house', 'vprime'];
-  const ENEMY_HEAD_CACHE = new Map();
 
   const BOSS_TALK = {
     razor: {
@@ -6429,6 +6480,32 @@ body.touch-mode .toast { bottom: 30%; }
     el.dataset.bossKey = safe;
   }
 
+  let enemyPortraitKey = '';
+
+  function updateEnemyHud(target) {
+    if (!dom.enemyUI) return;
+    if (!target || target.dead || target.boss) {
+      show(dom.enemyUI, false);
+      return;
+    }
+    const def = target.def || ENEMY_DATA[target.type] || {};
+    const ratio = clamp(target.hp / target.maxHp, 0, 1);
+    const accent = (target.char && target.char.colors && target.char.colors.accent) || '#ff4b5e';
+    dom.enemyName.textContent = `${def.name || String(target.type || '').toUpperCase()}${def.cn ? ` // ${def.cn}` : ''}`;
+    dom.enemyHp.textContent = `${Math.max(0, Math.ceil(target.hp))} / ${target.maxHp}`;
+    dom.enemyHp.classList.toggle('low', ratio <= .25);
+    dom.enemyFill.style.transform = `scaleX(${ratio})`;
+    dom.enemyUI.style.setProperty('--enemy-accent', accent);
+    if (dom.enemyPortrait && enemyPortraitKey !== target.type) {
+      const g = dom.enemyPortrait.getContext('2d');
+      g.clearRect(0, 0, 48, 48);
+      g.imageSmoothingEnabled = false;
+      Art.drawHeadPortrait(g, 48, 48, makeEnemyChar(target.type), 0);
+      enemyPortraitKey = target.type;
+    }
+    show(dom.enemyUI, true);
+  }
+
   function updateHud() {
     const p = G.player;
     if (!p) return;
@@ -6491,6 +6568,7 @@ body.touch-mode .toast { bottom: 30%; }
     } else if (!G.finishing) {
       show(dom.bossUI, false);
     }
+    updateEnemyHud(aliveBosses.length ? null : selectEnemyFocus());
   }
 
   function resetHud() {
@@ -11176,19 +11254,6 @@ body.touch-mode .toast { bottom: 30%; }
     ctx.restore();
   }
 
-  function getEnemyHead(type) {
-    let head = ENEMY_HEAD_CACHE.get(type);
-    if (head) return head;
-    head = document.createElement('canvas');
-    head.width = 24;
-    head.height = 24;
-    const g = head.getContext('2d');
-    g.imageSmoothingEnabled = false;
-    Art.drawHeadPortrait(g, 24, 24, makeEnemyChar(type), 0);
-    ENEMY_HEAD_CACHE.set(type, head);
-    return head;
-  }
-
   function selectEnemyFocus() {
     if (!G.player) return null;
     let hit = null;
@@ -11202,8 +11267,7 @@ body.touch-mode .toast { bottom: 30%; }
     }
     if (hit) return hit;
 
-    // With no fresh hit, keep a readable portrait on the nearest enemy the
-    // player is actually engaging, while every other enemy keeps a numeric bar.
+    // Keep the top-right target card on the enemy the player is engaging.
     let near = null;
     let nearDist = Infinity;
     for (const e of G.enemies) {
@@ -11220,121 +11284,37 @@ body.touch-mode .toast { bottom: 30%; }
     return near;
   }
 
-  function drawEnemyHpText(e, barX, barY, barW, barH, ratio) {
-    const hpText = String(Math.max(0, Math.ceil(e.hp)));
-    ctx.font = 'bold 8px "Courier New", monospace';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = 'rgba(8,5,13,.95)';
-    ctx.strokeText(hpText, barX + barW / 2, barY + barH / 2 + .5);
-    ctx.fillStyle = ratio <= .3 ? '#ffe0a0' : '#fff6e8';
-    ctx.fillText(hpText, barX + barW / 2, barY + barH / 2 + .5);
-  }
-
-  function drawEnemyBar(e, sx, textOnly) {
-    if (e.dead || e.state === 'wait' || e.boss) return;
-    if (sx < -24 || sx > W + 24) return;
-    const sc = e.scale || 1;
-    const ratio = clamp(e.hp / e.maxHp, 0, 1);
-    if (ratio <= 0) return;
-    const barW = 20;
-    const barH = 8;
-    const x = Math.round(sx - barW / 2);
-    const y = Math.round(e.y - (e.z || 0) - 46 * sc - 4);
-    let col = '#ff4b5e';
-    if (ratio <= .3) col = '#ffb03a';
-    if (ratio <= .14) col = Math.floor(G.time * 12) % 2 ? '#ffe36e' : '#ff4b5e';
-
-    ctx.save();
-    if (textOnly) {
-      drawEnemyHpText(e, x, y, barW, barH, ratio);
-      ctx.restore();
-      return;
-    }
-    ctx.fillStyle = 'rgba(8,5,13,.9)';
-    ctx.fillRect(x - 1, y - 1, barW + 2, barH + 2);
-    ctx.fillStyle = '#4a2431';
-    ctx.fillRect(x, y, barW, barH);
-    ctx.fillStyle = col;
-    ctx.fillRect(x, y, Math.max(2, Math.round(barW * ratio)), barH);
-    ctx.fillStyle = 'rgba(255,255,255,.35)';
-    ctx.fillRect(x, y, Math.max(2, Math.round(barW * ratio)), 1);
-    ctx.fillStyle = 'rgba(8,5,13,.55)';
-    for (let i = 1; i < 4; i++) ctx.fillRect(x + Math.round((barW * i) / 4), y, 1, barH);
-    ctx.restore();
-  }
-
-  function drawEnemyFocusPlate(e, sx) {
-    if (e.dead || e.state === 'wait' || e.boss) return;
-    if (sx < -36 || sx > W + 36) return;
-    const sc = e.scale || 1;
-    const ratio = clamp(e.hp / e.maxHp, 0, 1);
-    if (ratio <= 0) return;
-    const accent = (e.char && e.char.colors && e.char.colors.accent) || '#ff4b5e';
-    const barW = 26;
-    const barH = 5;
-    const headSize = 12;
-    const groupW = 40;
-    const groupH = 17;
-    const groupX = Math.round(sx - groupW / 2);
-    const groupY = Math.round(e.y - (e.z || 0) - 46 * sc - 4) - 11;
-    const barX = groupX + headSize + 2;
-    const barY = groupY + 12;
-    const fillW = Math.max(3, Math.round(barW * ratio));
-    let col = '#ff4b5e';
-    if (ratio <= .3) col = '#ffb03a';
-    if (ratio <= .14) col = Math.floor(G.time * 12) % 2 ? '#ffe36e' : '#ff4b5e';
-
-    ctx.save();
-    ctx.imageSmoothingEnabled = false;
-    ctx.fillStyle = 'rgba(8,5,13,.92)';
-    ctx.fillRect(groupX - 1, groupY - 1, groupW + 2, groupH + 2);
-    ctx.strokeStyle = accent;
-    ctx.globalAlpha = .85;
-    ctx.strokeRect(groupX - .5, groupY - .5, groupW + 1, groupH + 1);
-    ctx.globalAlpha = 1;
-
-    ctx.drawImage(getEnemyHead(e.type), groupX, groupY + 4, headSize, headSize);
-    ctx.strokeStyle = accent;
-    ctx.strokeRect(groupX + .5, groupY + 4.5, headSize - 1, headSize - 1);
-
-    ctx.fillStyle = 'rgba(0,0,0,.92)';
-    ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
-    ctx.fillStyle = '#4a2431';
-    ctx.fillRect(barX, barY, barW, barH);
-    ctx.fillStyle = col;
-    ctx.fillRect(barX, barY, fillW, barH);
-    ctx.fillStyle = 'rgba(255,255,255,.42)';
-    ctx.fillRect(barX, barY, fillW, 1);
-    ctx.fillStyle = 'rgba(8,5,13,.55)';
-    for (let i = 1; i < 4; i++) ctx.fillRect(barX + Math.round((barW * i) / 4), barY, 1, barH);
-
-    ctx.font = 'bold 8px "Courier New", monospace';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'alphabetic';
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = 'rgba(8,5,13,.95)';
-    const hpText = `${Math.max(0, Math.ceil(e.hp))}/${e.maxHp}`;
-    ctx.strokeText(hpText, barX + barW / 2, groupY + 6);
-    ctx.fillStyle = ratio <= .3 ? '#ffe0a0' : '#fff6e8';
-    ctx.fillText(hpText, barX + barW / 2, groupY + 6);
-    ctx.restore();
-  }
-
   function drawEnemyHealthBars() {
     if (G.mode !== 'playing' && G.mode !== 'paused' && G.mode !== 'intro') return;
-    const focus = selectEnemyFocus();
     for (const e of G.enemies) {
-      if (e === focus) continue;
-      drawEnemyBar(e, e.x - G.camera.x, false);
+      if (e.dead || e.state === 'wait' || e.boss) continue;
+      const sx = e.x - G.camera.x;
+      if (sx < -32 || sx > W + 32) continue;
+      const sc = e.scale || 1;
+      const w = Math.round(20 * sc);
+      const h = 3;
+      const x = Math.round(sx - w / 2);
+      const y = Math.round(e.y - (e.z || 0) - 46 * sc - 4);
+      const ratio = clamp(e.hp / e.maxHp, 0, 1);
+      if (ratio <= 0) continue;
+      const fillW = Math.max(3, Math.round(w * ratio));
+      ctx.save();
+      ctx.fillStyle = 'rgba(8,5,13,.92)';
+      ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
+      ctx.fillStyle = '#4a2431';
+      ctx.fillRect(x, y, w, h);
+      let col = '#ff4b5e';
+      if (ratio <= .3) col = '#ffb03a';
+      if (ratio <= .14) col = Math.floor(G.time * 12) % 2 ? '#ffe36e' : '#ff4b5e';
+      ctx.fillStyle = col;
+      ctx.fillRect(x, y, fillW, h);
+      ctx.fillStyle = 'rgba(255,255,255,.42)';
+      ctx.fillRect(x, y, fillW, 1);
+      // Quarter notches keep the tiny bar readable at 480p.
+      ctx.fillStyle = 'rgba(8,5,13,.55)';
+      for (let i = 1; i < 4; i++) ctx.fillRect(x + Math.round((w * i) / 4), y, 1, h);
+      ctx.restore();
     }
-    // Labels are a second pass so a nearby bar background cannot clip them.
-    for (const e of G.enemies) {
-      if (e === focus) continue;
-      drawEnemyBar(e, e.x - G.camera.x, true);
-    }
-    if (focus) drawEnemyFocusPlate(focus, focus.x - G.camera.x);
   }
 
   function renderWorld(t) {

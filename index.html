@@ -105,6 +105,17 @@
           </div>
         </div>
 
+        <div id="enemy-ui" class="enemy-ui is-hidden" aria-hidden="true">
+          <canvas id="enemy-portrait" class="enemy-portrait" width="48" height="48"></canvas>
+          <div class="enemy-ui-main">
+            <div class="enemy-ui-head"><span>TARGET // 敌兵</span><b id="enemy-name">PUNK</b></div>
+            <div class="enemy-bar-row">
+              <div class="meter enemy-meter"><i id="enemy-fill"></i></div>
+              <span id="enemy-hp" class="enemy-hp">20 / 20</span>
+            </div>
+          </div>
+        </div>
+
         <div id="boss-ui" class="boss-ui is-hidden">
           <div class="boss-row">
             <div id="boss-avatar" class="boss-avatar boss-portrait" aria-hidden="true"></div>
@@ -138,7 +149,7 @@
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
-            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.23</span></div>
+            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.24</span></div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <div class="cover-actions">
               <button id="btn-start" class="arcade-btn" type="button">
