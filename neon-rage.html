@@ -1661,7 +1661,7 @@ body.touch-mode .toast { bottom: 30%; }
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
-            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.19</span></div>
+            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.20</span></div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <div class="cover-actions">
               <button id="btn-start" class="arcade-btn" type="button">
@@ -5617,6 +5617,11 @@ body.touch-mode .toast { bottom: 30%; }
     }
   };
 
+  const DHARMA_HOLD = 5.0;
+  const DHARMA_FADE = .9;
+  const DHARMA_RISE = .35;
+  const DHARMA_TOTAL = DHARMA_HOLD + DHARMA_FADE;
+
   const WAVE_BASE_MULTIPLIER = 1.5;
   const MAX_WAVE_ENEMIES = 10;
   const WAVE_COUNT_FACTORS = [0.65, 0.90, 1.15, 1.35, 1.00, 0.65];
@@ -6233,6 +6238,7 @@ body.touch-mode .toast { bottom: 30%; }
     finalVictory: false,
     introTimer: 0,
     superBannerTimer: 0,
+    dharma: null,
     lastMode: 'title'
   };
 
@@ -6589,6 +6595,7 @@ body.touch-mode .toast { bottom: 30%; }
     G.floaters = [];
     G.effects = [];
     G.specialFx = [];
+    G.dharma = null;
     G.camera.shake = 0;
     dom.damageFlash.style.opacity = '0';
     if (!G.titleVisuals) G.titleVisuals = Art.buildStage(0, 2460);
@@ -6830,6 +6837,7 @@ body.touch-mode .toast { bottom: 30%; }
     G.floaters = [];
     G.effects = [];
     G.specialFx = [];
+    G.dharma = null;
     G.camera.x = 0;
     G.camera.shake = 0;
     G.battle = null;
@@ -7847,6 +7855,37 @@ body.touch-mode .toast { bottom: 30%; }
     if (hits.length) Sound.dashHit();
   }
 
+  function startDharmaFx(p, move) {
+    if (!p || !move) return;
+    G.dharma = {
+      age: 0,
+      x: p.x,
+      y: p.y,
+      facing: p.superDir || p.facing || 1,
+      char: p.char,
+      color: move.color,
+      pose: p.pose || 'special',
+      ext: 1,
+      scale: move.kind === 'bruno' ? 3.8 : move.kind === 'luna' ? 3.25 : 3.4,
+      seed: rand(0, Math.PI * 2)
+    };
+  }
+
+  function updateDharmaFx(dt) {
+    const fx = G.dharma;
+    if (!fx) return;
+    fx.age += dt;
+    const p = G.player;
+    if (p && p.state === 'super' && p.superMove) {
+      const follow = Math.min(1, dt * 9);
+      fx.x += (p.x - fx.x) * follow;
+      fx.y += (p.y - fx.y) * follow;
+      fx.facing = p.superDir || p.facing || fx.facing;
+      fx.pose = p.pose || 'special';
+    }
+    if (fx.age >= DHARMA_TOTAL) G.dharma = null;
+  }
+
   function startSuperSpecial() {
     const p = G.player;
     const move = SUPER_MOVES[p.charKey];
@@ -7867,6 +7906,7 @@ body.touch-mode .toast { bottom: 30%; }
     p.vy = 0;
     p.attack = null;
     p.pose = 'special';
+    startDharmaFx(p, move);
     showSuperBanner(move, p.charKey);
     spawnSuperPulseFx(p, move);
     Sound.special();
@@ -9632,6 +9672,7 @@ body.touch-mode .toast { bottom: 30%; }
   }
 
   function updatePlaying(dt) {
+    updateDharmaFx(dt);
     if (G.bossTalk) {
       updateBossTalk(dt);
       updateParticles(dt * .2);
@@ -9780,6 +9821,7 @@ body.touch-mode .toast { bottom: 30%; }
     G.battle = null;
     G.finishing = false;
     G.stageClearTimer = 0;
+    G.dharma = null;
     if (G.player) {
       G.player.state = 'idle';
       G.player.vx = 0;
@@ -9912,6 +9954,7 @@ body.touch-mode .toast { bottom: 30%; }
     show(dom.bossUI, false);
     dom.gameoverScore.textContent = pad(G.score, 6);
     dom.gameoverStage.textContent = G.stage ? G.stage.number : '01';
+    G.dharma = null;
     saveBest();
     Sound.stopMusic();
     Sound.gameover();
@@ -10583,6 +10626,118 @@ body.touch-mode .toast { bottom: 30%; }
     }
   }
 
+  function colorWithAlpha(hex, alpha) {
+    const raw = String(hex || '#ffffff').replace('#', '');
+    const full = raw.length === 3 ? raw.split('').map(ch => ch + ch).join('') : raw;
+    const value = parseInt(full, 16);
+    if (!Number.isFinite(value)) return `rgba(255,255,255,${alpha})`;
+    return `rgba(${(value >> 16) & 255},${(value >> 8) & 255},${value & 255},${alpha})`;
+  }
+
+  function drawDharmaFx() {
+    const fx = G.dharma;
+    if (!fx) return;
+    const age = fx.age;
+    const fadeIn = clamp(age / DHARMA_RISE, 0, 1);
+    const fadeOut = clamp((DHARMA_TOTAL - age) / DHARMA_FADE, 0, 1);
+    const alpha = Math.min(fadeIn, fadeOut);
+    if (alpha <= 0) return;
+    const rise = easeOut(fadeIn);
+    const scale = fx.scale * (.82 + rise * .18) * (1 + Math.sin(age * 2.15 + fx.seed) * .014);
+    const sx = Math.round(fx.x - G.camera.x);
+    const sy = Math.round(fx.y);
+    const color = fx.color;
+    const haloY = sy - 43 * scale;
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+
+    // Torso-length aura column: a soft, non-blocking backlight behind the fighter.
+    const auraY = sy - 31 * scale;
+    const aura = ctx.createRadialGradient(sx, auraY, 4, sx, auraY, 32 * scale);
+    aura.addColorStop(0, colorWithAlpha(color, .2 * alpha));
+    aura.addColorStop(.45, colorWithAlpha(color, .065 * alpha));
+    aura.addColorStop(1, colorWithAlpha(color, 0));
+    ctx.fillStyle = aura;
+    ctx.beginPath();
+    ctx.ellipse(sx, auraY, 30 * scale, 36 * scale, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    const column = ctx.createLinearGradient(sx, sy, sx, sy - 56 * scale);
+    column.addColorStop(0, colorWithAlpha(color, 0));
+    column.addColorStop(.55, colorWithAlpha(color, .1 * alpha));
+    column.addColorStop(1, colorWithAlpha(color, 0));
+    ctx.fillStyle = column;
+    ctx.fillRect(sx - 8 * scale, sy - 56 * scale, 16 * scale, 56 * scale);
+
+    // Ground seal: broad rings and slow-rotating ticks.
+    const ringPulse = Math.sin(age * 2.4 + fx.seed) * 2;
+    for (let i = 0; i < 3; i++) {
+      const rr = (26 + i * 8 + ringPulse) * scale;
+      ctx.globalAlpha = alpha * (.36 - i * .09);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = Math.max(1, 2.4 - i * .5);
+      ctx.beginPath();
+      ctx.ellipse(sx, sy, rr, rr * .24, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = alpha * .32;
+    ctx.fillStyle = color;
+    const tickR = 34 * scale;
+    for (let i = 0; i < 12; i++) {
+      const ang = age * .35 + i * Math.PI / 6;
+      const tx = sx + Math.cos(ang) * tickR;
+      const ty = sy + Math.sin(ang) * tickR * .24;
+      ctx.fillRect(Math.round(tx) - 1, Math.round(ty) - 1, 2, 2);
+    }
+
+    // Halo behind the head, with two rings and eight rotating spokes.
+    for (let i = 0; i < 2; i++) {
+      const r = (9 + i * 3.2) * scale;
+      ctx.globalAlpha = alpha * (.27 - i * .07);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = Math.max(1, 1.6 - i * .4);
+      ctx.beginPath();
+      ctx.arc(sx, haloY, r, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = alpha * .22;
+    ctx.lineWidth = Math.max(1, 1.2);
+    for (let i = 0; i < 8; i++) {
+      const ang = age * .5 + fx.seed + i * Math.PI / 4;
+      const r0 = (11 + (i % 2) * 2.5) * scale;
+      const r1 = (14 + (i % 2) * 2.5) * scale;
+      ctx.beginPath();
+      ctx.moveTo(sx + Math.cos(ang) * r0, haloY + Math.sin(ang) * r0);
+      ctx.lineTo(sx + Math.cos(ang) * r1, haloY + Math.sin(ang) * r1);
+      ctx.stroke();
+    }
+
+    // The giant itself. Art.drawFighter keeps the current pose and silhouette,
+    // so the effect reads as the fighter's own dharma rather than a stock sprite.
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+    Art.drawFighter(ctx, {
+      x: sx, y: sy, z: 0, facing: fx.facing || 1, scale,
+      char: fx.char, pose: fx.pose || 'special', ext: fx.ext == null ? 1 : fx.ext,
+      anim: age * .55, alpha: .25 * alpha, rim: color
+    });
+
+    // A handful of deterministic motes; no per-frame particle allocation.
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < 7; i++) {
+      const p = (age * .18 + i / 7) % 1;
+      const ang = fx.seed + i * 1.7 + age * .3;
+      const dist = (10 + p * 34) * scale;
+      const px = sx + Math.cos(ang) * dist;
+      const py = sy - (12 + p * 42) * scale + Math.sin(age * 2.8 + i) * 3;
+      ctx.globalAlpha = alpha * Math.sin(p * Math.PI) * .5;
+      ctx.fillStyle = i % 3 === 0 ? '#fff6d8' : color;
+      ctx.fillRect(Math.round(px) - 1, Math.round(py) - 1, 2, 2);
+    }
+    ctx.restore();
+  }
+
   function drawEnemyHealthBars() {
     if (G.mode !== 'playing' && G.mode !== 'paused' && G.mode !== 'intro') return;
     for (const e of G.enemies) {
@@ -10622,6 +10777,7 @@ body.touch-mode .toast { bottom: 30%; }
     ctx.save();
     ctx.translate(Math.round(shakeX), Math.round(shakeY));
     Art.drawBackground(ctx, G.stageIndex, G.visuals, G.camera.x, G.mode === 'paused' ? G.time : G.time, W, H);
+    drawDharmaFx();
     drawWarnings();
     drawWhipFx();
     // Ground loot sits below all fighters so prone bodies never cover pickups.
