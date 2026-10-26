@@ -254,9 +254,20 @@ button:focus-visible, [tabindex]:focus-visible {
 .enemy-portrait {
   width: 3.2cqw; height: 3.2cqw; min-width: 42px; min-height: 42px;
   flex: 0 0 auto; display: block;
-  background: #0b0710; border: 1px solid rgba(255,255,255,.2);
-  image-rendering: pixelated;
+  background-color: #0b0710; background-repeat: no-repeat;
+  background-position: center; background-size: cover;
+  border: 1px solid rgba(255,255,255,.2);
 }
+.enemy-portrait.enemy-punk { background-image: url("images/enemies/punk.webp"); }
+.enemy-portrait.enemy-blade { background-image: url("images/enemies/blade.webp"); }
+.enemy-portrait.enemy-brute { background-image: url("images/enemies/brute.webp"); }
+.enemy-portrait.enemy-kicker { background-image: url("images/enemies/kicker.webp"); }
+.enemy-portrait.enemy-boxer { background-image: url("images/enemies/boxer.webp"); }
+.enemy-portrait.enemy-whip { background-image: url("images/enemies/whip.webp"); }
+.enemy-portrait.enemy-gunner { background-image: url("images/enemies/gunner.webp"); }
+.enemy-portrait.enemy-siren { background-image: url("images/enemies/siren.webp"); }
+.enemy-portrait.enemy-viper { background-image: url("images/enemies/viper.webp"); }
+.enemy-portrait.enemy-wrecker { background-image: url("images/enemies/wrecker.webp"); }
 .enemy-ui-main { flex: 1 1 auto; min-width: 0; }
 .enemy-ui-head { display: flex; justify-content: space-between; align-items: baseline; gap: .7cqw; padding-bottom: .18cqw; }
 .enemy-ui-head span { font-size: max(9px, .55cqw); letter-spacing: .15em; color: #ffd08a; white-space: nowrap; }

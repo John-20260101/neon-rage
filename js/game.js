@@ -308,6 +308,7 @@
   const STAGE_BOSS_KEYS = ['razor', 'titan', 'vector', 'twin', 'house', 'final'];
 
   const BOSS_PORTRAIT_KEYS = ['razor', 'titan', 'vector', 'raven', 'nyx', 'house', 'vprime'];
+  const ENEMY_PORTRAIT_KEYS = ['punk', 'blade', 'brute', 'kicker', 'boxer', 'whip', 'gunner', 'siren', 'viper', 'wrecker'];
 
   const BOSS_TALK = {
     razor: {
@@ -934,8 +935,6 @@
     el.dataset.bossKey = safe;
   }
 
-  let enemyPortraitKey = '';
-
   function updateEnemyHud(target) {
     if (!dom.enemyUI) return;
     if (!target || target.dead || target.boss) {
@@ -950,12 +949,9 @@
     dom.enemyHp.classList.toggle('low', ratio <= .25);
     dom.enemyFill.style.transform = `scaleX(${ratio})`;
     dom.enemyUI.style.setProperty('--enemy-accent', accent);
-    if (dom.enemyPortrait && enemyPortraitKey !== target.type) {
-      const g = dom.enemyPortrait.getContext('2d');
-      g.clearRect(0, 0, 48, 48);
-      g.imageSmoothingEnabled = false;
-      Art.drawHeadPortrait(g, 48, 48, makeEnemyChar(target.type), 0);
-      enemyPortraitKey = target.type;
+    if (dom.enemyPortrait) {
+      const key = ENEMY_PORTRAIT_KEYS.includes(target.type) ? target.type : 'punk';
+      dom.enemyPortrait.className = `enemy-portrait enemy-${key}`;
     }
     show(dom.enemyUI, true);
   }
