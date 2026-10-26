@@ -238,7 +238,7 @@
   };
   const BOSS_TRACKS = {
     razor: 'bossRazor', titan: 'bossTitan', vector: 'bossVector',
-    twin: 'twin', final: 'final'
+    twin: 'twin', house: 'bossHouse', final: 'final'
   };
 
   function makeUpgradeState() {
@@ -283,7 +283,7 @@
     bruno: '码头重锤 · 力量'
   };
 
-  const STAGE_BOSS_KEYS = ['razor', 'titan', 'vector', 'twin', 'final'];
+  const STAGE_BOSS_KEYS = ['razor', 'titan', 'vector', 'twin', 'house', 'final'];
 
   const BOSS_TALK = {
     razor: {
@@ -337,6 +337,19 @@
         } },
         { char: 'raven', speaker: 'RAVEN', role: '双子刺客 · 姐', hold: 5.0, text: '听见了吗？他还会开玩笑。' },
         { char: 'nyx', speaker: 'NYX', role: '双子刺客 · 妹', hold: 5.2, text: '那就把他的笑声，留到最后。' }
+      ]
+    },
+    house: {
+      title: 'THE HOUSE', name: 'THE HOUSE', cn: '庄家', char: 'house',
+      lines: [
+        { char: 'house', speaker: 'THE HOUSE', role: '顶楼庄家', hold: 5.2, text: '欢迎来到顶楼。这里的赔率从不骗人——只骗输不起的人。' },
+        { char: 'house', speaker: 'THE HOUSE', role: '顶楼庄家', hold: 5.2, text: 'V 先生给了你一张入场券。可惜，今晚只出不进。' },
+        { char: 'player', hold: 4.8, text: {
+          rex: '我不赌。我只收账。',
+          luna: '赔率不错。可惜，我从不按你的规矩下注。',
+          bruno: '把门打开。我不玩牌。'
+        } },
+        { char: 'house', speaker: 'THE HOUSE', role: '顶楼庄家', hold: 5.2, text: '很好。那就把你的命，押在下一局。' }
       ]
     },
     final: {
@@ -399,6 +412,18 @@
           luna: '舞跳得不错。可惜，音乐停了。',
           bruno: '躺好。别起来了。'
         } }
+      ]
+    },
+    house: {
+      lines: [
+        { char: 'house', speaker: 'THE HOUSE', role: '顶楼庄家', hold: 5.0, text: '庄家……也会输。' },
+        { char: 'house', speaker: 'THE HOUSE', role: '顶楼庄家', hold: 5.2, text: '但账……还没有结清。V 先生在下面……等你。' },
+        { char: 'player', hold: 4.8, text: {
+          rex: '账我会亲自结。带路。',
+          luna: '筹码我收下了。下次记得换一副牌。',
+          bruno: '让开。别挡路。'
+        } },
+        { char: 'house', speaker: 'THE HOUSE', role: '顶楼庄家', hold: 5.0, text: '去吧。今晚……算你赢。' }
       ]
     },
     final: {
@@ -493,6 +518,10 @@
     wrecker: {
       name: 'WRECKER', cn: '摔跤手', hp: 48, speed: 38, damage: 9, range: 28, score: 280,
       scale: .96, coolMin: 1.1, coolMax: 1.8, hitbox: 14, attackRange: 64, grapple: true
+    },
+    house: {
+      name: 'THE HOUSE', cn: '庄家', hp: 420, speed: 46, damage: 11, range: 39, score: 6000,
+      scale: 1.3, coolMin: .55, coolMax: 1.0, boss: true, hitbox: 16, keepDist: 128, ranged: true, phases: 3, attackRange: 150
     },
     vprime: {
       name: 'V-PRIME', cn: 'V先生·终焉', hp: 620, speed: 44, damage: 10, range: 38, score: 14000,
@@ -623,7 +652,38 @@
       ]
     },
     {
-      number: '05', title: 'V-TOWER CORE', cn: 'V 塔核心',
+      number: '05', title: 'THE HOUSE', cn: '顶楼赌场',
+      desc: '电梯停在顶楼。绿色赌桌、金色吊灯，还有一位从不输的庄家。',
+      goal: '击溃庄家', worldW: 2500, music: 'stage4', bossMusic: 'bossHouse',
+      bossAddPool: ['boxer', 'whip', 'gunner'],
+      waves: [
+        { at: 300, spawns: [['boxer', 210], ['whip', 242]] },
+        { at: 760, spawns: [['gunner', 204], ['boxer', 238], ['whip', 218]] },
+        { at: 1180, spawns: [['whip', 206], ['brute', 236], ['gunner', 220], ['boxer', 246]] },
+        { at: 1600, spawns: [['boxer', 204], ['whip', 232], ['gunner', 222], ['siren', 244], ['brute', 218]] },
+        { at: 1740, spawns: [['gunner', 210], ['whip', 240], ['boxer', 222]] },
+        { at: 1880, spawns: [['brute', 206], ['whip', 238], ['gunner', 220], ['boxer', 244]] },
+        { at: 2070, boss: 'house', spawns: [['house', 230]] }
+      ],
+      props: [
+        { type: 'crate', x: 460, y: 240 }, { type: 'barrel', x: 920, y: 220 },
+        { type: 'crate', x: 1320, y: 244 }, { type: 'barrel', x: 1760, y: 220 },
+        { type: 'crate', x: 2060, y: 240 },
+        { type: 'barrel', x: 680, y: 238, upgrade: 'speed', upgradeId: 's5h-speed' },
+        { type: 'barrel', x: 1850, y: 226, upgrade: 'attack', upgradeId: 's5h-attack' },
+        { type: 'barrel', x: 300, y: 238, upgrade: 'defense', upgradeId: 's5h-defense' },
+        { type: 'barrel', x: 1080, y: 226, upgrade: 'speed', upgradeId: 's5h-speed-2' },
+        { type: 'barrel', x: 2220, y: 238, upgrade: 'attack', upgradeId: 's5h-attack-2' }
+      ],
+      pickups: [
+        { type: 'steak', x: 620, y: 240 }, { type: 'pistol', x: 1180, y: 238 },
+        { type: 'moneybag', x: 1520, y: 244 }, { type: 'burger', x: 1840, y: 242 },
+        { type: 'knife', x: 2120, y: 240 },
+        { type: 'overdrive', x: 1360, y: 242 }
+      ]
+    },
+    {
+      number: '06', title: 'V-TOWER CORE', cn: 'V 塔核心',
       desc: '电梯停在地下三百层。塔的心脏里，V 先生给自己留了三具身体。',
       goal: '终结 V 先生', worldW: 2600, music: 'stage5', bossMusic: 'final',
       bossAddPool: ['siren', 'gunner', 'wrecker'],
@@ -765,6 +825,7 @@
     if (type === 'razor') c.accessory = 'shades';
     if (type === 'titan') c.accessory = 'mask';
     if (type === 'vector') c.accessory = 'shades';
+    if (type === 'house') c.accessory = 'monocle';
     if (type === 'blade') c.accessory = 'earring';
     if (type === 'brute') c.accessory = 'beard';
     return c;
@@ -940,7 +1001,7 @@
     dom.bossTalkProgress.textContent = `${t.index + 1} / ${t.data.lines.length}`;
     if (dom.bossTalkKicker) dom.bossTalkKicker.textContent = t.post ? 'AFTERMATH // 战败' : 'BOSS ENCOUNTER // 出场';
     if (dom.bossTalkPortrait) {
-      dom.bossTalkPortrait.classList.remove('boss-razor', 'boss-titan', 'boss-vector', 'boss-raven', 'boss-nyx', 'boss-vprime', 'boss-rex', 'boss-luna', 'boss-bruno');
+      dom.bossTalkPortrait.classList.remove('boss-razor', 'boss-titan', 'boss-vector', 'boss-raven', 'boss-nyx', 'boss-vprime', 'boss-house', 'boss-rex', 'boss-luna', 'boss-bruno');
       dom.bossTalkPortrait.classList.add(`boss-${key}`);
     }
   }
@@ -1281,7 +1342,7 @@
     dom.stageCn.textContent = stage.cn;
     dom.stageDesc.textContent = stage.desc;
     if (dom.stageCard) {
-      dom.stageCard.classList.remove('stage-card--01', 'stage-card--02', 'stage-card--03', 'stage-card--04', 'stage-card--05');
+      dom.stageCard.classList.remove('stage-card--01', 'stage-card--02', 'stage-card--03', 'stage-card--04', 'stage-card--05', 'stage-card--06');
       dom.stageCard.classList.add(`stage-card--${stage.number}`);
     }
     if (dom.stageKicker) dom.stageKicker.textContent = `NEO CITY // ${(G.difficulty || DIFFICULTIES.normal).name} // CRIME DISTRICT`;
@@ -2656,6 +2717,12 @@
     slam: { startup: .5, active: .2, recovery: .62, range: 72, kind: 'aoe', pose: 'special', radius: 74, dive: true },
     airvolley: { startup: .32, active: .3, recovery: .45, range: 210, kind: 'burst', projectile: 'energy', shots: 3, shotGap: .14, damageMul: .8, pose: 'punch2' },
     talon: { startup: .22, active: .13, recovery: .4, range: 48, kind: 'melee', pose: 'jumpkick', lunge: 175, height: 30 },
+    // THE HOUSE
+    cardSlash: { startup: .3, active: .12, recovery: .45, range: 46, kind: 'melee', pose: 'slash', damageMul: .95, knockdown: false },
+    cardFan: { startup: .44, active: .2, recovery: .55, range: 230, kind: 'burst', projectile: 'card', shots: 5, shotGap: .075, damageMul: .62, pose: 'punch2' },
+    chipToss: { startup: .42, active: .12, recovery: .5, range: 220, kind: 'projectile', projectile: 'chip', damageMul: 1.1, pose: 'punch2', speed: 230 },
+    allIn: { startup: .32, active: .18, recovery: .5, range: 48, kind: 'melee', pose: 'punch2', lunge: 310, damageMul: 1.35, knockdown: true, dash: true },
+    roulette: { startup: 1.0, active: .22, recovery: .72, range: 190, kind: 'roulette', pose: 'special', radius: 190, damageMul: 1.1 },
     // Stage boss signature moves
     sweep: { startup: .38, active: .22, recovery: .55, range: 96, kind: 'sweep', pose: 'slash', damageMul: 1.2, knockdown: true, color: '#ff5b7d' },
     charge: { startup: .34, active: .2, recovery: .56, range: 50, kind: 'melee', pose: 'punch2', lunge: 300, damageMul: 1.2, knockdown: true, dash: true },
@@ -2705,6 +2772,22 @@
       if (e.attackCount % 4 === 0) return 'shoryu';
       if (e.attackCount % 3 === 0) return 'volley';
       return gap > 55 ? 'lunge' : 'slash';
+    }
+    if (e.type === 'house') {
+      e.attackCount++;
+      const gap = Math.abs(G.player.x - e.x);
+      if (e.phase === 1) {
+        if (gap > 150) return e.attackCount % 3 === 0 ? 'chipToss' : 'cardFan';
+        if (gap > 62) return e.attackCount % 3 === 0 ? 'chipToss' : 'cardFan';
+        return 'cardSlash';
+      }
+      if (e.phase === 2) {
+        if (gap > 130) return e.attackCount % 3 === 0 ? 'roulette' : 'cardFan';
+        if (gap > 58) return e.attackCount % 3 === 0 ? 'allIn' : 'chipToss';
+        return 'cardSlash';
+      }
+      if (gap > 92) return e.attackCount % 2 === 0 ? 'cardFan' : 'chipToss';
+      return e.attackCount % 3 === 0 ? 'allIn' : 'cardSlash';
     }
     if (e.type === 'wrecker') {
       e.attackCount++;
@@ -2813,7 +2896,7 @@
       e.vz = 185;
       e.z = 1;
     }
-    if (style.kind === 'aoe') {
+    if (style.kind === 'aoe' || style.kind === 'roulette') {
       // warning effect is drawn from attack state
       Sound.warning();
     }
@@ -2892,6 +2975,24 @@
   function triggerEnemyAttackHit(e, st, a) {
     const p = G.player;
     if (!p || p.state === 'dead') return;
+    if (st.kind === 'roulette') {
+      const radius = st.radius || 170;
+      for (let i = 0; i < 28; i++) {
+        const a = rand(0, Math.PI * 2);
+        spawnParticle('spark', e.x + Math.cos(a) * rand(18, radius), e.y, rand(2, 16), {
+          vx: Math.cos(a) * rand(18, 74), vz: rand(18, 72), color: choose(['#ffd34d', '#ff4f6d', '#fff2b0']),
+          size: rand(1, 3), life: rand(.2, .5), gravity: 50, drag: 1.5, glow: true
+        });
+      }
+      G.effects.push({ x: e.x, y: e.y, radius: 8, maxRadius: radius, life: .65, maxLife: .65, color: '#ffd34d', width: 5 });
+      spawnBurst(e.x, e.y, 28, '#ffd34d', 12, 70);
+      if (Math.hypot(p.x - e.x, (p.y - e.y) * 1.1) < radius && p.z < 28) {
+        hurtPlayer(e.def.damage * (st.damageMul || 1), e.x, true);
+      }
+      shake(8);
+      Sound.special();
+      return;
+    }
     if (st.kind === 'aoe') {
       const radius = st.radius || 60;
       G.effects.push({ x: e.x, y: e.y, radius: 8, maxRadius: radius, life: .5, maxLife: .5, color: e.boss ? '#ff5b3d' : '#ffd23f', width: 4 });
@@ -2958,19 +3059,22 @@
     const isBullet = st.projectile === 'bullet';
     const isKnife = st.projectile === 'knife';
     const isEnergy = st.projectile === 'energy';
-    const speed = o.speed || (isBullet ? 355 : isKnife ? 292 : 156);
+    const isCard = st.projectile === 'card';
+    const isChip = st.projectile === 'chip';
+    const speed = o.speed || (isBullet ? 355 : isKnife ? 292 : isCard ? 286 : isChip ? 218 : 156);
     const yOff = o.spread ? rand(-o.spread, o.spread) : 0;
+    const color = isBullet ? '#ffe27a' : isKnife ? '#dff2ff' : isCard ? '#ffefb0' : isChip ? '#ffd34d' : (e.type === 'vprime' ? '#ff5b6d' : e.type === 'vector' ? '#b57bff' : '#ff7a3d');
     G.projectiles.push({
       x: e.x + e.facing * (isBullet ? 15 : isKnife ? 18 : 20),
       y: e.y + yOff,
-      z: isBullet ? 17 : isKnife ? 20 : 12,
+      z: isBullet ? 17 : isKnife ? 20 : isCard ? 21 : isChip ? 14 : 12,
       vx: e.facing * speed,
       damage: o.damage == null ? e.def.damage : o.damage,
-      life: isBullet ? 1.8 : isKnife ? 2.2 : 2.5,
-      color: isBullet ? '#ffe27a' : isKnife ? '#dff2ff' : (e.type === 'vprime' ? '#ff5b6d' : e.type === 'vector' ? '#b57bff' : '#ff7a3d'),
+      life: isBullet ? 1.8 : isKnife ? 2.2 : isCard ? 2.0 : isChip ? 2.3 : 2.5,
+      color,
       owner: e, friendly: false,
-      kind: isBullet ? 'bullet' : isKnife ? 'knife' : 'energy',
-      spin: isKnife ? rand(18, 26) : 0,
+      kind: isBullet ? 'bullet' : isKnife ? 'knife' : isCard ? 'card' : isChip ? 'chip' : 'energy',
+      spin: isKnife ? rand(18, 26) : isCard ? rand(10, 18) : 0,
       big: !!o.big,
       dir: e.facing
     });
@@ -2980,6 +3084,12 @@
     } else if (isKnife) {
       spawnBurst(e.x + e.facing * 20, e.y, 22, '#dff2ff', 3, 20);
       Sound.knife();
+    } else if (isCard) {
+      spawnBurst(e.x + e.facing * 20, e.y + yOff, 21, '#ffefb0', 3, 18);
+      Sound.knife();
+    } else if (isChip) {
+      spawnBurst(e.x + e.facing * 20, e.y, 22, '#ffd34d', 4, 22);
+      Sound.whoosh();
     } else {
       spawnBurst(e.x + e.facing * 24, e.y + yOff, 22, isEnergy && e.type === 'vprime' ? '#ff5b6d' : '#ff7a3d', 4, 26);
       Sound.whoosh();
@@ -3367,6 +3477,61 @@
     return false;
   }
 
+  function advanceHousePhase(e) {
+    const ratio = e.hp / e.maxHp;
+    if (e.phase === 1 && ratio <= 2 / 3) {
+      e.phase = 2;
+      e.invuln = 1.4;
+      e.attack = null;
+      e.attacking = false;
+      e.state = 'chase';
+      e.stateTime = 0;
+      e.cooldown = .9;
+      e.def.damage = 12;
+      e.def.keepDist = 108;
+      e.def.attackRange = 138;
+      e.def.coolMin = .45;
+      e.def.coolMax = .82;
+      e.speed = 51;
+      e.char = { ...e.char, colors: { ...e.char.colors, top: '#8b1a2b', topShade: '#4c0912', accent: '#ffd34d', sleeve: '#6e1321' } };
+      G.effects.push({ x: e.x, y: e.y, radius: 12, maxRadius: 150, life: .7, maxLife: .7, color: '#ffd34d', width: 5 });
+      G.effects.push({ x: e.x, y: e.y, radius: 24, maxRadius: 110, life: .5, maxLife: .5, color: '#ff4f6d', width: 3 });
+      spawnBurst(e.x, e.y, 26, '#ffd34d', 20, 100);
+      G.flash = Math.max(G.flash, .4);
+      shake(9);
+      announce('PHASE 2', 'PLACE YOUR BETS // 下注', '#ffd34d', 2.2);
+      Sound.special();
+      updateHud();
+      return true;
+    }
+    if (e.phase === 2 && ratio <= 1 / 3) {
+      e.phase = 3;
+      e.invuln = 1.5;
+      e.attack = null;
+      e.attacking = false;
+      e.state = 'chase';
+      e.stateTime = 0;
+      e.cooldown = .75;
+      e.def.damage = 15;
+      e.def.keepDist = 76;
+      e.def.attackRange = 120;
+      e.def.coolMin = .38;
+      e.def.coolMax = .72;
+      e.speed = 58;
+      e.char = { ...e.char, colors: { ...e.char.colors, top: '#c28b2b', topShade: '#6e4510', accent: '#ff4f6d', sleeve: '#9c651b' } };
+      G.effects.push({ x: e.x, y: e.y, radius: 14, maxRadius: 190, life: .85, maxLife: .85, color: '#ffd34d', width: 6 });
+      G.effects.push({ x: e.x, y: e.y, radius: 30, maxRadius: 140, life: .62, maxLife: .62, color: '#ff4f6d', width: 4 });
+      spawnBurst(e.x, e.y, 34, '#ffd34d', 24, 120);
+      G.flash = Math.max(G.flash, .5);
+      shake(12);
+      announce('PHASE 3', 'THE HOUSE ALWAYS WINS // 庄家通吃', '#ff4f6d', 2.4);
+      Sound.special();
+      updateHud();
+      return true;
+    }
+    return false;
+  }
+
   function hitEnemy(e, damage, dir, opts) {
     if (!e || e.dead || e.invuln > 0) return false;
     const o = opts || {};
@@ -3392,6 +3557,7 @@
       return true;
     }
     if (e.type === 'vprime' && advanceVprimePhase(e)) return true;
+    if (e.type === 'house' && advanceHousePhase(e)) return true;
     const kb = o.kb == null ? 35 : o.kb;
     if (o.knockdown || (!e.def.armor && dmg >= 8)) {
       e.state = 'down';
@@ -4098,12 +4264,13 @@
     } else {
       dom.resultKicker.textContent = `STAGE ${stage.number} // ${(G.difficulty || DIFFICULTIES.normal).name} // CLEAR`;
       dom.resultGrade.textContent = grade;
-      dom.resultTitle.textContent = stage.number === '04' ? '花园已清场' : stage.number === '05' ? '核心已停转' : '街区已清空';
+      dom.resultTitle.textContent = stage.number === '04' ? '花园已清场' : stage.number === '05' ? '赌场已清场' : '街区已清空';
       const copyByStage = {
         '01': '霓虹重新亮了起来。只是今晚，换了一群人倒下。',
         '02': '站台尽头，下一班车已经进站。你知道终点还有一个人在等。',
         '03': '天台的风停了。可 V 先生不在塔顶——他在更深的下面。',
-        '04': '双子倒在霓虹灯下。电梯只剩一个按钮，向下。'
+        '04': '双子倒在霓虹灯下。电梯只剩一个按钮，向下。',
+        '05': '庄家倒下，筹码散了一地。电梯还在向下——真正的账本在核心。'
       };
       dom.resultCopy.textContent = copyByStage[stage.number] || '城市还没醒来，最后一段路在等你。';
       dom.btnNext.querySelector('.btn-main').textContent = '进入下一关';
@@ -4995,6 +5162,32 @@
         ctx.fillRect(-8, -1, 5, 2);
         ctx.fillStyle = '#4d3a24';
         ctx.fillRect(-9, -1, 1, 2);
+      } else if (pr.kind === 'card') {
+        const dir = sign(pr.vx);
+        ctx.rotate(G.time * (pr.spin || 12) * dir + .2);
+        ctx.fillStyle = '#fff8dd';
+        ctx.fillRect(-4, -7, 8, 14);
+        ctx.strokeStyle = '#c9a24a';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(-4, -7, 8, 14);
+        ctx.fillStyle = '#b3122b';
+        ctx.fillRect(-2, -5, 4, 1);
+        ctx.fillRect(-2, 4, 4, 1);
+        ctx.fillStyle = '#ff4f6d';
+        ctx.fillRect(0, -3, 1, 6);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(-1, -4, 1, 1);
+      } else if (pr.kind === 'chip') {
+        ctx.rotate(G.time * 9 * sign(pr.vx));
+        ctx.fillStyle = '#ffd34d';
+        ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#7a3b18';
+        ctx.beginPath(); ctx.arc(0, 0, 3.4, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#fff2b0'; ctx.lineWidth = 1;
+        for (let i = 0; i < 4; i++) {
+          const a = i * Math.PI / 2;
+          ctx.beginPath(); ctx.moveTo(Math.cos(a) * 3.4, Math.sin(a) * 3.4); ctx.lineTo(Math.cos(a) * 5.8, Math.sin(a) * 5.8); ctx.stroke();
+        }
       } else {
         const sc = pr.big ? 1.85 : 1;
         ctx.scale(sc, sc);
@@ -5414,7 +5607,7 @@
   }
 
   // Read-only debug handle (useful for testing; harmless in play).
-  window.__NEON_RAGE__ = { G, Input, STAGES, PLAYER_STATS, ENEMY_DATA, DIFFICULTIES, BOSS_TALK, POST_BOSS_TALK, startStage, spawnEnemy, startRun, hurtPlayer, hitEnemy, killEnemy, clearBattle, showResult, showEnding, beginBossTalk, advanceBossTalk, endBossTalk, buildWaveSpawns, updateBossAdds, dismissBossAdds, damageCrate };
+  window.__NEON_RAGE__ = { G, Input, STAGES, PLAYER_STATS, ENEMY_DATA, DIFFICULTIES, BOSS_TALK, POST_BOSS_TALK, startStage, spawnEnemy, startRun, hurtPlayer, hitEnemy, killEnemy, clearBattle, showResult, showEnding, beginBossTalk, advanceBossTalk, endBossTalk, buildWaveSpawns, updateBossAdds, dismissBossAdds, damageCrate, Art };
 
   boot();
 })();

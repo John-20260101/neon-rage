@@ -146,6 +146,15 @@
         accent: '#ffcf5a', metal: '#9ea7b0', eye: '#171019', gloves: '#d8324a'
       }
     },
+    house: {
+      key: 'house', build: 'boss', hair: 'slick', outfit: 'suit',
+      colors: {
+        skin: '#d0a17d', skinShade: '#a07252', hair: '#171015', hairHi: '#4b2a35',
+        top: '#a3263a', topShade: '#5e0d1b', sleeve: '#821527', shirt: '#fff1d8',
+        pants: '#24121b', pantsShade: '#13090e', shoe: '#120c10', sole: '#070406',
+        accent: '#ffd34d', metal: '#f0dca8', eye: '#171019'
+      }
+    },
     vprime: {
       key: 'vprime', build: 'boss', hair: 'slick', outfit: 'suit',
       colors: {
@@ -606,6 +615,13 @@
       px(g, left + hw, top + 1, 2, 4, C.topShade);
       px(g, left + 2, top + 1, 3, 1, '#fff0b0');
     }
+    if (c.accessory === 'monocle') {
+      px(g, left + hw - 7, top + 2, 7, 4, C.accent);
+      px(g, left + hw - 6, top + 3, 5, 2, mix(C.top, '#ffffff', .12));
+      px(g, left + hw - 4, top + 3, 2, 2, C.eye);
+      px(g, left + hw, top + 4, 1, 3, C.accent);
+      px(g, left + hw + 1, top + 6, 1, 2, C.accent);
+    }
     if (c.accessory === 'shades') {
       px(g, left + hw - 7, top + 3, 7, 2, '#09080d');
       px(g, left + hw - 6, top + 3, 2, 1, '#4d5a69');
@@ -1001,6 +1017,22 @@
       g.restore();
     }
     drawWeapon(g, p.fa, pose, o, C);
+    if (c.key === 'house') {
+      // Dealer's fanned hand: readable silhouette even at gameplay scale.
+      const hand = p.fa;
+      g.save();
+      g.translate(hand.hx + 1, hand.hy - 2);
+      g.rotate(-.35);
+      for (let i = 0; i < 3; i++) {
+        g.save();
+        g.rotate(i * .34);
+        px(g, -2, -7, 5, 9, '#100b10');
+        px(g, -1, -6, 3, 7, '#fff2d8');
+        px(g, 0, -5, 1, 2, C.accent);
+        g.restore();
+      }
+      g.restore();
+    }
 
     // little ground contact glint for jump? no
     g.restore();
@@ -1870,11 +1902,202 @@
     return vis;
   }
 
+  function buildHouse(worldW) {
+    const vis = buildClub(worldW);
+    const rand = mulberry32(0x40e5ca51);
+
+    const sg = vis.sky.getContext('2d');
+    sg.clearRect(0, 0, 480, 270);
+    gradientFill(sg, 0, 0, 480, 270, [
+      [0, '#12060d'], [.42, '#260b17'], [.72, '#4a1520'], [1, '#12060d']
+    ]);
+    for (let x = 0; x < 480; x += 48) {
+      sg.fillStyle = 'rgba(255,211,77,.055)'; sg.fillRect(x, 0, 1, 182);
+      sg.fillStyle = 'rgba(0,0,0,.22)'; sg.fillRect(x + 1, 0, 2, 182);
+    }
+    for (let i = 0; i < 3; i++) {
+      const x = 92 + i * 108;
+      sg.fillStyle = '#070c14'; sg.fillRect(x, 22, 76, 142);
+      sg.strokeStyle = 'rgba(201,162,74,.55)'; sg.lineWidth = 2; sg.strokeRect(x, 22, 76, 142);
+      sg.strokeStyle = 'rgba(201,162,74,.18)'; sg.lineWidth = 1;
+      sg.beginPath(); sg.moveTo(x + 38, 22); sg.lineTo(x + 38, 164); sg.stroke();
+      sg.beginPath(); sg.moveTo(x, 72); sg.lineTo(x + 76, 72); sg.stroke();
+      for (let k = 0; k < 16; k++) {
+        sg.fillStyle = k % 3 ? 'rgba(255,207,122,.36)' : 'rgba(255,79,120,.35)';
+        sg.fillRect(x + 6 + rand() * 64, 32 + rand() * 128, 1 + rand() * 2, 1 + rand() * 2);
+      }
+      for (let k = 0; k < 12; k++) {
+        sg.strokeStyle = 'rgba(180,215,255,.18)'; sg.lineWidth = 1;
+        const rx = x + 4 + rand() * 68, ry = 24 + rand() * 135;
+        sg.beginPath(); sg.moveTo(rx, ry); sg.lineTo(rx - 2, ry + 6 + rand() * 5); sg.stroke();
+      }
+    }
+    for (let i = 0; i < 3; i++) {
+      const x = 64 + i * 176;
+      sg.strokeStyle = 'rgba(255,211,77,.5)'; sg.lineWidth = 2;
+      sg.beginPath(); sg.moveTo(x, 0); sg.lineTo(x, 22); sg.stroke();
+      for (let k = 0; k < 5; k++) {
+        sg.fillStyle = 'rgba(255,211,77,.55)';
+        sg.fillRect(x - 16 + k * 8, 22, 2, 4 + (k % 2) * 4);
+      }
+      const glow = sg.createRadialGradient(x, 34, 2, x, 34, 70);
+      glow.addColorStop(0, 'rgba(255,211,77,.22)'); glow.addColorStop(1, 'rgba(255,211,77,0)');
+      sg.fillStyle = glow; sg.fillRect(x - 75, 0, 150, 120);
+    }
+    neonSign(sg, 240, 30, 'THE HOUSE', '#ffd34d', 17, 12);
+    sg.globalAlpha = .28;
+    neonSign(sg, 240, 34, 'THE HOUSE', '#ff4f6d', 17, 6);
+    sg.globalAlpha = 1;
+
+    const m = vis.mid.getContext('2d');
+    m.clearRect(0, 0, 1440, 270);
+    m.fillStyle = 'rgba(12,4,9,.56)'; m.fillRect(0, 0, 1440, 270);
+    for (let x = 0; x < 1440; x += 120) {
+      m.fillStyle = 'rgba(255,211,77,.05)'; m.fillRect(x, 0, 2, 176);
+      m.fillStyle = 'rgba(0,0,0,.26)'; m.fillRect(x + 2, 0, 3, 176);
+    }
+    for (let x = 60; x < 1440; x += 360) {
+      m.fillStyle = '#09060a'; m.fillRect(x, 30, 24, 150);
+      m.fillStyle = '#2b1018'; m.fillRect(x + 3, 34, 18, 146);
+      m.fillStyle = '#c9a24a'; m.fillRect(x + 10, 38, 2, 138);
+      m.fillStyle = 'rgba(255,211,77,.14)'; m.fillRect(x + 14, 42, 4, 128);
+      m.fillStyle = '#120a10'; m.fillRect(x + 34, 90, 120, 8);
+      m.fillStyle = '#5b2a24'; m.fillRect(x + 34, 98, 120, 4);
+      m.fillStyle = 'rgba(255,211,77,.25)'; m.fillRect(x + 36, 102, 116, 1);
+      for (let b = 0; b < 7; b++) {
+        m.fillStyle = b % 2 ? '#5b2a24' : '#2f5a4a';
+        m.fillRect(x + 42 + b * 11, 76 + (b % 3), 3, 14);
+        m.fillStyle = 'rgba(255,211,77,.4)'; m.fillRect(x + 43 + b * 11, 76 + (b % 3), 1, 3);
+      }
+    }
+    for (let x = 150; x < 1440; x += 430) {
+      m.fillStyle = '#0a070a'; m.fillRect(x, 114, 112, 38);
+      m.fillStyle = '#1b5a3b'; m.fillRect(x + 3, 117, 106, 32);
+      m.fillStyle = 'rgba(255,211,77,.32)'; m.fillRect(x + 3, 117, 106, 1);
+      m.fillStyle = 'rgba(0,0,0,.35)'; m.fillRect(x + 8, 122, 96, 1);
+      m.fillStyle = '#c9a24a'; m.beginPath(); m.arc(x + 56, 130, 13, 0, TAU); m.fill();
+      m.fillStyle = '#1b5a3b'; m.beginPath(); m.arc(x + 56, 130, 9, 0, TAU); m.fill();
+      m.fillStyle = '#ff4f6d'; m.fillRect(x + 55, 124, 2, 4);
+      m.fillStyle = '#0a070a'; m.fillRect(x + 54, 135, 4, 12);
+      m.strokeStyle = '#c9a24a'; m.lineWidth = 1;
+      m.beginPath(); m.moveTo(x + 56, 0); m.lineTo(x + 56, 62); m.stroke();
+      m.fillStyle = '#ffd34d'; m.fillRect(x + 48, 62, 16, 3);
+      m.fillStyle = 'rgba(255,211,77,.18)'; m.fillRect(x + 40, 65, 32, 1);
+    }
+    for (let x = 20; x < 1440; x += 210) {
+      m.fillStyle = '#0b0709'; m.fillRect(x, 150, 3, 20);
+      m.fillStyle = '#c9a24a'; m.fillRect(x, 148, 3, 3);
+      m.strokeStyle = 'rgba(255,79,109,.32)'; m.lineWidth = 2;
+      m.beginPath(); m.moveTo(x - 49, 151); m.quadraticCurveTo(x, 163, x + 49, 151); m.stroke();
+    }
+
+    // House wordmark: the neon anchor for the stage card and the room.
+    neonSign(m, 240, 74, 'THE HOUSE', '#ffd34d', 22, 11);
+    m.globalAlpha = .32;
+    neonSign(m, 240, 77, 'THE HOUSE', '#ff4f6d', 22, 5);
+    m.globalAlpha = 1;
+    for (let x = 720; x < 1440; x += 480) {
+      m.globalAlpha = .45;
+      neonSign(m, x, 70, 'BET', '#ff4f6d', 10, 7);
+      m.globalAlpha = 1;
+    }
+
+    // Chandeliers: brass arms, warm bulbs and crystal drops.
+    for (let x = 240; x < 1440; x += 480) {
+      m.strokeStyle = 'rgba(201,162,74,.8)'; m.lineWidth = 2;
+      m.beginPath(); m.moveTo(x, 0); m.lineTo(x, 22); m.stroke();
+      m.fillStyle = '#c9a24a'; m.beginPath(); m.ellipse(x, 24, 34, 7, 0, 0, TAU); m.fill();
+      m.fillStyle = '#7a4e18'; m.beginPath(); m.ellipse(x, 25, 22, 4, 0, 0, TAU); m.fill();
+      m.strokeStyle = '#ffd34d'; m.lineWidth = 2;
+      for (let k = 0; k < 6; k++) {
+        const a = -Math.PI * .85 + k * Math.PI * .34;
+        const ex = x + Math.cos(a) * 42, ey = 30 + Math.sin(a) * 18;
+        m.beginPath(); m.moveTo(x, 26); m.quadraticCurveTo(x + Math.cos(a) * 22, 18, ex, ey); m.stroke();
+        m.fillStyle = '#fff2b0'; m.fillRect(ex - 2, ey, 4, 3);
+        for (let d = 0; d < 3; d++) {
+          m.fillStyle = d % 2 ? 'rgba(255,242,176,.8)' : 'rgba(255,211,77,.55)';
+          m.fillRect(ex - 1 + (d - 1) * 3, ey + 4 + d * 3, 1, 4);
+        }
+      }
+      m.fillStyle = '#ffd34d'; m.beginPath(); m.arc(x, 28, 5, 0, TAU); m.fill();
+      const glow = m.createRadialGradient(x, 36, 2, x, 36, 80);
+      glow.addColorStop(0, 'rgba(255,211,77,.18)'); glow.addColorStop(1, 'rgba(255,211,77,0)');
+      m.fillStyle = glow; m.fillRect(x - 90, 0, 180, 125);
+    }
+
+    // Roulette wheels: the signature casino silhouette.
+    for (let x = 360; x < 1440; x += 720) {
+      m.fillStyle = 'rgba(0,0,0,.45)'; m.beginPath(); m.ellipse(x, 160, 42, 8, 0, 0, TAU); m.fill();
+      m.fillStyle = '#1a1008'; m.fillRect(x - 4, 126, 8, 30);
+      m.fillStyle = '#c9a24a'; m.beginPath(); m.arc(x, 108, 38, 0, TAU); m.fill();
+      m.fillStyle = '#0d3b2a'; m.beginPath(); m.arc(x, 108, 33, 0, TAU); m.fill();
+      for (let k = 0; k < 16; k++) {
+        const a = k * TAU / 16;
+        m.strokeStyle = k % 2 ? 'rgba(255,79,109,.8)' : 'rgba(255,242,176,.8)';
+        m.lineWidth = 2;
+        m.beginPath(); m.moveTo(x + Math.cos(a) * 14, 108 + Math.sin(a) * 14); m.lineTo(x + Math.cos(a) * 31, 108 + Math.sin(a) * 31); m.stroke();
+      }
+      m.strokeStyle = '#ffd34d'; m.lineWidth = 2; m.beginPath(); m.arc(x, 108, 27, 0, TAU); m.stroke();
+      m.fillStyle = '#c9a24a'; m.beginPath(); m.arc(x, 108, 8, 0, TAU); m.fill();
+      m.fillStyle = '#3a1808'; m.beginPath(); m.arc(x, 108, 4, 0, TAU); m.fill();
+      m.fillStyle = '#fff8e0'; m.beginPath(); m.arc(x + 18, 94, 2, 0, TAU); m.fill();
+      const glow = m.createRadialGradient(x, 108, 4, x, 108, 62);
+      glow.addColorStop(0, 'rgba(255,211,77,.16)'); glow.addColorStop(1, 'rgba(255,211,77,0)');
+      m.fillStyle = glow; m.fillRect(x - 70, 46, 140, 125);
+    }
+
+    // Chip stacks and a fanned hand on the green table.
+    for (let x = 150; x < 1440; x += 430) {
+      for (let s = 0; s < 3; s++) {
+        const cx = x + 18 + s * 13, ch = 3 + (s % 2) * 3;
+        for (let k = 0; k < ch; k++) {
+          m.fillStyle = k % 2 ? '#c73b4d' : '#f1d27a';
+          m.beginPath(); m.ellipse(cx, 129 - k * 3, 7, 2.4, 0, 0, TAU); m.fill();
+          m.strokeStyle = 'rgba(20,8,10,.5)'; m.lineWidth = 1;
+          m.beginPath(); m.ellipse(cx, 129 - k * 3, 7, 2.4, 0, 0, TAU); m.stroke();
+        }
+      }
+      for (let c = 0; c < 5; c++) {
+        m.save(); m.translate(x + 78 + c * 5, 128 - c * 2); m.rotate(-.18 + c * .09);
+        m.fillStyle = '#fff4d2'; m.fillRect(-4, -8, 8, 11);
+        m.strokeStyle = '#c9a24a'; m.lineWidth = 1; m.strokeRect(-4, -8, 8, 11);
+        m.fillStyle = c % 2 ? '#b3122b' : '#161018'; m.fillRect(-1, -5, 2, 2);
+        m.restore();
+      }
+    }
+
+
+    const gg = vis.ground.getContext('2d');
+    gg.clearRect(0, 0, worldW, 100);
+    gg.fillStyle = 'rgba(18,5,10,.64)'; gg.fillRect(0, 0, worldW, 100);
+    for (let x = 0; x < worldW; x += 36) {
+      gg.strokeStyle = 'rgba(201,162,74,.10)'; gg.lineWidth = 1;
+      gg.beginPath(); gg.moveTo(x, 10); gg.lineTo(x + 18, 28); gg.lineTo(x, 46); gg.lineTo(x - 18, 28); gg.closePath(); gg.stroke();
+    }
+    for (let x = 140; x < worldW; x += 320) {
+      const pool = gg.createRadialGradient(x, 36, 2, x, 36, 100);
+      pool.addColorStop(0, 'rgba(255,211,77,.13)'); pool.addColorStop(1, 'rgba(255,211,77,0)');
+      gg.fillStyle = pool; gg.fillRect(x - 110, 4, 220, 90);
+    }
+    gg.fillStyle = '#2b1018'; gg.fillRect(0, 0, worldW, 5);
+    gg.fillStyle = '#c9a24a'; gg.globalAlpha = .5; gg.fillRect(0, 5, worldW, 1); gg.globalAlpha = 1;
+    for (let x = 60; x < worldW; x += 150) {
+      gg.fillStyle = '#c9a24a'; gg.fillRect(x, 14, 2, 2);
+      gg.fillStyle = '#ff4f6d'; gg.fillRect(x + 5, 15, 2, 2);
+    }
+
+    vis.ambient = 'house';
+    vis.houseLights = [];
+    for (let i = 0; i < 7; i++) vis.houseLights.push({ x: rand() * 1440, phase: rand() * TAU, speed: .35 + rand() * .6 });
+    return vis;
+  }
+
   function buildStage(index, worldW) {
     const vis = index === 0 ? buildDocks(worldW)
       : index === 1 ? buildSubway(worldW)
       : index === 2 ? buildRooftop(worldW)
       : index === 3 ? buildClub(worldW)
+      : index === 4 ? buildHouse(worldW)
       : buildFinale(worldW);
     const rand = mulberry32(0xabc123 + index * 777);
     vis.rain = [];
@@ -1940,6 +2163,20 @@
         g.lineTo(floorX - 44, 196);
         g.closePath();
         g.fill();
+      }
+      g.restore();
+    } else if (vis.ambient === 'house') {
+      g.save();
+      g.globalCompositeOperation = 'lighter';
+      for (const l of vis.houseLights) {
+        const sx = (l.x - camX * 0.37) % 1440;
+        if (sx < -120 || sx > W + 120) continue;
+        const sway = Math.sin(t * l.speed + l.phase) * 24;
+        const grd = g.createRadialGradient(sx + sway, 22, 2, sx + sway, 22, 120);
+        grd.addColorStop(0, 'rgba(255,211,77,.13)');
+        grd.addColorStop(.5, 'rgba(255,79,109,.045)');
+        grd.addColorStop(1, 'rgba(255,211,77,0)');
+        g.fillStyle = grd; g.fillRect(sx - 130, 0, 260, 210);
       }
       g.restore();
     } else if (vis.ambient === 'finale') {

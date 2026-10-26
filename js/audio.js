@@ -54,6 +54,13 @@
       chords: [0, -2, 5, 3],
       hat: 0.8, snare: 0.92
     },
+    bossHouse: {
+      bpm: 128, root: 43, gain: 0.98,
+      bass: [0, null, 0, 7, null, 3, 0, null, 10, null, 7, 5, 3, null, 0, null],
+      lead: [12, null, 15, 19, 22, null, 19, 15, 17, null, 22, 24, 22, 19, 15, 12],
+      chords: [0, 3, 5, 2],
+      hat: 0.7, snare: 0.6
+    },
     twin: {
       bpm: 142, root: 44, gain: 1.0,
       bass: [0, 0, 12, 0, 10, null, 7, 0, 0, 12, 0, 3, 5, 7, 10, 12],
