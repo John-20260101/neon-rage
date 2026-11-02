@@ -819,8 +819,8 @@ body.touch-mode .touch-controls {
 .touch-dpad .down { grid-area: 3 / 2; }
 .touch-actions {
   position: absolute; right: 2.6%; bottom: 3.6%;
-  width: 33%; aspect-ratio: 1.5;
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2cqw; align-items: end;
+  width: 38%; aspect-ratio: 1.6;
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: .7cqw; align-items: end;
   opacity: .86;
 }
 .touch-actions .touch-key {
@@ -831,6 +831,7 @@ body.touch-mode .touch-controls {
 .touch-actions .jump { margin-bottom: 16%; }
 .touch-actions .special { margin-bottom: 3%; background: rgba(255,210,63,.22); border-color: rgba(255,210,63,.6); }
 .touch-actions .grab { margin-bottom: 4%; }
+.touch-actions .dash { margin-bottom: 8%; background: rgba(41,231,255,.18); border-color: rgba(41,231,255,.58); }
 .touch-pause {
   position: absolute; right: 1.5%; top: 1.5%; width: 5.6%; aspect-ratio: 1;
   border-radius: 4px; font-size: 1.2cqw;
@@ -1795,7 +1796,7 @@ body.touch-mode .toast { bottom: 30%; }
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
-            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.30</span></div>
+            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.31</span></div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <div class="cover-actions">
               <button id="btn-start" class="arcade-btn" type="button">
@@ -2009,7 +2010,7 @@ body.touch-mode .toast { bottom: 30%; }
                 <div class="settings-panel-title"><b>STREET WISDOM</b><span>生存守则</span></div>
                 <ul class="settings-guide">
                   <li><b>走位比出拳重要。</b>用上下方向错开敌人的拳头，再从侧面切入。</li>
-                  <li><b>双击前方向并按住可以跑动。</b>跑动中按 <kbd>J</kbd> 直接放冲刺技：REX 带火焰，LUNA 带闪电，BRUNO 带烟尘。</li>
+                  <li><b>双击前方向并按住可以跑动。</b>跑动中按 <kbd>J</kbd>（触屏按「突」）直接放冲刺技：REX 带火焰，LUNA 带闪电，BRUNO 带烟尘。</li>
                   <li><b>敌人头顶有血条。</b>血条变黄、闪红时说明快倒了，优先补刀；Boss 的血量看屏幕顶部。</li>
                   <li><b>抓取后按 J 膝击，按 K 投掷。</b>把打手砸向同伴，能连带击倒。</li>
                   <li><b>必杀会消耗生命值（HUD 显示 −N HP）。</b>REX「烈焰升龙」范围最大，LUNA「雷光贯线」贯穿前方一条线，BRUNO「裂地重砸」震开周身；被围住时再用。</li>
@@ -2222,6 +2223,7 @@ body.touch-mode .toast { bottom: 30%; }
             <button class="touch-key action special" data-action="special" type="button" aria-label="必杀">必杀</button>
             <button class="touch-key action grab" data-action="grab" type="button" aria-label="抓取">抓</button>
             <button class="touch-key action jump" data-action="jump" type="button" aria-label="跳跃">跳</button>
+            <button class="touch-key action dash" data-action="dash" type="button" aria-label="突进">突</button>
             <button class="touch-key action attack" data-action="attack" type="button" aria-label="攻击">打</button>
           </div>
           <button id="btn-touch-pause" class="touch-key touch-pause" type="button" aria-label="暂停">Ⅱ</button>
@@ -6030,7 +6032,7 @@ body.touch-mode .toast { bottom: 30%; }
       ],
       jumpKick: 10, special: 17,
       dash: {
-        name: '蛮牛头槌', en: 'BULL HEADBUTT', startup: .07, active: .14, recovery: .28,
+        name: '蛮牛冲撞', en: 'BULL RUSH', startup: .07, active: .14, recovery: .28,
         damage: 18, range: 45, kb: 175, knockdown: true, pose: 'headbutt', speed: 175, duration: .22, fx: 'smoke'
       }
     }
@@ -7399,7 +7401,7 @@ body.touch-mode .toast { bottom: 30%; }
     Sound.playTrack(G.stage.music);
     Sound.start();
     announce('FIGHT', `${G.stage.title} // ${G.stage.cn}`, '#ffd23f', 1.8);
-    if (document.body.classList.contains('touch-mode')) toast('左侧移动 · 「打」连击 · 前前+打 突进技', 4.2);
+    if (document.body.classList.contains('touch-mode')) toast('左侧移动 · 「打」连击 · 按「突」直接冲刺', 4.2);
     else toast('WASD 移动 · J 连击 · 前前+J 突进技 · L 必杀 · E 拾取', 4.2);
     dom.canvas.focus({ preventScroll: true });
     blurFocus();
@@ -7625,6 +7627,7 @@ body.touch-mode .toast { bottom: 30%; }
     }
 
     bufferSuperInput(p, dt);
+    if (Input.pressed('dash') && startDashAttack()) return;
 
     // double-tap forward: the second press starts a sustained run
     let tapDir = 0;
@@ -7875,6 +7878,7 @@ body.touch-mode .toast { bottom: 30%; }
     const st = PLAYER_STATS[p.charKey];
     p.runTime += dt;
     bufferSuperInput(p, dt);
+    if (Input.pressed('dash') && startDashAttack()) return;
     if (p.superWindow > 0 && Input.pressed('special')) {
       p.superWindow = 0;
       startSuperSpecial();

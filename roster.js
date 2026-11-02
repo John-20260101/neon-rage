@@ -69,7 +69,7 @@
       ],
       abilities: [
         { name: '三连拳', en: 'TRIPLE STRIKE', desc: '6 / 7 / 11 点伤害，第三段击倒。慢，但每一拳都重。' },
-        { name: '蛮牛头槌', en: 'BULL HEADBUTT', desc: '前前 + J。18 点伤害，伤害最高的冲刺技。' },
+        { name: '蛮牛冲撞', en: 'BULL RUSH', desc: '前前 + J / 触屏「突」。18 点伤害，伤害最高的冲刺技。' },
         { name: '裂地重砸', en: 'GROUND SLAM', desc: '必杀技，17 点伤害。震开周身敌人，硬的解围。' },
         { name: '陨星断岳', en: 'METEOR BREAKER', desc: '超必杀。三段 40 / 35 / 25 点伤害，范围小但爆发最高。' }
       ]

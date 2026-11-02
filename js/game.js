@@ -172,7 +172,7 @@
       ],
       jumpKick: 10, special: 17,
       dash: {
-        name: '蛮牛头槌', en: 'BULL HEADBUTT', startup: .07, active: .14, recovery: .28,
+        name: '蛮牛冲撞', en: 'BULL RUSH', startup: .07, active: .14, recovery: .28,
         damage: 18, range: 45, kb: 175, knockdown: true, pose: 'headbutt', speed: 175, duration: .22, fx: 'smoke'
       }
     }
@@ -1541,7 +1541,7 @@
     Sound.playTrack(G.stage.music);
     Sound.start();
     announce('FIGHT', `${G.stage.title} // ${G.stage.cn}`, '#ffd23f', 1.8);
-    if (document.body.classList.contains('touch-mode')) toast('左侧移动 · 「打」连击 · 前前+打 突进技', 4.2);
+    if (document.body.classList.contains('touch-mode')) toast('左侧移动 · 「打」连击 · 按「突」直接冲刺', 4.2);
     else toast('WASD 移动 · J 连击 · 前前+J 突进技 · L 必杀 · E 拾取', 4.2);
     dom.canvas.focus({ preventScroll: true });
     blurFocus();
@@ -1767,6 +1767,7 @@
     }
 
     bufferSuperInput(p, dt);
+    if (Input.pressed('dash') && startDashAttack()) return;
 
     // double-tap forward: the second press starts a sustained run
     let tapDir = 0;
@@ -2017,6 +2018,7 @@
     const st = PLAYER_STATS[p.charKey];
     p.runTime += dt;
     bufferSuperInput(p, dt);
+    if (Input.pressed('dash') && startDashAttack()) return;
     if (p.superWindow > 0 && Input.pressed('special')) {
       p.superWindow = 0;
       startSuperSpecial();
