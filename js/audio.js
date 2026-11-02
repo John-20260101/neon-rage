@@ -120,6 +120,33 @@
   const DEFAULT_SFX = 0.8;
   const SFX_BURST = 24;
   const SFX_REFILL = 24;
+
+  // Combat voices are deliberately short and non-verbal. Each fighter gets a
+  // different fundamental/formant pair so hits read as REX, LUNA or BRUNO
+  // without turning into dialogue.
+  const FIGHTER_SFX = {
+    rex: { air: [700, 1600], sub: 62, voice: [126, 74], formant: 720, voiceGain: 0.052 },
+    luna: { air: [1250, 2900], sub: 84, voice: [184, 112], formant: 1020, voiceGain: 0.045 },
+    bruno: { air: [430, 980], sub: 47, voice: [88, 54], formant: 580, voiceGain: 0.060 }
+  };
+
+  const ENEMY_SFX = {
+    punk: { voice: [148, 96], formant: 880, gain: 0.028 },
+    blade: { voice: [164, 106], formant: 980, gain: 0.028 },
+    brute: { voice: [96, 60], formant: 620, gain: 0.034 },
+    kicker: { voice: [156, 100], formant: 900, gain: 0.028 },
+    boxer: { voice: [146, 94], formant: 860, gain: 0.028 },
+    whip: { voice: [176, 112], formant: 1040, gain: 0.026 },
+    gunner: { voice: [142, 92], formant: 820, gain: 0.027 },
+    siren: { voice: [196, 124], formant: 1120, gain: 0.026 },
+    viper: { voice: [180, 116], formant: 1040, gain: 0.026 },
+    wrecker: { voice: [104, 66], formant: 650, gain: 0.034 },
+    boss: { voice: [84, 50], formant: 560, gain: 0.042 }
+  };
+
+  const fighterSfx = (key) => FIGHTER_SFX[key] || FIGHTER_SFX.rex;
+  const enemySfx = (type) => ENEMY_SFX[type] || ENEMY_SFX.punk;
+
   const clamp01 = (v, fallback) => {
     const n = Number(v);
     return Number.isFinite(n) ? Math.max(0, Math.min(1, n)) : fallback;
@@ -559,8 +586,8 @@
       o.start(when); o.stop(when + 0.2);
     }
 
-    noise(when, dur, gain, type, freq, q, bus) {
-      if (bus === this.sfxBus && !this.spendSfx()) return;
+    noise(when, dur, gain, type, freq, q, bus, free) {
+      if (bus === this.sfxBus && !free && !this.spendSfx()) return;
       const c = this.ctx;
       const src = c.createBufferSource();
       src.buffer = this.noiseBuffer;
@@ -591,8 +618,8 @@
       this.noise(when, 0.035, gain, 'highpass', 7000 * (pitch || 1), 0.4);
     }
 
-    sweep(from, to, dur, type, gain, when) {
-      if (!this.ensure() || !this.spendSfx()) return;
+    sweep(from, to, dur, type, gain, when, free) {
+      if (!this.ensure() || (!free && !this.spendSfx())) return;
       const c = this.ctx;
       const t = when || c.currentTime;
       const o = c.createOscillator();
@@ -607,8 +634,8 @@
       o.start(t); o.stop(t + dur + 0.02);
     }
 
-    tone(freq, dur, type, gain, slideTo) {
-      if (!this.ensure() || !this.spendSfx()) return;
+    tone(freq, dur, type, gain, slideTo, free) {
+      if (!this.ensure() || (!free && !this.spendSfx())) return;
       const c = this.ctx;
       const t = c.currentTime;
       const o = c.createOscillator();
@@ -641,6 +668,238 @@
       return true;
     }
 
+    // ——— combat sound design helpers ———
+    air(when, dur, gain, f0, f1, q, free) {
+      if (!this.ensure() || (!free && !this.spendSfx())) return;
+      const c = this.ctx;
+      const t = when || c.currentTime;
+      const src = c.createBufferSource();
+      src.buffer = this.noiseBuffer;
+      const f = c.createBiquadFilter();
+      f.type = 'bandpass';
+      f.Q.value = q || 1.6;
+      f.frequency.setValueAtTime(f0, t);
+      f.frequency.exponentialRampToValueAtTime(Math.max(80, f1), t + dur);
+      const g = c.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(gain, t + dur * 0.3);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      src.connect(f);
+      f.connect(g);
+      g.connect(this.sfxBus);
+      src.start(t);
+      src.stop(t + dur + 0.02);
+    }
+
+    body(when, gain, from, to, dur) {
+      const c = this.ctx;
+      const t = when || c.currentTime;
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(from, t);
+      o.frequency.exponentialRampToValueAtTime(Math.max(20, to), t + dur);
+      g.gain.setValueAtTime(gain, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g);
+      g.connect(this.sfxBus);
+      o.start(t);
+      o.stop(t + dur + 0.02);
+    }
+
+    metal(when, gain, pitch) {
+      const c = this.ctx;
+      const t = when || c.currentTime;
+      const p = pitch || 1;
+      this.noise(t, 0.055, gain, 'highpass', 3000 * p, 0.7, this.sfxBus, true);
+      [2200 * p, 3100 * p].forEach((freq, i) => {
+        const o = c.createOscillator();
+        const g = c.createGain();
+        o.type = i ? 'triangle' : 'square';
+        o.frequency.setValueAtTime(freq, t);
+        o.frequency.exponentialRampToValueAtTime(freq * .78, t + 0.1);
+        g.gain.setValueAtTime(gain * (i ? .7 : 1), t);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
+        o.connect(g);
+        g.connect(this.sfxBus);
+        o.start(t);
+        o.stop(t + 0.15);
+      });
+    }
+
+    voice(when, profile, gain) {
+      const c = this.ctx;
+      const t = when || c.currentTime;
+      const p = profile || FIGHTER_SFX.rex;
+      const f0 = p.voice[0], f1 = p.voice[1];
+      const o = c.createOscillator();
+      const f = c.createBiquadFilter();
+      const g = c.createGain();
+      o.type = 'sawtooth';
+      o.frequency.setValueAtTime(f0, t);
+      o.frequency.exponentialRampToValueAtTime(f1, t + 0.14);
+      f.type = 'bandpass';
+      f.frequency.value = p.formant;
+      f.Q.value = 2.4;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.linearRampToValueAtTime(gain, t + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.17);
+      o.connect(f);
+      f.connect(g);
+      g.connect(this.sfxBus);
+      o.start(t);
+      o.stop(t + 0.19);
+      this.noise(t, 0.1, gain * 0.65, 'bandpass', p.formant + 260, 1.3, this.sfxBus, true);
+    }
+
+    attackWindup(profile) {
+      if (!this.ensure() || !this.spendSfx(1)) return;
+      const p = profile || {};
+      const f = fighterSfx(p.charKey);
+      const t = this.ctx.currentTime;
+      const j = 0.9 + Math.random() * 0.2;
+      const heavy = p.step >= 2 || p.kind === 'dash' || p.kind === 'finisher' || p.kind === 'jumpkick';
+
+      if (p.weapon === 'pistol') {
+        this.tone(940 * j, 0.035, 'square', 0.05, 520, true);
+        return;
+      }
+      if (p.weapon === 'knife') {
+        this.air(t, 0.08, 0.065, 2200 * j, 3600 * j, 1.8, true);
+        this.noise(t, 0.035, 0.025, 'highpass', 4200, 0.7, this.sfxBus, true);
+        return;
+      }
+      if (p.weapon === 'pipe') {
+        this.air(t, 0.15, 0.105, 480 * j, 1200 * j, 1.1, true);
+        this.body(t + 0.03, 0.05, 96, 48, 0.13);
+        return;
+      }
+      if (p.kind === 'dash') {
+        this.air(t, 0.16, 0.11, f.air[0] * 0.8 * j, f.air[1] * 1.15 * j, 1.2, true);
+        this.body(t + 0.04, 0.07, f.sub, f.sub * 0.6, 0.12);
+        return;
+      }
+      this.air(t, heavy ? 0.14 : 0.09, heavy ? 0.11 : 0.075, f.air[0] * j, f.air[1] * j, 1.35, true);
+      this.noise(t + 0.01, 0.035, 0.022, 'highpass', 3600, 0.8, this.sfxBus, true);
+      if (heavy) this.body(t + 0.04, 0.055, f.sub, f.sub * 0.65, 0.11);
+    }
+
+    impact(profile, free) {
+      if (!this.ensure()) return;
+      const p = profile || {};
+      const now = this.ctx.currentTime;
+      if (!free && now - this.lastHitAt < 0.025) return;
+      if (!free && !this.spendSfx(2)) return;
+      if (!free) this.lastHitAt = now;
+
+      const t = now;
+      const heavy = p.weight === 'heavy' || p.boss;
+      const material = p.material || 'flesh';
+      const j = 0.92 + Math.random() * 0.16;
+      this.noise(t, heavy ? 0.12 : 0.075, heavy ? 0.24 : 0.16, 'lowpass', (p.boss ? 700 : heavy ? 900 : 1500) * j, 0.8, this.sfxBus, true);
+      this.body(t, heavy ? 0.15 : 0.1, (p.boss ? 95 : heavy ? 125 : 170) * j, 48, heavy ? 0.14 : 0.08);
+      if (material === 'metal' || material === 'armor') {
+        this.metal(t + 0.005, (material === 'armor' ? 0.095 : 0.055) * (heavy ? 1.15 : 1), p.weapon === 'knife' ? 1.15 : 1);
+      }
+      if (material === 'boss') {
+        this.metal(t + 0.01, 0.05, 0.8);
+        this.duckMusic(0.12, 0.2);
+      }
+      if (p.enemyType && this.cooldown('enemyVoice', 85)) {
+        const v = enemySfx(p.enemyType);
+        this.voice(t + 0.018, v, v.gain * (heavy ? 1.1 : 0.85));
+      }
+    }
+
+    playerHurt(charKey, opts) {
+      if (!this.ensure() || !this.spendSfx(2)) return;
+      const p = opts || {};
+      const t = this.ctx.currentTime;
+      const f = fighterSfx(charKey);
+      this.impact({ material: 'flesh', weight: p.knockdown ? 'heavy' : 'light' }, true);
+      if (!p.fatal && this.cooldown('fighterVoice', 75)) {
+        this.voice(t + 0.015, f, f.voiceGain);
+      }
+      if (p.knockdown) this.body(t + 0.18, 0.08, 110, 42, 0.16);
+    }
+
+    enemyDefeat(profile) {
+      if (!this.ensure()) return;
+      const p = profile || {};
+      const boss = !!p.boss;
+      const silent = !!p.silent;
+      if (!this.spendSfx(boss ? 3 : 2)) return;
+      const t = this.ctx.currentTime;
+      const type = boss ? 'boss' : (p.type || 'punk');
+      const v = enemySfx(type);
+
+      if (silent) {
+        this.body(t + 0.04, 0.035, 120, 50, 0.08);
+        return;
+      }
+      const bossFinal = boss && p.final !== false;
+      this.body(t + 0.06, bossFinal ? 0.3 : boss ? 0.2 : 0.16, boss ? 130 : 150, boss ? 48 : 55, bossFinal ? 0.3 : boss ? 0.2 : 0.12);
+      this.noise(t + 0.05, bossFinal ? 0.65 : boss ? 0.32 : 0.18, bossFinal ? 0.28 : boss ? 0.18 : 0.15, 'lowpass', boss ? 650 : 900, 0.6, this.sfxBus, true);
+      if (boss) {
+        this.duckMusic(bossFinal ? 0.5 : 0.28, bossFinal ? 0.7 : 0.45);
+        this.metal(t + 0.08, 0.05, 0.7);
+        if (bossFinal) {
+          this.noise(t + 0.2, 0.8, 0.16, 'lowpass', 420, 0.5, this.sfxBus, true);
+          [523, 440, 349, 262].forEach((f, i) => this.sweep(f, f * 0.98, 0.36, 'sawtooth', 0.09, t + 0.25 + i * 0.2, true));
+        } else {
+          this.sweep(440, 220, 0.3, 'triangle', 0.06, t + 0.1, true);
+        }
+      } else {
+        if (this.cooldown('enemyDefeatVoice', 60)) this.voice(t + 0.05, v, v.gain);
+        this.sweep(220, 120, 0.16, 'triangle', 0.03, t + 0.1, true);
+      }
+    }
+
+    playerDefeat(charKey) {
+      if (!this.ensure() || !this.spendSfx(3)) return;
+      const t = this.ctx.currentTime;
+      const f = fighterSfx(charKey);
+      this.duckMusic(0.35, 0.7);
+      this.body(t + 0.04, 0.16, 120, 42, 0.32);
+      this.noise(t + 0.03, 0.55, 0.18, 'lowpass', 400, 0.5, this.sfxBus, true);
+      this.sweep(180, 45, 0.7, 'sawtooth', 0.16, t + 0.02, true);
+      this.voice(t + 0.06, f, f.voiceGain * 0.8);
+      this.body(t + 0.5, 0.05, 70, 35, 0.4);
+    }
+
+    bodyFall(profile) {
+      if (!this.ensure() || !this.spendSfx(1)) return;
+      const p = profile || {};
+      const boss = !!p.boss;
+      const t = this.ctx.currentTime;
+      this.body(t, boss ? 0.16 : 0.1, boss ? 110 : 140, boss ? 40 : 60, boss ? 0.24 : 0.14);
+      this.noise(t, boss ? 0.24 : 0.12, boss ? 0.12 : 0.06, 'lowpass', 420, 0.6, this.sfxBus, true);
+      this.noise(t + 0.01, 0.06, 0.04, 'bandpass', 1800, 1.1, this.sfxBus, true);
+    }
+
+    enemyTell(profile) {
+      if (!this.ensure() || !this.cooldown('enemyTell', 120) || !this.spendSfx(1)) return;
+      const p = profile || {};
+      const boss = !!p.boss;
+      const t = this.ctx.currentTime;
+      const kind = p.kind || 'jab';
+      if (p.weapon === 'gun') {
+        this.tone(760, 0.035, 'square', 0.045, 480, true);
+        return;
+      }
+      if (p.weapon === 'knife' || kind === 'projectile') {
+        this.noise(t, 0.08, 0.05, 'highpass', 2600, 0.9, this.sfxBus, true);
+        this.air(t + 0.02, 0.09, 0.04, 1500, 2600, 1.4, true);
+        return;
+      }
+      if (kind === 'heavy' || kind === 'sweep' || kind === 'aoe' || kind === 'roulette') {
+        this.body(t, boss ? 0.08 : 0.05, boss ? 90 : 120, 60, 0.18);
+        this.noise(t, 0.16, boss ? 0.09 : 0.06, 'lowpass', boss ? 360 : 520, 0.6, this.sfxBus, true);
+        return;
+      }
+      this.air(t, 0.12, 0.05, boss ? 300 : 500, boss ? 700 : 900, 1.2, true);
+    }
+
     phaseStinger() {
       if (!this.ensure()) return;
       this.duckMusic(0.45, 0.55);
@@ -652,15 +911,7 @@
 
     // ——— game SFX ———
     punch(heavy) {
-      if (!this.ensure()) return;
-      const now = this.ctx.currentTime;
-      if (now - this.lastHitAt < 0.025) return;
-      this.lastHitAt = now;
-      const jitter = 0.94 + Math.random() * 0.12;
-      const variation = 0.92 + Math.random() * 0.16;
-      this.noise(now, heavy ? 0.11 : 0.07, (heavy ? 0.24 : 0.16) * variation, 'lowpass', (heavy ? 900 : 1500) * jitter, 0.8, this.sfxBus);
-      this.sweep((heavy ? 160 : 210) * jitter, 55, heavy ? 0.12 : 0.07, 'triangle', (heavy ? 0.24 : 0.14) * variation);
-      if (heavy) this.tone(58, 0.14, 'sine', 0.09 * variation, 34);
+      this.impact({ material: 'flesh', weight: heavy ? 'heavy' : 'light' });
     }
     kick() { this.punch(true); }
     hurt() {

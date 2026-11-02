@@ -131,9 +131,11 @@
   const ctx = dom.canvas.getContext('2d');
   ctx.imageSmoothingEnabled = false;
 
+  // specialCost is an HP cost, not stamina: the player needs cost + 1 HP
+  // so a special can never reduce HP to zero.
   const PLAYER_STATS = {
     rex: {
-      name: 'REX', cn: '雷克斯', hp: 112, speed: 80, runSpeed: 154, power: 1, jump: 188, specialCost: 7,
+      name: 'REX', cn: '雷克斯', hp: 112, speed: 80, runSpeed: 154, power: 1, jump: 188, specialCost: 7, // HP cost
       specialKind: 'flameUppercut', specialName: '烈焰升龙', specialPose: 'uppercut',
       combo: [
         { startup: .062, active: .075, recovery: .115, damage: 4, range: 30, kb: 26, pose: 'punch1' },
@@ -147,7 +149,7 @@
       }
     },
     luna: {
-      name: 'LUNA', cn: '露娜', hp: 92, speed: 93, runSpeed: 172, power: .9, jump: 214, specialCost: 6,
+      name: 'LUNA', cn: '露娜', hp: 92, speed: 93, runSpeed: 172, power: .9, jump: 214, specialCost: 6, // HP cost
       specialKind: 'lightningLine', specialName: '雷光贯线',
       combo: [
         { startup: .052, active: .065, recovery: .085, damage: 3, range: 29, kb: 20, pose: 'punch1' },
@@ -161,7 +163,7 @@
       }
     },
     bruno: {
-      name: 'BRUNO', cn: '布鲁诺', hp: 138, speed: 64, runSpeed: 132, power: 1.28, jump: 160, specialCost: 12,
+      name: 'BRUNO', cn: '布鲁诺', hp: 138, speed: 64, runSpeed: 132, power: 1.28, jump: 160, specialCost: 12, // HP cost
       specialKind: 'groundSlam', specialName: '裂地重砸', specialPose: 'slam',
       combo: [
         { startup: .085, active: .09, recovery: .16, damage: 6, range: 32, kb: 38, pose: 'punch1' },
@@ -1422,6 +1424,9 @@
   function updateCharCards() {
     const cards = [...document.querySelectorAll('.char-card')];
     cards.forEach(card => {
+      const st = PLAYER_STATS[card.dataset.char];
+      const special = card.querySelector('.char-special');
+      if (st && special) special.textContent = `必杀 −${st.specialCost} HP`;
       card.classList.toggle('selected', card.dataset.char === G.selectedChar);
       card.setAttribute('aria-pressed', card.dataset.char === G.selectedChar ? 'true' : 'false');
     });
@@ -1683,7 +1688,6 @@
       G.stageClearTimer = 0;
       announce('K.O.', 'AREA CLEAR // 区域已清空', '#ffd23f', 2.4);
       Sound.stopMusic();
-      Sound.bossDown();
       G.score += 1500;
       const postKey = STAGE_BOSS_KEYS[G.stageIndex];
       const canTalk = G.player && G.player.state !== 'dead' && POST_BOSS_TALK[postKey];
@@ -1833,9 +1837,7 @@
         weaponKey: p.weapon,
         gun: p.weapon === 'pistol'
       };
-      if (w.type === 'ranged') Sound.trigger();
-      else if (p.weapon === 'knife') Sound.knife();
-      else Sound.whoosh();
+      Sound.attackWindup({ charKey: p.charKey, step: 2, weapon: p.weapon, kind: 'weapon' });
       return;
     }
     const data = scaleAttackData(PLAYER_STATS[p.charKey].combo[0]);
@@ -1845,7 +1847,7 @@
     p.queuedAttack = false;
     p.comboBuffer = 0;
     p.attack = { timer: 0, data, index: 0, struck: false, weapon: false };
-    Sound.whoosh();
+    Sound.attackWindup({ charKey: p.charKey, step: 0, weapon: null, kind: 'combo' });
   }
 
   function nextComboAttack() {
@@ -1855,7 +1857,7 @@
     p.attack = { timer: 0, data: scaleAttackData(combo[next]), index: next, struck: false, weapon: false };
     p.stateTime = 0;
     p.queuedAttack = false;
-    if (next === 2) Sound.whoosh();
+    Sound.attackWindup({ charKey: p.charKey, step: next, weapon: null, kind: next === 2 ? 'finisher' : 'combo' });
   }
 
   function updatePlayerAttack(dt) {
@@ -1931,7 +1933,13 @@
       const ok = hitEnemy(e, damage, dir, {
         kb: d.kb,
         knockdown: !!d.knockdown || (wKey === 'pipe' && Math.random() < .35),
-        color: wKey === 'knife' ? '#e9f5ff' : '#ffd23f'
+        color: wKey === 'knife' ? '#e9f5ff' : '#ffd23f',
+        sfx: {
+          charKey: p.charKey,
+          step: p.attack ? p.attack.index : 0,
+          weapon: isWeapon ? wKey : null,
+          move: isWeapon ? 'weapon' : (p.attack && p.attack.index === 2 ? 'finisher' : 'combo')
+        }
       });
       if (ok) hitAny = true;
     }
@@ -2089,7 +2097,7 @@
       G.flash = Math.max(G.flash, .07);
       Sound.quake(true);
     }
-    Sound.dashStrike();
+    Sound.attackWindup({ charKey: p.charKey, step: 3, kind: 'dash', element: dash.fx });
     shake(3.5);
     return true;
   }
@@ -2117,7 +2125,8 @@
         if (dx < -8 || dx > dash.range + (e.def.hitbox || 10)) continue;
         if (Math.abs(e.y - p.y) > 20) continue;
         hitEnemy(e, dash.damage * p.power, p.facing, {
-          kb: dash.kb, knockdown: true, color: dashFxColor(dash.fx)
+          kb: dash.kb, knockdown: true, color: dashFxColor(dash.fx),
+          sfx: { charKey: p.charKey, step: 3, weapon: null, move: 'dash' }
         });
         hitAny = true;
       }
@@ -2238,7 +2247,7 @@
       p.stateTime = 0;
       p.vz = Math.max(p.vz, 30);
       p.vx = p.facing * 92;
-      Sound.whoosh();
+      Sound.attackWindup({ charKey: p.charKey, step: 2, weapon: null, kind: 'jumpkick' });
     }
     if (p.state === 'jumpkick' && p.z > 3) {
       const d = { range: 35, damage: PLAYER_STATS[p.charKey].jumpKick * p.power, kb: 100 };
@@ -2247,7 +2256,10 @@
         const dx = (e.x - p.x) * p.facing;
         if (dx > -8 && dx < d.range + e.def.hitbox && Math.abs(e.y - p.y) < 18) {
           p.jumpHit.add(e);
-          hitEnemy(e, d.damage, p.facing, { kb: d.kb, knockdown: true, color: '#ffe98a' });
+          hitEnemy(e, d.damage, p.facing, {
+            kb: d.kb, knockdown: true, color: '#ffe98a',
+            sfx: { charKey: p.charKey, step: 2, weapon: null, move: 'jumpkick' }
+          });
           p.vz = Math.max(p.vz, 30);
         }
       }
@@ -2267,11 +2279,11 @@
   function startPlayerSpecial() {
     const p = G.player;
     const st = PLAYER_STATS[p.charKey];
-    if (p.hp <= 1) {
-      toast('血量见底，必杀用不出来。', 1.5);
+    const cost = st.specialCost;
+    if (p.hp <= cost) {
+      toast(`血量见底，需要至少 ${cost + 1} HP 才能放必杀。`, 1.6);
       return;
     }
-    const cost = Math.min(st.specialCost, p.hp - 1);
     p.hp -= cost;
     p.dashReady = 0;
     p.state = 'special';
@@ -2740,8 +2752,13 @@
     p.vx *= Math.max(0, 1 - dt * 3.4);
     if (p.z <= 0) {
       p.z = 0;
-      if (!p.bounced && p.vz < -90) { p.vz = 48; p.bounced = true; Sound.land(); }
-      else p.vz = 0;
+      if (!p.bounced) {
+        Sound.bodyFall({ kind: 'player', charKey: p.charKey });
+        if (p.vz < -90) { p.vz = 48; p.bounced = true; Sound.land(); }
+        else { p.vz = 0; p.bounced = true; }
+      } else {
+        p.vz = 0;
+      }
     }
     if (p.downTimer <= 0) {
       p.state = 'idle';
@@ -2768,7 +2785,7 @@
     G.damageFlash = 1;
     G.flash = .5;
     shake(8);
-    Sound.ko();
+    Sound.playerDefeat(p.charKey);
     announce('DOWN', G.lives > 0 ? '继续战斗' : 'NO LIVES LEFT', '#ff2e63', 1.7);
     updateHud();
     releaseGrab();
@@ -2845,7 +2862,7 @@
     G.hitstop = Math.max(G.hitstop, .045);
     spawnBurst(p.x, p.y, 26, '#ff5b6d', 9, 55);
     spawnFloater(p.x, p.y, 32, `-${dmg}`, '#ff6b78');
-    Sound.hurt();
+    Sound.playerHurt(p.charKey, { knockdown: !!knockdown, fatal: p.hp <= 0 });
     p.comboBuffer = 0;
     p.queuedAttack = false;
     p.dashReady = 0;
@@ -3089,6 +3106,11 @@
     if (style.kind === 'shoryu') {
       e.vz = 185;
       e.z = 1;
+    }
+    const tellDist = G.player ? Math.abs(G.player.x - e.x) : 999;
+    if (tellDist < 170 && (e.boss || ['heavy', 'sweep', 'lunge', 'projectile', 'jump'].includes(style.kind) || style.id === 'slash')) {
+      const tellWeapon = style.projectile === 'bullet' ? 'gun' : (style.projectile === 'knife' || style.id === 'slash') ? 'knife' : null;
+      Sound.enemyTell({ type: e.type, boss: !!e.boss, kind: style.kind, weapon: tellWeapon });
     }
     if (style.kind === 'aoe' || style.kind === 'roulette') {
       // warning effect is drawn from attack state
@@ -3560,11 +3582,17 @@
     e.downTimer -= dt;
     if (e.z <= 0) {
       e.z = 0;
-      if (!e.bounced && e.vz < -80) {
-        e.vz = 46;
-        e.bounced = true;
-        spawnDust(e.x, e.y, 4);
-        Sound.land();
+      if (!e.bounced) {
+        Sound.bodyFall({ kind: 'enemy', type: e.type, boss: !!e.boss });
+        if (e.vz < -80) {
+          e.vz = 46;
+          e.bounced = true;
+          spawnDust(e.x, e.y, 4);
+          Sound.land();
+        } else {
+          e.vz = 0;
+          e.bounced = true;
+        }
       } else {
         e.vz = 0;
       }
@@ -3750,7 +3778,15 @@
     shake(e.boss ? 3.5 : dmg >= 7 ? 4.5 : 2.6);
     spawnBurst(e.x, e.y, e.z + 17, o.color || '#ffd23f', dmg >= 8 ? 10 : 6, dmg * 5);
     spawnFloater(e.x, e.y, e.z + 32, String(dmg), o.color || '#ffd23f');
-    Sound.punch(dmg >= 7 || e.boss);
+    const sfx = o.sfx || {};
+    Sound.impact({
+      material: e.boss ? 'boss' : e.def.armor ? 'armor' : sfx.weapon ? 'metal' : 'flesh',
+      weight: dmg >= 7 || e.boss || (sfx.step || 0) >= 2 ? 'heavy' : 'light',
+      charKey: sfx.charKey,
+      weapon: sfx.weapon,
+      boss: !!e.boss,
+      enemyType: e.hp > 0 ? (e.boss ? 'boss' : e.type) : null
+    });
     if (e.hp <= 0) {
       killEnemy(e, dir, false);
       return true;
@@ -3806,12 +3842,17 @@
     spawnBurst(e.x, e.y, 20, '#ff5b6d', 12, 60);
     spawnBurst(e.x, e.y, 14, '#ffd23f', 7, 45);
     spawnFloater(e.x, e.y, 36, `+${e.def.score}`, '#ffd23f');
-    if (!silent) Sound.ko();
+    const anotherBoss = e.boss ? [G.boss, G.boss2].some(b => b && b !== e && !b.dead) : false;
+    Sound.enemyDefeat({
+      type: e.type,
+      boss: !!e.boss,
+      final: e.boss && !anotherBoss,
+      silent: !!silent
+    });
     shake(5);
     if (G.battle) G.battle.remaining = Math.max(0, G.battle.remaining - 1);
     maybeDropEnemyLoot(e);
     if (e.boss) {
-      const anotherBoss = [G.boss, G.boss2].some(b => b && b !== e && !b.dead);
       G.bossDefeated = !anotherBoss;
       G.battle && (G.battle.cleared = false);
       if (anotherBoss) {
@@ -3825,7 +3866,6 @@
         G.hitstop = .22;
         announce('K.O.', `${e.def.name} // DOWN`, '#ffd23f', 2.8);
         Sound.stopMusic();
-        setTimeout(() => Sound.bossDown(), 180);
       }
     }
     updateHud();

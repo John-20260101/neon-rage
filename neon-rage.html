@@ -558,6 +558,11 @@ button:focus-visible, [tabindex]:focus-visible {
   margin: auto 0 0; padding-top: .5cqw; font-family: var(--cn); font-size: max(10px, .72cqw); line-height: 1.55;
   color: #cdc1da; letter-spacing: .03em;
 }
+.char-special {
+  display: block; margin-top: .4cqw; font-family: var(--cn);
+  font-size: max(9px, .66cqw); font-weight: 700; letter-spacing: .06em;
+  color: var(--char-color, var(--pink));
+}
 .select-footer {
   display: flex; align-items: center; justify-content: space-between; gap: 1cqw;
   flex: 0 0 auto; padding-top: .15cqw;
@@ -1379,6 +1384,7 @@ body.touch-mode .toast { bottom: 30%; }
   .char-role { font-size: max(8px, 1.05cqw); }
   .char-desc { display: none; }
   .char-trait { display: block !important; font-family: var(--cn); font-size: max(8px, 1.02cqw); letter-spacing: .04em; color: #d9cde5; margin-top: .7cqw; }
+  .char-special { font-size: max(9px, 1.02cqw); margin-top: .55cqw; }
   .stat-row { margin-top: .7cqw; gap: .65cqw; }
   .stat-row > span { width: max(12px, 1.15cqw); font-size: max(9px, 1.08cqw); color: #e2d6ee; }
   .stat-track { height: max(5px, .8cqw); }
@@ -1683,7 +1689,7 @@ body.touch-mode .toast { bottom: 30%; }
                 <span id="hud-lives" class="hud-lives">×3</span>
               </div>
               <div class="meter hp-meter"><i id="hp-ghost"></i><i id="hp-fill"></i></div>
-              <div class="hud-subrow"><span id="hud-weapon">FISTS</span><span id="hud-special">必杀 HP -7</span></div>
+              <div class="hud-subrow"><span id="hud-weapon">FISTS</span><span id="hud-special">必杀 -7 HP</span></div>
               <div id="hud-overdrive" class="hud-overdrive">◈ 超必杀 ×0</div>
               <div id="hud-upgrades" class="hud-upgrades is-hidden" aria-label="斗士强化">
                 <div class="upg-row" data-upg="speed">
@@ -1772,7 +1778,7 @@ body.touch-mode .toast { bottom: 30%; }
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
-            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.26</span></div>
+            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.27</span></div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <div class="cover-actions">
               <button id="btn-start" class="arcade-btn" type="button">
@@ -1928,7 +1934,7 @@ body.touch-mode .toast { bottom: 30%; }
                   <div><kbd>→ → + J</kbd><span>冲刺技（火 / 电 / 尘）</span></div>
                   <div><kbd>J</kbd><span>连击 / 使用武器</span></div>
                   <div><kbd>K</kbd><span>跳跃 / 空中踢</span></div>
-                  <div><kbd>L</kbd><span>必杀（消耗体力）</span></div>
+                  <div><kbd>L</kbd><span>必杀（消耗 HP）</span></div>
                   <div><kbd>↓ ↓ + L</kbd><span>超必杀（消耗核心）</span></div>
                   <div><kbd>E</kbd><span>抓取 / 投掷 / 拾取道具</span></div>
                   <div><kbd>ESC</kbd><span>暂停</span></div>
@@ -1989,7 +1995,7 @@ body.touch-mode .toast { bottom: 30%; }
                   <li><b>双击前方向并按住可以跑动。</b>跑动中按 <kbd>J</kbd> 直接放冲刺技：REX 带火焰，LUNA 带闪电，BRUNO 带烟尘。</li>
                   <li><b>敌人头顶有血条。</b>血条变黄、闪红时说明快倒了，优先补刀；Boss 的血量看屏幕顶部。</li>
                   <li><b>抓取后按 J 膝击，按 K 投掷。</b>把打手砸向同伴，能连带击倒。</li>
-                  <li><b>必杀会消耗体力。</b>REX「烈焰升龙」范围最大，LUNA「雷光贯线」贯穿前方一条线，BRUNO「裂地重砸」震开周身；被围住时再用。</li>
+                  <li><b>必杀会消耗生命值（HUD 显示 −N HP）。</b>REX「烈焰升龙」范围最大，LUNA「雷光贯线」贯穿前方一条线，BRUNO「裂地重砸」震开周身；被围住时再用。</li>
                   <li><b>木箱和普通油桶能打碎。</b>苹果、牛奶、汉堡和牛排回血；钢管、小刀、手枪都能上手。</li>
                   <li><b>发光的强化油桶</b>会掉出 1 枚属性芯片。全场共 32 个强化油桶；速、攻、防各 3 级，每级需要吃 3 枚。</li>
                   <li><b>手枪只有 6 发。</b>按 <kbd>J</kbd> 射击，子弹可以打断敌人；打空后自动丢掉。</li>
@@ -2037,6 +2043,7 @@ body.touch-mode .toast { bottom: 30%; }
               <div class="stat-row"><span>技</span><div class="stat-track"><i style="width:78%"></i></div></div>
               <p class="char-desc">前特警。三连拳稳定；前前+J「崩拳突进」可击倒一排。</p>
               <span class="char-trait">崩拳突进 · 回旋风暴</span>
+              <span class="char-special">必杀 −7 HP</span>
             </button>
             <button class="char-card" data-char="luna" type="button">
               <span class="char-index">02</span>
@@ -2049,6 +2056,7 @@ body.touch-mode .toast { bottom: 30%; }
               <div class="stat-row"><span>技</span><div class="stat-track"><i style="width:86%"></i></div></div>
               <p class="char-desc">夜行舞者。出拳最快；前前+J「流光踢」突进距离最远。</p>
               <span class="char-trait">流光踢 · 空中压制</span>
+              <span class="char-special">必杀 −6 HP</span>
             </button>
             <button class="char-card" data-char="bruno" type="button">
               <span class="char-index">03</span>
@@ -2061,6 +2069,7 @@ body.touch-mode .toast { bottom: 30%; }
               <div class="stat-row"><span>技</span><div class="stat-track"><i style="width:66%"></i></div></div>
               <p class="char-desc">码头重锤。抗击打；前前+J「蛮牛冲撞」伤害最高。</p>
               <span class="char-trait">蛮牛冲撞 · 硬抗围攻</span>
+              <span class="char-special">必杀 −12 HP</span>
             </button>
           </div>
           <div class="select-footer">
@@ -2097,7 +2106,7 @@ body.touch-mode .toast { bottom: 30%; }
               <div><kbd>WASD</kbd> / <kbd>方向键</kbd><span>移动</span></div>
               <div><kbd>J</kbd><span>连击</span></div>
               <div><kbd>K</kbd><span>跳跃</span></div>
-              <div><kbd>L</kbd><span>必杀（耗体力）</span></div>
+              <div><kbd>L</kbd><span>必杀（−HP）</span></div>
               <div><kbd>↓ ↓ + L</kbd><span>超必杀（消耗核心）</span></div>
               <div><kbd>E</kbd><span>抓取 / 投掷 / 拾取道具</span></div>
               <div><kbd>→ →</kbd><span>跑动（第二下按住）</span></div>
@@ -2334,6 +2343,33 @@ body.touch-mode .toast { bottom: 30%; }
   const DEFAULT_SFX = 0.8;
   const SFX_BURST = 24;
   const SFX_REFILL = 24;
+
+  // Combat voices are deliberately short and non-verbal. Each fighter gets a
+  // different fundamental/formant pair so hits read as REX, LUNA or BRUNO
+  // without turning into dialogue.
+  const FIGHTER_SFX = {
+    rex: { air: [700, 1600], sub: 62, voice: [126, 74], formant: 720, voiceGain: 0.052 },
+    luna: { air: [1250, 2900], sub: 84, voice: [184, 112], formant: 1020, voiceGain: 0.045 },
+    bruno: { air: [430, 980], sub: 47, voice: [88, 54], formant: 580, voiceGain: 0.060 }
+  };
+
+  const ENEMY_SFX = {
+    punk: { voice: [148, 96], formant: 880, gain: 0.028 },
+    blade: { voice: [164, 106], formant: 980, gain: 0.028 },
+    brute: { voice: [96, 60], formant: 620, gain: 0.034 },
+    kicker: { voice: [156, 100], formant: 900, gain: 0.028 },
+    boxer: { voice: [146, 94], formant: 860, gain: 0.028 },
+    whip: { voice: [176, 112], formant: 1040, gain: 0.026 },
+    gunner: { voice: [142, 92], formant: 820, gain: 0.027 },
+    siren: { voice: [196, 124], formant: 1120, gain: 0.026 },
+    viper: { voice: [180, 116], formant: 1040, gain: 0.026 },
+    wrecker: { voice: [104, 66], formant: 650, gain: 0.034 },
+    boss: { voice: [84, 50], formant: 560, gain: 0.042 }
+  };
+
+  const fighterSfx = (key) => FIGHTER_SFX[key] || FIGHTER_SFX.rex;
+  const enemySfx = (type) => ENEMY_SFX[type] || ENEMY_SFX.punk;
+
   const clamp01 = (v, fallback) => {
     const n = Number(v);
     return Number.isFinite(n) ? Math.max(0, Math.min(1, n)) : fallback;
@@ -2773,8 +2809,8 @@ body.touch-mode .toast { bottom: 30%; }
       o.start(when); o.stop(when + 0.2);
     }
 
-    noise(when, dur, gain, type, freq, q, bus) {
-      if (bus === this.sfxBus && !this.spendSfx()) return;
+    noise(when, dur, gain, type, freq, q, bus, free) {
+      if (bus === this.sfxBus && !free && !this.spendSfx()) return;
       const c = this.ctx;
       const src = c.createBufferSource();
       src.buffer = this.noiseBuffer;
@@ -2805,8 +2841,8 @@ body.touch-mode .toast { bottom: 30%; }
       this.noise(when, 0.035, gain, 'highpass', 7000 * (pitch || 1), 0.4);
     }
 
-    sweep(from, to, dur, type, gain, when) {
-      if (!this.ensure() || !this.spendSfx()) return;
+    sweep(from, to, dur, type, gain, when, free) {
+      if (!this.ensure() || (!free && !this.spendSfx())) return;
       const c = this.ctx;
       const t = when || c.currentTime;
       const o = c.createOscillator();
@@ -2821,8 +2857,8 @@ body.touch-mode .toast { bottom: 30%; }
       o.start(t); o.stop(t + dur + 0.02);
     }
 
-    tone(freq, dur, type, gain, slideTo) {
-      if (!this.ensure() || !this.spendSfx()) return;
+    tone(freq, dur, type, gain, slideTo, free) {
+      if (!this.ensure() || (!free && !this.spendSfx())) return;
       const c = this.ctx;
       const t = c.currentTime;
       const o = c.createOscillator();
@@ -2855,6 +2891,238 @@ body.touch-mode .toast { bottom: 30%; }
       return true;
     }
 
+    // ——— combat sound design helpers ———
+    air(when, dur, gain, f0, f1, q, free) {
+      if (!this.ensure() || (!free && !this.spendSfx())) return;
+      const c = this.ctx;
+      const t = when || c.currentTime;
+      const src = c.createBufferSource();
+      src.buffer = this.noiseBuffer;
+      const f = c.createBiquadFilter();
+      f.type = 'bandpass';
+      f.Q.value = q || 1.6;
+      f.frequency.setValueAtTime(f0, t);
+      f.frequency.exponentialRampToValueAtTime(Math.max(80, f1), t + dur);
+      const g = c.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(gain, t + dur * 0.3);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      src.connect(f);
+      f.connect(g);
+      g.connect(this.sfxBus);
+      src.start(t);
+      src.stop(t + dur + 0.02);
+    }
+
+    body(when, gain, from, to, dur) {
+      const c = this.ctx;
+      const t = when || c.currentTime;
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(from, t);
+      o.frequency.exponentialRampToValueAtTime(Math.max(20, to), t + dur);
+      g.gain.setValueAtTime(gain, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g);
+      g.connect(this.sfxBus);
+      o.start(t);
+      o.stop(t + dur + 0.02);
+    }
+
+    metal(when, gain, pitch) {
+      const c = this.ctx;
+      const t = when || c.currentTime;
+      const p = pitch || 1;
+      this.noise(t, 0.055, gain, 'highpass', 3000 * p, 0.7, this.sfxBus, true);
+      [2200 * p, 3100 * p].forEach((freq, i) => {
+        const o = c.createOscillator();
+        const g = c.createGain();
+        o.type = i ? 'triangle' : 'square';
+        o.frequency.setValueAtTime(freq, t);
+        o.frequency.exponentialRampToValueAtTime(freq * .78, t + 0.1);
+        g.gain.setValueAtTime(gain * (i ? .7 : 1), t);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
+        o.connect(g);
+        g.connect(this.sfxBus);
+        o.start(t);
+        o.stop(t + 0.15);
+      });
+    }
+
+    voice(when, profile, gain) {
+      const c = this.ctx;
+      const t = when || c.currentTime;
+      const p = profile || FIGHTER_SFX.rex;
+      const f0 = p.voice[0], f1 = p.voice[1];
+      const o = c.createOscillator();
+      const f = c.createBiquadFilter();
+      const g = c.createGain();
+      o.type = 'sawtooth';
+      o.frequency.setValueAtTime(f0, t);
+      o.frequency.exponentialRampToValueAtTime(f1, t + 0.14);
+      f.type = 'bandpass';
+      f.frequency.value = p.formant;
+      f.Q.value = 2.4;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.linearRampToValueAtTime(gain, t + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.17);
+      o.connect(f);
+      f.connect(g);
+      g.connect(this.sfxBus);
+      o.start(t);
+      o.stop(t + 0.19);
+      this.noise(t, 0.1, gain * 0.65, 'bandpass', p.formant + 260, 1.3, this.sfxBus, true);
+    }
+
+    attackWindup(profile) {
+      if (!this.ensure() || !this.spendSfx(1)) return;
+      const p = profile || {};
+      const f = fighterSfx(p.charKey);
+      const t = this.ctx.currentTime;
+      const j = 0.9 + Math.random() * 0.2;
+      const heavy = p.step >= 2 || p.kind === 'dash' || p.kind === 'finisher' || p.kind === 'jumpkick';
+
+      if (p.weapon === 'pistol') {
+        this.tone(940 * j, 0.035, 'square', 0.05, 520, true);
+        return;
+      }
+      if (p.weapon === 'knife') {
+        this.air(t, 0.08, 0.065, 2200 * j, 3600 * j, 1.8, true);
+        this.noise(t, 0.035, 0.025, 'highpass', 4200, 0.7, this.sfxBus, true);
+        return;
+      }
+      if (p.weapon === 'pipe') {
+        this.air(t, 0.15, 0.105, 480 * j, 1200 * j, 1.1, true);
+        this.body(t + 0.03, 0.05, 96, 48, 0.13);
+        return;
+      }
+      if (p.kind === 'dash') {
+        this.air(t, 0.16, 0.11, f.air[0] * 0.8 * j, f.air[1] * 1.15 * j, 1.2, true);
+        this.body(t + 0.04, 0.07, f.sub, f.sub * 0.6, 0.12);
+        return;
+      }
+      this.air(t, heavy ? 0.14 : 0.09, heavy ? 0.11 : 0.075, f.air[0] * j, f.air[1] * j, 1.35, true);
+      this.noise(t + 0.01, 0.035, 0.022, 'highpass', 3600, 0.8, this.sfxBus, true);
+      if (heavy) this.body(t + 0.04, 0.055, f.sub, f.sub * 0.65, 0.11);
+    }
+
+    impact(profile, free) {
+      if (!this.ensure()) return;
+      const p = profile || {};
+      const now = this.ctx.currentTime;
+      if (!free && now - this.lastHitAt < 0.025) return;
+      if (!free && !this.spendSfx(2)) return;
+      if (!free) this.lastHitAt = now;
+
+      const t = now;
+      const heavy = p.weight === 'heavy' || p.boss;
+      const material = p.material || 'flesh';
+      const j = 0.92 + Math.random() * 0.16;
+      this.noise(t, heavy ? 0.12 : 0.075, heavy ? 0.24 : 0.16, 'lowpass', (p.boss ? 700 : heavy ? 900 : 1500) * j, 0.8, this.sfxBus, true);
+      this.body(t, heavy ? 0.15 : 0.1, (p.boss ? 95 : heavy ? 125 : 170) * j, 48, heavy ? 0.14 : 0.08);
+      if (material === 'metal' || material === 'armor') {
+        this.metal(t + 0.005, (material === 'armor' ? 0.095 : 0.055) * (heavy ? 1.15 : 1), p.weapon === 'knife' ? 1.15 : 1);
+      }
+      if (material === 'boss') {
+        this.metal(t + 0.01, 0.05, 0.8);
+        this.duckMusic(0.12, 0.2);
+      }
+      if (p.enemyType && this.cooldown('enemyVoice', 85)) {
+        const v = enemySfx(p.enemyType);
+        this.voice(t + 0.018, v, v.gain * (heavy ? 1.1 : 0.85));
+      }
+    }
+
+    playerHurt(charKey, opts) {
+      if (!this.ensure() || !this.spendSfx(2)) return;
+      const p = opts || {};
+      const t = this.ctx.currentTime;
+      const f = fighterSfx(charKey);
+      this.impact({ material: 'flesh', weight: p.knockdown ? 'heavy' : 'light' }, true);
+      if (!p.fatal && this.cooldown('fighterVoice', 75)) {
+        this.voice(t + 0.015, f, f.voiceGain);
+      }
+      if (p.knockdown) this.body(t + 0.18, 0.08, 110, 42, 0.16);
+    }
+
+    enemyDefeat(profile) {
+      if (!this.ensure()) return;
+      const p = profile || {};
+      const boss = !!p.boss;
+      const silent = !!p.silent;
+      if (!this.spendSfx(boss ? 3 : 2)) return;
+      const t = this.ctx.currentTime;
+      const type = boss ? 'boss' : (p.type || 'punk');
+      const v = enemySfx(type);
+
+      if (silent) {
+        this.body(t + 0.04, 0.035, 120, 50, 0.08);
+        return;
+      }
+      const bossFinal = boss && p.final !== false;
+      this.body(t + 0.06, bossFinal ? 0.3 : boss ? 0.2 : 0.16, boss ? 130 : 150, boss ? 48 : 55, bossFinal ? 0.3 : boss ? 0.2 : 0.12);
+      this.noise(t + 0.05, bossFinal ? 0.65 : boss ? 0.32 : 0.18, bossFinal ? 0.28 : boss ? 0.18 : 0.15, 'lowpass', boss ? 650 : 900, 0.6, this.sfxBus, true);
+      if (boss) {
+        this.duckMusic(bossFinal ? 0.5 : 0.28, bossFinal ? 0.7 : 0.45);
+        this.metal(t + 0.08, 0.05, 0.7);
+        if (bossFinal) {
+          this.noise(t + 0.2, 0.8, 0.16, 'lowpass', 420, 0.5, this.sfxBus, true);
+          [523, 440, 349, 262].forEach((f, i) => this.sweep(f, f * 0.98, 0.36, 'sawtooth', 0.09, t + 0.25 + i * 0.2, true));
+        } else {
+          this.sweep(440, 220, 0.3, 'triangle', 0.06, t + 0.1, true);
+        }
+      } else {
+        if (this.cooldown('enemyDefeatVoice', 60)) this.voice(t + 0.05, v, v.gain);
+        this.sweep(220, 120, 0.16, 'triangle', 0.03, t + 0.1, true);
+      }
+    }
+
+    playerDefeat(charKey) {
+      if (!this.ensure() || !this.spendSfx(3)) return;
+      const t = this.ctx.currentTime;
+      const f = fighterSfx(charKey);
+      this.duckMusic(0.35, 0.7);
+      this.body(t + 0.04, 0.16, 120, 42, 0.32);
+      this.noise(t + 0.03, 0.55, 0.18, 'lowpass', 400, 0.5, this.sfxBus, true);
+      this.sweep(180, 45, 0.7, 'sawtooth', 0.16, t + 0.02, true);
+      this.voice(t + 0.06, f, f.voiceGain * 0.8);
+      this.body(t + 0.5, 0.05, 70, 35, 0.4);
+    }
+
+    bodyFall(profile) {
+      if (!this.ensure() || !this.spendSfx(1)) return;
+      const p = profile || {};
+      const boss = !!p.boss;
+      const t = this.ctx.currentTime;
+      this.body(t, boss ? 0.16 : 0.1, boss ? 110 : 140, boss ? 40 : 60, boss ? 0.24 : 0.14);
+      this.noise(t, boss ? 0.24 : 0.12, boss ? 0.12 : 0.06, 'lowpass', 420, 0.6, this.sfxBus, true);
+      this.noise(t + 0.01, 0.06, 0.04, 'bandpass', 1800, 1.1, this.sfxBus, true);
+    }
+
+    enemyTell(profile) {
+      if (!this.ensure() || !this.cooldown('enemyTell', 120) || !this.spendSfx(1)) return;
+      const p = profile || {};
+      const boss = !!p.boss;
+      const t = this.ctx.currentTime;
+      const kind = p.kind || 'jab';
+      if (p.weapon === 'gun') {
+        this.tone(760, 0.035, 'square', 0.045, 480, true);
+        return;
+      }
+      if (p.weapon === 'knife' || kind === 'projectile') {
+        this.noise(t, 0.08, 0.05, 'highpass', 2600, 0.9, this.sfxBus, true);
+        this.air(t + 0.02, 0.09, 0.04, 1500, 2600, 1.4, true);
+        return;
+      }
+      if (kind === 'heavy' || kind === 'sweep' || kind === 'aoe' || kind === 'roulette') {
+        this.body(t, boss ? 0.08 : 0.05, boss ? 90 : 120, 60, 0.18);
+        this.noise(t, 0.16, boss ? 0.09 : 0.06, 'lowpass', boss ? 360 : 520, 0.6, this.sfxBus, true);
+        return;
+      }
+      this.air(t, 0.12, 0.05, boss ? 300 : 500, boss ? 700 : 900, 1.2, true);
+    }
+
     phaseStinger() {
       if (!this.ensure()) return;
       this.duckMusic(0.45, 0.55);
@@ -2866,15 +3134,7 @@ body.touch-mode .toast { bottom: 30%; }
 
     // ——— game SFX ———
     punch(heavy) {
-      if (!this.ensure()) return;
-      const now = this.ctx.currentTime;
-      if (now - this.lastHitAt < 0.025) return;
-      this.lastHitAt = now;
-      const jitter = 0.94 + Math.random() * 0.12;
-      const variation = 0.92 + Math.random() * 0.16;
-      this.noise(now, heavy ? 0.11 : 0.07, (heavy ? 0.24 : 0.16) * variation, 'lowpass', (heavy ? 900 : 1500) * jitter, 0.8, this.sfxBus);
-      this.sweep((heavy ? 160 : 210) * jitter, 55, heavy ? 0.12 : 0.07, 'triangle', (heavy ? 0.24 : 0.14) * variation);
-      if (heavy) this.tone(58, 0.14, 'sine', 0.09 * variation, 34);
+      this.impact({ material: 'flesh', weight: heavy ? 'heavy' : 'light' });
     }
     kick() { this.punch(true); }
     hurt() {
@@ -5703,9 +5963,11 @@ body.touch-mode .toast { bottom: 30%; }
   const ctx = dom.canvas.getContext('2d');
   ctx.imageSmoothingEnabled = false;
 
+  // specialCost is an HP cost, not stamina: the player needs cost + 1 HP
+  // so a special can never reduce HP to zero.
   const PLAYER_STATS = {
     rex: {
-      name: 'REX', cn: '雷克斯', hp: 112, speed: 80, runSpeed: 154, power: 1, jump: 188, specialCost: 7,
+      name: 'REX', cn: '雷克斯', hp: 112, speed: 80, runSpeed: 154, power: 1, jump: 188, specialCost: 7, // HP cost
       specialKind: 'flameUppercut', specialName: '烈焰升龙', specialPose: 'uppercut',
       combo: [
         { startup: .062, active: .075, recovery: .115, damage: 4, range: 30, kb: 26, pose: 'punch1' },
@@ -5719,7 +5981,7 @@ body.touch-mode .toast { bottom: 30%; }
       }
     },
     luna: {
-      name: 'LUNA', cn: '露娜', hp: 92, speed: 93, runSpeed: 172, power: .9, jump: 214, specialCost: 6,
+      name: 'LUNA', cn: '露娜', hp: 92, speed: 93, runSpeed: 172, power: .9, jump: 214, specialCost: 6, // HP cost
       specialKind: 'lightningLine', specialName: '雷光贯线',
       combo: [
         { startup: .052, active: .065, recovery: .085, damage: 3, range: 29, kb: 20, pose: 'punch1' },
@@ -5733,7 +5995,7 @@ body.touch-mode .toast { bottom: 30%; }
       }
     },
     bruno: {
-      name: 'BRUNO', cn: '布鲁诺', hp: 138, speed: 64, runSpeed: 132, power: 1.28, jump: 160, specialCost: 12,
+      name: 'BRUNO', cn: '布鲁诺', hp: 138, speed: 64, runSpeed: 132, power: 1.28, jump: 160, specialCost: 12, // HP cost
       specialKind: 'groundSlam', specialName: '裂地重砸', specialPose: 'slam',
       combo: [
         { startup: .085, active: .09, recovery: .16, damage: 6, range: 32, kb: 38, pose: 'punch1' },
@@ -6994,6 +7256,9 @@ body.touch-mode .toast { bottom: 30%; }
   function updateCharCards() {
     const cards = [...document.querySelectorAll('.char-card')];
     cards.forEach(card => {
+      const st = PLAYER_STATS[card.dataset.char];
+      const special = card.querySelector('.char-special');
+      if (st && special) special.textContent = `必杀 −${st.specialCost} HP`;
       card.classList.toggle('selected', card.dataset.char === G.selectedChar);
       card.setAttribute('aria-pressed', card.dataset.char === G.selectedChar ? 'true' : 'false');
     });
@@ -7255,7 +7520,6 @@ body.touch-mode .toast { bottom: 30%; }
       G.stageClearTimer = 0;
       announce('K.O.', 'AREA CLEAR // 区域已清空', '#ffd23f', 2.4);
       Sound.stopMusic();
-      Sound.bossDown();
       G.score += 1500;
       const postKey = STAGE_BOSS_KEYS[G.stageIndex];
       const canTalk = G.player && G.player.state !== 'dead' && POST_BOSS_TALK[postKey];
@@ -7405,9 +7669,7 @@ body.touch-mode .toast { bottom: 30%; }
         weaponKey: p.weapon,
         gun: p.weapon === 'pistol'
       };
-      if (w.type === 'ranged') Sound.trigger();
-      else if (p.weapon === 'knife') Sound.knife();
-      else Sound.whoosh();
+      Sound.attackWindup({ charKey: p.charKey, step: 2, weapon: p.weapon, kind: 'weapon' });
       return;
     }
     const data = scaleAttackData(PLAYER_STATS[p.charKey].combo[0]);
@@ -7417,7 +7679,7 @@ body.touch-mode .toast { bottom: 30%; }
     p.queuedAttack = false;
     p.comboBuffer = 0;
     p.attack = { timer: 0, data, index: 0, struck: false, weapon: false };
-    Sound.whoosh();
+    Sound.attackWindup({ charKey: p.charKey, step: 0, weapon: null, kind: 'combo' });
   }
 
   function nextComboAttack() {
@@ -7427,7 +7689,7 @@ body.touch-mode .toast { bottom: 30%; }
     p.attack = { timer: 0, data: scaleAttackData(combo[next]), index: next, struck: false, weapon: false };
     p.stateTime = 0;
     p.queuedAttack = false;
-    if (next === 2) Sound.whoosh();
+    Sound.attackWindup({ charKey: p.charKey, step: next, weapon: null, kind: next === 2 ? 'finisher' : 'combo' });
   }
 
   function updatePlayerAttack(dt) {
@@ -7503,7 +7765,13 @@ body.touch-mode .toast { bottom: 30%; }
       const ok = hitEnemy(e, damage, dir, {
         kb: d.kb,
         knockdown: !!d.knockdown || (wKey === 'pipe' && Math.random() < .35),
-        color: wKey === 'knife' ? '#e9f5ff' : '#ffd23f'
+        color: wKey === 'knife' ? '#e9f5ff' : '#ffd23f',
+        sfx: {
+          charKey: p.charKey,
+          step: p.attack ? p.attack.index : 0,
+          weapon: isWeapon ? wKey : null,
+          move: isWeapon ? 'weapon' : (p.attack && p.attack.index === 2 ? 'finisher' : 'combo')
+        }
       });
       if (ok) hitAny = true;
     }
@@ -7661,7 +7929,7 @@ body.touch-mode .toast { bottom: 30%; }
       G.flash = Math.max(G.flash, .07);
       Sound.quake(true);
     }
-    Sound.dashStrike();
+    Sound.attackWindup({ charKey: p.charKey, step: 3, kind: 'dash', element: dash.fx });
     shake(3.5);
     return true;
   }
@@ -7689,7 +7957,8 @@ body.touch-mode .toast { bottom: 30%; }
         if (dx < -8 || dx > dash.range + (e.def.hitbox || 10)) continue;
         if (Math.abs(e.y - p.y) > 20) continue;
         hitEnemy(e, dash.damage * p.power, p.facing, {
-          kb: dash.kb, knockdown: true, color: dashFxColor(dash.fx)
+          kb: dash.kb, knockdown: true, color: dashFxColor(dash.fx),
+          sfx: { charKey: p.charKey, step: 3, weapon: null, move: 'dash' }
         });
         hitAny = true;
       }
@@ -7810,7 +8079,7 @@ body.touch-mode .toast { bottom: 30%; }
       p.stateTime = 0;
       p.vz = Math.max(p.vz, 30);
       p.vx = p.facing * 92;
-      Sound.whoosh();
+      Sound.attackWindup({ charKey: p.charKey, step: 2, weapon: null, kind: 'jumpkick' });
     }
     if (p.state === 'jumpkick' && p.z > 3) {
       const d = { range: 35, damage: PLAYER_STATS[p.charKey].jumpKick * p.power, kb: 100 };
@@ -7819,7 +8088,10 @@ body.touch-mode .toast { bottom: 30%; }
         const dx = (e.x - p.x) * p.facing;
         if (dx > -8 && dx < d.range + e.def.hitbox && Math.abs(e.y - p.y) < 18) {
           p.jumpHit.add(e);
-          hitEnemy(e, d.damage, p.facing, { kb: d.kb, knockdown: true, color: '#ffe98a' });
+          hitEnemy(e, d.damage, p.facing, {
+            kb: d.kb, knockdown: true, color: '#ffe98a',
+            sfx: { charKey: p.charKey, step: 2, weapon: null, move: 'jumpkick' }
+          });
           p.vz = Math.max(p.vz, 30);
         }
       }
@@ -7839,11 +8111,11 @@ body.touch-mode .toast { bottom: 30%; }
   function startPlayerSpecial() {
     const p = G.player;
     const st = PLAYER_STATS[p.charKey];
-    if (p.hp <= 1) {
-      toast('血量见底，必杀用不出来。', 1.5);
+    const cost = st.specialCost;
+    if (p.hp <= cost) {
+      toast(`血量见底，需要至少 ${cost + 1} HP 才能放必杀。`, 1.6);
       return;
     }
-    const cost = Math.min(st.specialCost, p.hp - 1);
     p.hp -= cost;
     p.dashReady = 0;
     p.state = 'special';
@@ -8312,8 +8584,13 @@ body.touch-mode .toast { bottom: 30%; }
     p.vx *= Math.max(0, 1 - dt * 3.4);
     if (p.z <= 0) {
       p.z = 0;
-      if (!p.bounced && p.vz < -90) { p.vz = 48; p.bounced = true; Sound.land(); }
-      else p.vz = 0;
+      if (!p.bounced) {
+        Sound.bodyFall({ kind: 'player', charKey: p.charKey });
+        if (p.vz < -90) { p.vz = 48; p.bounced = true; Sound.land(); }
+        else { p.vz = 0; p.bounced = true; }
+      } else {
+        p.vz = 0;
+      }
     }
     if (p.downTimer <= 0) {
       p.state = 'idle';
@@ -8340,7 +8617,7 @@ body.touch-mode .toast { bottom: 30%; }
     G.damageFlash = 1;
     G.flash = .5;
     shake(8);
-    Sound.ko();
+    Sound.playerDefeat(p.charKey);
     announce('DOWN', G.lives > 0 ? '继续战斗' : 'NO LIVES LEFT', '#ff2e63', 1.7);
     updateHud();
     releaseGrab();
@@ -8417,7 +8694,7 @@ body.touch-mode .toast { bottom: 30%; }
     G.hitstop = Math.max(G.hitstop, .045);
     spawnBurst(p.x, p.y, 26, '#ff5b6d', 9, 55);
     spawnFloater(p.x, p.y, 32, `-${dmg}`, '#ff6b78');
-    Sound.hurt();
+    Sound.playerHurt(p.charKey, { knockdown: !!knockdown, fatal: p.hp <= 0 });
     p.comboBuffer = 0;
     p.queuedAttack = false;
     p.dashReady = 0;
@@ -8661,6 +8938,11 @@ body.touch-mode .toast { bottom: 30%; }
     if (style.kind === 'shoryu') {
       e.vz = 185;
       e.z = 1;
+    }
+    const tellDist = G.player ? Math.abs(G.player.x - e.x) : 999;
+    if (tellDist < 170 && (e.boss || ['heavy', 'sweep', 'lunge', 'projectile', 'jump'].includes(style.kind) || style.id === 'slash')) {
+      const tellWeapon = style.projectile === 'bullet' ? 'gun' : (style.projectile === 'knife' || style.id === 'slash') ? 'knife' : null;
+      Sound.enemyTell({ type: e.type, boss: !!e.boss, kind: style.kind, weapon: tellWeapon });
     }
     if (style.kind === 'aoe' || style.kind === 'roulette') {
       // warning effect is drawn from attack state
@@ -9132,11 +9414,17 @@ body.touch-mode .toast { bottom: 30%; }
     e.downTimer -= dt;
     if (e.z <= 0) {
       e.z = 0;
-      if (!e.bounced && e.vz < -80) {
-        e.vz = 46;
-        e.bounced = true;
-        spawnDust(e.x, e.y, 4);
-        Sound.land();
+      if (!e.bounced) {
+        Sound.bodyFall({ kind: 'enemy', type: e.type, boss: !!e.boss });
+        if (e.vz < -80) {
+          e.vz = 46;
+          e.bounced = true;
+          spawnDust(e.x, e.y, 4);
+          Sound.land();
+        } else {
+          e.vz = 0;
+          e.bounced = true;
+        }
       } else {
         e.vz = 0;
       }
@@ -9322,7 +9610,15 @@ body.touch-mode .toast { bottom: 30%; }
     shake(e.boss ? 3.5 : dmg >= 7 ? 4.5 : 2.6);
     spawnBurst(e.x, e.y, e.z + 17, o.color || '#ffd23f', dmg >= 8 ? 10 : 6, dmg * 5);
     spawnFloater(e.x, e.y, e.z + 32, String(dmg), o.color || '#ffd23f');
-    Sound.punch(dmg >= 7 || e.boss);
+    const sfx = o.sfx || {};
+    Sound.impact({
+      material: e.boss ? 'boss' : e.def.armor ? 'armor' : sfx.weapon ? 'metal' : 'flesh',
+      weight: dmg >= 7 || e.boss || (sfx.step || 0) >= 2 ? 'heavy' : 'light',
+      charKey: sfx.charKey,
+      weapon: sfx.weapon,
+      boss: !!e.boss,
+      enemyType: e.hp > 0 ? (e.boss ? 'boss' : e.type) : null
+    });
     if (e.hp <= 0) {
       killEnemy(e, dir, false);
       return true;
@@ -9378,12 +9674,17 @@ body.touch-mode .toast { bottom: 30%; }
     spawnBurst(e.x, e.y, 20, '#ff5b6d', 12, 60);
     spawnBurst(e.x, e.y, 14, '#ffd23f', 7, 45);
     spawnFloater(e.x, e.y, 36, `+${e.def.score}`, '#ffd23f');
-    if (!silent) Sound.ko();
+    const anotherBoss = e.boss ? [G.boss, G.boss2].some(b => b && b !== e && !b.dead) : false;
+    Sound.enemyDefeat({
+      type: e.type,
+      boss: !!e.boss,
+      final: e.boss && !anotherBoss,
+      silent: !!silent
+    });
     shake(5);
     if (G.battle) G.battle.remaining = Math.max(0, G.battle.remaining - 1);
     maybeDropEnemyLoot(e);
     if (e.boss) {
-      const anotherBoss = [G.boss, G.boss2].some(b => b && b !== e && !b.dead);
       G.bossDefeated = !anotherBoss;
       G.battle && (G.battle.cleared = false);
       if (anotherBoss) {
@@ -9397,7 +9698,6 @@ body.touch-mode .toast { bottom: 30%; }
         G.hitstop = .22;
         announce('K.O.', `${e.def.name} // DOWN`, '#ffd23f', 2.8);
         Sound.stopMusic();
-        setTimeout(() => Sound.bossDown(), 180);
       }
     }
     updateHud();

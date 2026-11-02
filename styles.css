@@ -548,6 +548,11 @@ button:focus-visible, [tabindex]:focus-visible {
   margin: auto 0 0; padding-top: .5cqw; font-family: var(--cn); font-size: max(10px, .72cqw); line-height: 1.55;
   color: #cdc1da; letter-spacing: .03em;
 }
+.char-special {
+  display: block; margin-top: .4cqw; font-family: var(--cn);
+  font-size: max(9px, .66cqw); font-weight: 700; letter-spacing: .06em;
+  color: var(--char-color, var(--pink));
+}
 .select-footer {
   display: flex; align-items: center; justify-content: space-between; gap: 1cqw;
   flex: 0 0 auto; padding-top: .15cqw;
@@ -1369,6 +1374,7 @@ body.touch-mode .toast { bottom: 30%; }
   .char-role { font-size: max(8px, 1.05cqw); }
   .char-desc { display: none; }
   .char-trait { display: block !important; font-family: var(--cn); font-size: max(8px, 1.02cqw); letter-spacing: .04em; color: #d9cde5; margin-top: .7cqw; }
+  .char-special { font-size: max(9px, 1.02cqw); margin-top: .55cqw; }
   .stat-row { margin-top: .7cqw; gap: .65cqw; }
   .stat-row > span { width: max(12px, 1.15cqw); font-size: max(9px, 1.08cqw); color: #e2d6ee; }
   .stat-track { height: max(5px, .8cqw); }

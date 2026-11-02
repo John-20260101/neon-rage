@@ -60,7 +60,7 @@
                 <span id="hud-lives" class="hud-lives">×3</span>
               </div>
               <div class="meter hp-meter"><i id="hp-ghost"></i><i id="hp-fill"></i></div>
-              <div class="hud-subrow"><span id="hud-weapon">FISTS</span><span id="hud-special">必杀 HP -7</span></div>
+              <div class="hud-subrow"><span id="hud-weapon">FISTS</span><span id="hud-special">必杀 -7 HP</span></div>
               <div id="hud-overdrive" class="hud-overdrive">◈ 超必杀 ×0</div>
               <div id="hud-upgrades" class="hud-upgrades is-hidden" aria-label="斗士强化">
                 <div class="upg-row" data-upg="speed">
@@ -149,7 +149,7 @@
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
-            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.26</span></div>
+            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.27</span></div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <div class="cover-actions">
               <button id="btn-start" class="arcade-btn" type="button">
@@ -305,7 +305,7 @@
                   <div><kbd>→ → + J</kbd><span>冲刺技（火 / 电 / 尘）</span></div>
                   <div><kbd>J</kbd><span>连击 / 使用武器</span></div>
                   <div><kbd>K</kbd><span>跳跃 / 空中踢</span></div>
-                  <div><kbd>L</kbd><span>必杀（消耗体力）</span></div>
+                  <div><kbd>L</kbd><span>必杀（消耗 HP）</span></div>
                   <div><kbd>↓ ↓ + L</kbd><span>超必杀（消耗核心）</span></div>
                   <div><kbd>E</kbd><span>抓取 / 投掷 / 拾取道具</span></div>
                   <div><kbd>ESC</kbd><span>暂停</span></div>
@@ -366,7 +366,7 @@
                   <li><b>双击前方向并按住可以跑动。</b>跑动中按 <kbd>J</kbd> 直接放冲刺技：REX 带火焰，LUNA 带闪电，BRUNO 带烟尘。</li>
                   <li><b>敌人头顶有血条。</b>血条变黄、闪红时说明快倒了，优先补刀；Boss 的血量看屏幕顶部。</li>
                   <li><b>抓取后按 J 膝击，按 K 投掷。</b>把打手砸向同伴，能连带击倒。</li>
-                  <li><b>必杀会消耗体力。</b>REX「烈焰升龙」范围最大，LUNA「雷光贯线」贯穿前方一条线，BRUNO「裂地重砸」震开周身；被围住时再用。</li>
+                  <li><b>必杀会消耗生命值（HUD 显示 −N HP）。</b>REX「烈焰升龙」范围最大，LUNA「雷光贯线」贯穿前方一条线，BRUNO「裂地重砸」震开周身；被围住时再用。</li>
                   <li><b>木箱和普通油桶能打碎。</b>苹果、牛奶、汉堡和牛排回血；钢管、小刀、手枪都能上手。</li>
                   <li><b>发光的强化油桶</b>会掉出 1 枚属性芯片。全场共 32 个强化油桶；速、攻、防各 3 级，每级需要吃 3 枚。</li>
                   <li><b>手枪只有 6 发。</b>按 <kbd>J</kbd> 射击，子弹可以打断敌人；打空后自动丢掉。</li>
@@ -414,6 +414,7 @@
               <div class="stat-row"><span>技</span><div class="stat-track"><i style="width:78%"></i></div></div>
               <p class="char-desc">前特警。三连拳稳定；前前+J「崩拳突进」可击倒一排。</p>
               <span class="char-trait">崩拳突进 · 回旋风暴</span>
+              <span class="char-special">必杀 −7 HP</span>
             </button>
             <button class="char-card" data-char="luna" type="button">
               <span class="char-index">02</span>
@@ -426,6 +427,7 @@
               <div class="stat-row"><span>技</span><div class="stat-track"><i style="width:86%"></i></div></div>
               <p class="char-desc">夜行舞者。出拳最快；前前+J「流光踢」突进距离最远。</p>
               <span class="char-trait">流光踢 · 空中压制</span>
+              <span class="char-special">必杀 −6 HP</span>
             </button>
             <button class="char-card" data-char="bruno" type="button">
               <span class="char-index">03</span>
@@ -438,6 +440,7 @@
               <div class="stat-row"><span>技</span><div class="stat-track"><i style="width:66%"></i></div></div>
               <p class="char-desc">码头重锤。抗击打；前前+J「蛮牛冲撞」伤害最高。</p>
               <span class="char-trait">蛮牛冲撞 · 硬抗围攻</span>
+              <span class="char-special">必杀 −12 HP</span>
             </button>
           </div>
           <div class="select-footer">
@@ -474,7 +477,7 @@
               <div><kbd>WASD</kbd> / <kbd>方向键</kbd><span>移动</span></div>
               <div><kbd>J</kbd><span>连击</span></div>
               <div><kbd>K</kbd><span>跳跃</span></div>
-              <div><kbd>L</kbd><span>必杀（耗体力）</span></div>
+              <div><kbd>L</kbd><span>必杀（−HP）</span></div>
               <div><kbd>↓ ↓ + L</kbd><span>超必杀（消耗核心）</span></div>
               <div><kbd>E</kbd><span>抓取 / 投掷 / 拾取道具</span></div>
               <div><kbd>→ →</kbd><span>跑动（第二下按住）</span></div>
