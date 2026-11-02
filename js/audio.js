@@ -855,6 +855,15 @@
       }
     }
 
+    lifeLost() {
+      if (!this.ensure() || !this.cooldown('lifeLost', 80) || !this.spendSfx(2)) return;
+      const t = this.ctx.currentTime;
+      this.body(t, 0.28, 120, 34, 0.5);
+      this.noise(t + 0.015, 0.12, 0.07, 'lowpass', 520, 0.8, this.sfxBus, true);
+      this.sweep(240, 60, 0.42, 'triangle', 0.1, t + 0.02, true);
+      this.sweep(120, 42, 0.55, 'sine', 0.08, t + 0.12, true);
+    }
+
     playerDefeat(charKey) {
       if (!this.ensure() || !this.spendSfx(3)) return;
       const t = this.ctx.currentTime;

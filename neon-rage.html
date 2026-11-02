@@ -1783,7 +1783,7 @@ body.touch-mode .toast { bottom: 30%; }
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
-            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.28</span></div>
+            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.29</span></div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <div class="cover-actions">
               <button id="btn-start" class="arcade-btn" type="button">
@@ -3081,6 +3081,15 @@ body.touch-mode .toast { bottom: 30%; }
         if (this.cooldown('enemyDefeatVoice', 60)) this.voice(t + 0.05, v, v.gain);
         this.sweep(220, 120, 0.16, 'triangle', 0.03, t + 0.1, true);
       }
+    }
+
+    lifeLost() {
+      if (!this.ensure() || !this.cooldown('lifeLost', 80) || !this.spendSfx(2)) return;
+      const t = this.ctx.currentTime;
+      this.body(t, 0.28, 120, 34, 0.5);
+      this.noise(t + 0.015, 0.12, 0.07, 'lowpass', 520, 0.8, this.sfxBus, true);
+      this.sweep(240, 60, 0.42, 'triangle', 0.1, t + 0.02, true);
+      this.sweep(120, 42, 0.55, 'sine', 0.08, t + 0.12, true);
     }
 
     playerDefeat(charKey) {
@@ -6889,7 +6898,7 @@ body.touch-mode .toast { bottom: 30%; }
       jumpHit: null, weapon: null, weaponDur: 0, ammo: 0, emptyWeapon: false,
       heldEnemy: null, grabTimer: 0,
       grabbedBy: null, throwDamage: 0, throwFromX: 0,
-      invuln: 1.2, hitFlash: 0, deathTimer: 0,
+      invuln: 1.2, hitFlash: 0, deathTimer: 0, lifePriorityUntil: 0,
       overdrive: 0, lastDownTapAt: -10, superWindow: 0, superPulse: 0, superMove: null, superDir: 1,
       downTimer: 0, bounced: false,
       kneeHits: 0,
@@ -8613,6 +8622,7 @@ body.touch-mode .toast { bottom: 30%; }
     p.state = 'dead';
     p.stateTime = 0;
     p.deathTimer = 0;
+    p.lifePriorityUntil = G.time + 2.1;
     p.z = 0;
     p.vz = 0;
     p.vx = 0;
@@ -8623,7 +8633,8 @@ body.touch-mode .toast { bottom: 30%; }
     G.flash = .5;
     shake(8);
     Sound.playerDefeat(p.charKey);
-    announce('DOWN', G.lives > 0 ? '继续战斗' : 'NO LIVES LEFT', '#ff2e63', 1.7);
+    Sound.lifeLost();
+    announce('LIFE −1', `剩余 ×${G.lives}`, '#ff2e63', 1.7);
     updateHud();
     releaseGrab();
   }
@@ -8652,6 +8663,7 @@ body.touch-mode .toast { bottom: 30%; }
     p.vx = 0;
     p.vz = 0;
     p.invuln = 1.5;
+    p.lifePriorityUntil = G.time + 1.7;
     p.x = clamp(G.camera.x + 54, 20, G.stage.worldW - 20);
     p.y = 232;
     p.weapon = null;
@@ -8664,7 +8676,7 @@ body.touch-mode .toast { bottom: 30%; }
     G.projectiles = [];
     G.combo = 0;
     updateHud();
-    toast('继续战斗。', 1.3);
+    toast(`还剩 ${G.lives} 条命 · 无敌片刻`, 1.6);
     announce('READY', 'GET UP', '#29e7ff', 1.1);
   }
 
@@ -11663,8 +11675,15 @@ body.touch-mode .toast { bottom: 30%; }
     for (const e of G.enemies) {
       renderables.push({ y: e.y, draw: () => drawEntity(e) });
     }
-    if (G.player) renderables.push({ y: G.player.y, draw: () => drawEntity(G.player) });
-    renderables.sort((a, b) => a.y - b.y);
+    if (G.player) {
+      // Keep the death/respawn animation readable even when enemies overlap.
+      const forceLast = G.player.state === 'dead' || G.time < G.player.lifePriorityUntil;
+      renderables.push({ y: G.player.y, forceLast, draw: () => drawEntity(G.player) });
+    }
+    renderables.sort((a, b) => {
+      if (!!a.forceLast !== !!b.forceLast) return a.forceLast ? 1 : -1;
+      return a.y - b.y;
+    });
     for (const r of renderables) r.draw();
     drawBossAttackFx();
     drawSpecialFx();

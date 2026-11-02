@@ -1052,7 +1052,7 @@
       jumpHit: null, weapon: null, weaponDur: 0, ammo: 0, emptyWeapon: false,
       heldEnemy: null, grabTimer: 0,
       grabbedBy: null, throwDamage: 0, throwFromX: 0,
-      invuln: 1.2, hitFlash: 0, deathTimer: 0,
+      invuln: 1.2, hitFlash: 0, deathTimer: 0, lifePriorityUntil: 0,
       overdrive: 0, lastDownTapAt: -10, superWindow: 0, superPulse: 0, superMove: null, superDir: 1,
       downTimer: 0, bounced: false,
       kneeHits: 0,
@@ -2776,6 +2776,7 @@
     p.state = 'dead';
     p.stateTime = 0;
     p.deathTimer = 0;
+    p.lifePriorityUntil = G.time + 2.1;
     p.z = 0;
     p.vz = 0;
     p.vx = 0;
@@ -2786,7 +2787,8 @@
     G.flash = .5;
     shake(8);
     Sound.playerDefeat(p.charKey);
-    announce('DOWN', G.lives > 0 ? '继续战斗' : 'NO LIVES LEFT', '#ff2e63', 1.7);
+    Sound.lifeLost();
+    announce('LIFE −1', `剩余 ×${G.lives}`, '#ff2e63', 1.7);
     updateHud();
     releaseGrab();
   }
@@ -2815,6 +2817,7 @@
     p.vx = 0;
     p.vz = 0;
     p.invuln = 1.5;
+    p.lifePriorityUntil = G.time + 1.7;
     p.x = clamp(G.camera.x + 54, 20, G.stage.worldW - 20);
     p.y = 232;
     p.weapon = null;
@@ -2827,7 +2830,7 @@
     G.projectiles = [];
     G.combo = 0;
     updateHud();
-    toast('继续战斗。', 1.3);
+    toast(`还剩 ${G.lives} 条命 · 无敌片刻`, 1.6);
     announce('READY', 'GET UP', '#29e7ff', 1.1);
   }
 
@@ -5826,8 +5829,15 @@
     for (const e of G.enemies) {
       renderables.push({ y: e.y, draw: () => drawEntity(e) });
     }
-    if (G.player) renderables.push({ y: G.player.y, draw: () => drawEntity(G.player) });
-    renderables.sort((a, b) => a.y - b.y);
+    if (G.player) {
+      // Keep the death/respawn animation readable even when enemies overlap.
+      const forceLast = G.player.state === 'dead' || G.time < G.player.lifePriorityUntil;
+      renderables.push({ y: G.player.y, forceLast, draw: () => drawEntity(G.player) });
+    }
+    renderables.sort((a, b) => {
+      if (!!a.forceLast !== !!b.forceLast) return a.forceLast ? 1 : -1;
+      return a.y - b.y;
+    });
     for (const r of renderables) r.draw();
     drawBossAttackFx();
     drawSpecialFx();
