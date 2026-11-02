@@ -943,6 +943,7 @@
       show(dom.enemyUI, false);
       return;
     }
+    dom.enemyUI.classList.add('mob');
     const def = target.def || ENEMY_DATA[target.type] || {};
     const ratio = clamp(target.hp / target.maxHp, 0, 1);
     const accent = (target.char && target.char.colors && target.char.colors.accent) || '#ff4b5e';

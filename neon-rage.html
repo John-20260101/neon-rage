@@ -245,7 +245,11 @@ button:focus-visible, [tabindex]:focus-visible {
 .hud-center { text-align: center; padding: .15cqw .65cqw .2cqw; background: rgba(4,2,10,.42); border-bottom: 1px solid rgba(255,210,63,.18); }
 .hud-center > span { font-size: max(9px, .7cqw); letter-spacing: .24em; color: var(--yellow); }
 .hud-center > div { font-size: max(9px, .58cqw); letter-spacing: .14em; color: #e4d9ed; margin-top: .25cqw; }
-.hud-right { text-align: right; line-height: 1.1; }
+.hud-right {
+  position: relative; z-index: 20;
+  justify-self: end; min-width: max-content;
+  text-align: right; line-height: 1.1;
+}
 .hud-score span, .hud-combo span { font-size: max(9px, .6cqw); letter-spacing: .12em; color: #d7cbe1; display: block; }
 .hud-score b { font-size: max(12px, 1.23cqw); letter-spacing: .09em; color: var(--paper); font-weight: 400; }
 .hud-combo { margin-top: .2cqw; }
@@ -253,12 +257,12 @@ button:focus-visible, [tabindex]:focus-visible {
 .hud-combo.hot b { color: var(--pink); text-shadow: 0 0 10px rgba(255,46,99,.8); }
 
 .enemy-ui {
-  position: absolute; z-index: 14; top: 2.5cqw; right: 6.2cqw;
-  width: min(34.5cqw, 520px); min-width: 250px;
+  position: absolute; z-index: 14; top: clamp(110px, 10.5cqw, 160px); right: 3.2cqw;
+  width: min(40cqw, 42%); min-width: 0;
   display: flex; align-items: center; gap: .5cqw;
   pointer-events: none;
   background: rgba(4,2,10,.76); border: 1px solid var(--enemy-accent, #ff4b5e);
-  padding: .35cqw .5cqw;
+  padding: .3cqw .45cqw;
   box-shadow: 0 0 16px rgba(255,46,99,.13);
 }
 .enemy-portrait {
@@ -291,6 +295,14 @@ button:focus-visible, [tabindex]:focus-visible {
   font-variant-numeric: tabular-nums; letter-spacing: .02em; color: #ffe0a0; white-space: nowrap;
 }
 .enemy-hp.low { color: #ff8b9e; text-shadow: 0 0 8px rgba(255,46,99,.7); }
+
+/* Regular enemies get a compact name + bar; bosses keep the full #boss-ui. */
+.enemy-ui.mob .enemy-portrait,
+.enemy-ui.mob .enemy-ui-head span,
+.enemy-ui.mob .enemy-hp { display: none; }
+.enemy-ui.mob .enemy-ui-head { justify-content: flex-start; padding-bottom: .12cqw; }
+.enemy-ui.mob .enemy-ui-head b { text-align: left; }
+.enemy-ui.mob .enemy-bar-row { gap: 0; }
 
 .boss-ui {
   position: absolute; z-index: 15; top: max(38px, 5.6cqw); left: 50%; transform: translateX(-50%);
@@ -1351,7 +1363,7 @@ body.touch-mode .toast { bottom: 30%; }
 }
 
 @media (max-width: 760px) {
-  .enemy-ui { top: clamp(52px, 11.5cqw, 76px); left: 3cqw; right: 3cqw; width: auto; min-width: 0; }
+  .enemy-ui { top: clamp(86px, 12.5cqw, 112px); left: auto; right: 3cqw; width: 42%; min-width: 0; }
   .enemy-ui-head span { display: none; }
   .enemy-ui-head b { text-align: left; }
   .enemy-portrait { min-width: 38px; min-height: 38px; }
@@ -1783,7 +1795,7 @@ body.touch-mode .toast { bottom: 30%; }
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
-            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.29</span></div>
+            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.30</span></div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <div class="cover-actions">
               <button id="btn-start" class="arcade-btn" type="button">
@@ -6789,6 +6801,7 @@ body.touch-mode .toast { bottom: 30%; }
       show(dom.enemyUI, false);
       return;
     }
+    dom.enemyUI.classList.add('mob');
     const def = target.def || ENEMY_DATA[target.type] || {};
     const ratio = clamp(target.hp / target.maxHp, 0, 1);
     const accent = (target.char && target.char.colors && target.char.colors.accent) || '#ff4b5e';
