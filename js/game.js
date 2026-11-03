@@ -714,7 +714,7 @@
     {
       number: '05', title: 'THE HOUSE', cn: '顶楼赌场',
       desc: '电梯停在顶楼。绿色赌桌、金色吊灯，还有一位从不输的庄家。',
-      goal: '击溃庄家', worldW: 2500, music: 'stage4', bossMusic: 'bossHouse',
+      goal: '击溃庄家', worldW: 2500, music: 'stage5', bossMusic: 'bossHouse',
       bossAddPool: ['boxer', 'whip', 'gunner'],
       waves: [
         { at: 300, spawns: [['boxer', 210], ['whip', 242]] },
@@ -745,7 +745,7 @@
     {
       number: '06', title: 'V-TOWER CORE', cn: 'V 塔核心',
       desc: '电梯停在地下三百层。塔的心脏里，V 先生给自己留了三具身体。',
-      goal: '终结 V 先生', worldW: 2600, music: 'stage5', bossMusic: 'final',
+      goal: '终结 V 先生', worldW: 2600, music: 'stage6', bossMusic: 'final',
       bossAddPool: ['siren', 'gunner', 'wrecker'],
       waves: [
         { at: 290, spawns: [['blade', 208], ['boxer', 240]] },
@@ -774,6 +774,11 @@
       ]
     }
   ];
+
+  const STAGE_MUSIC_KEYS = STAGES.map(stage => stage.music);
+  if (new Set(STAGE_MUSIC_KEYS).size !== STAGE_MUSIC_KEYS.length) {
+    console.warn('[NEON RAGE] duplicate stage music key:', STAGE_MUSIC_KEYS);
+  }
 
   const G = {
     mode: 'title',

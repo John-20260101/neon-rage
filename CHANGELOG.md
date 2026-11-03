@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2.32 — 2026-11-03
+
+- 六关 BGM 重写为六首独立 Funk 曲，修复 THE HOUSE 与 V-TOWER CORE 复用关卡曲的问题。
+- 音频引擎新增 16 分鼓组、swing、铜管/ clavinet 和弦切音、每曲独立 A/B/C 排列与贝斯音色。
+- 六首 Boss 曲同步改为 Funk 编排，保留各 Boss 的独立主题与阶段强度层。
+- 声音页三套音色包文案更新为 Funk 律动变体。
+- 重新构建单文件版 `neon-rage.html`。
+
 ## v0.2.31 — 2026-11-02
 
 - BRUNO 突进技统一为「蛮牛冲撞 / BULL RUSH」，同步 `PLAYER_STATS`、角色选择卡、角色档案与 README。

@@ -19,89 +19,196 @@
       chords: [0, 3, -2, 0],
       hat: 0.6, snare: 0.55
     },
+
+    // ——— stage themes: original synth-funk, one per level ———
     stage1: {
-      bpm: 118, root: 40, gain: 0.95,
-      bass: [0, 0, null, 0, 7, null, 0, 0, 0, 0, null, 3, 5, null, 7, 10],
-      lead: [12, null, 15, 19, null, 15, 12, null, 19, 22, null, 19, 15, 12, null, 10],
-      chords: [0, 0, 8, 7],
-      hat: 0.8, snare: 0.85
+      bpm: 104, root: 38, gain: 0.96, swing: .11,
+      arrangement: ['A', 'A', 'B', 'A', 'C', 'A', 'B', 'A'],
+      bass: [0, null, 12, null, 10, null, 0, 3, 0, null, 7, null, 3, 5, null, 0],
+      lead: [12, null, 15, null, 17, 15, null, 12, null, 10, 12, null, 15, 17, null, 15],
+      chords: [0, 3, 10, 8],
+      stabs: [0, .7, 0, 0, .9, 0, 0, .6, 0, .8, 0, 0, .6, 0, .9, 0],
+      stabNotes: [0, 3, 7, 10],
+      kicks: [1, 0, 0, .7, 0, 0, 1, 0, 0, .8, 0, 0, 1, 0, .5, 0],
+      snares: [0, 0, 0, 0, 1, 0, 0, .5, 0, 0, 0, 0, 1, 0, 0, .55],
+      ghosts: [0, 0, .25, 0, 0, 0, 0, 0, 0, .2, 0, 0, 0, 0, .3, 0],
+      hats: [.8, .45, .55, .45, .7, .4, .55, .45, .8, .45, .55, .4, .7, .45, .6, .5],
+      bassWave: 'square', bassCutoff: 650, bassQ: 3,
+      pads: false, noLift: true
     },
     stage2: {
-      bpm: 126, root: 38, gain: 0.92,
-      bass: [0, null, 0, 0, 0, null, 10, 0, 0, null, 0, 7, 5, 3, 2, 0],
-      lead: [19, null, 17, 15, null, 12, null, 15, 17, null, 19, 22, null, 19, 17, 15],
-      chords: [0, -3, 5, 2],
-      hat: 0.95, snare: 0.9
+      bpm: 112, root: 40, gain: 0.94, swing: .08,
+      arrangement: ['A', 'B', 'A', 'A', 'C', 'A', 'B', 'B'],
+      bass: [0, 0, null, 7, null, 5, 0, null, 3, null, 10, null, 7, 5, null, 3],
+      lead: [12, null, 15, 17, null, 15, 12, null, 10, 12, null, 15, 17, 19, null, 15],
+      chords: [0, 3, 8, 10],
+      stabs: [0, 0, .8, 0, 0, .6, 0, 0, .9, 0, 0, .65, 0, 0, .75, 0],
+      stabNotes: [0, 3, 7, 10],
+      kicks: [1, 0, 0, 0, .6, 0, 1, 0, 0, 0, .7, 0, 1, 0, .5, 0],
+      snares: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, .4, 1, 0, 0, .5],
+      ghosts: [0, .2, 0, .3, 0, 0, .25, 0, .2, 0, .3, 0, 0, .4, 0, .2],
+      hats: [.75, .45, .6, .45, .8, .45, .6, .45, .75, .45, .6, .45, .8, .5, .65, .55],
+      bassWave: 'sawtooth', bassCutoff: 580, bassQ: 4,
+      pads: false, noLift: true
     },
     stage3: {
-      bpm: 112, root: 41, gain: 1.0,
-      bass: [0, 0, 0, null, 5, null, 0, null, 3, 3, null, 7, 5, null, 3, 2],
-      lead: [12, 15, 19, 22, null, 19, 22, 24, 22, 19, 15, 12, null, 15, 19, null],
-      chords: [0, 5, 3, 7],
-      hat: 0.72, snare: 0.9
+      bpm: 118, root: 42, gain: 1, swing: .06,
+      arrangement: ['A', 'A', 'B', 'A', 'C', 'B', 'A', 'B'],
+      bass: [0, null, 0, 0, 5, null, 12, null, 0, 3, null, 7, 5, null, 3, 2],
+      lead: [12, 15, null, 19, 22, null, 19, 15, 12, null, 17, 19, null, 22, 24, null],
+      chords: [0, 5, 3, 10],
+      stabs: [.85, 0, 0, .6, 0, 0, .9, 0, .7, 0, 0, .8, 0, 0, .6, 0],
+      stabNotes: [0, 3, 7],
+      kicks: [1, 0, 0, .6, 0, 0, .8, 0, 0, 1, 0, 0, .7, 0, .5, 0],
+      snares: [0, 0, 0, 0, 1, 0, 0, .5, 0, 0, 0, 0, 1, 0, .45, .6],
+      ghosts: [0, .3, 0, 0, .25, 0, 0, 0, .3, 0, .2, 0, 0, .35, 0, 0],
+      hats: [.9, .5, .6, .5, .85, .5, .6, .5, .9, .5, .6, .5, .85, .55, .7, .6],
+      bassWave: 'sawtooth', bassCutoff: 700, bassQ: 3.5,
+      pads: false, noLift: true
     },
     stage4: {
-      bpm: 132, root: 42, gain: 0.96,
-      bass: [0, null, 0, 0, 7, null, 0, null, 5, null, 5, 0, 3, null, 7, null],
-      lead: [19, null, 22, null, 24, 22, 19, null, 17, null, 19, 22, null, 19, 15, null],
-      chords: [0, 3, 5, 2],
-      hat: 0.95, snare: 0.9
+      bpm: 100, root: 43, gain: 0.93, swing: .13,
+      arrangement: ['A', 'A', 'B', 'A', 'C', 'A', 'B', 'A'],
+      bass: [0, null, 3, null, 7, 5, null, 0, 10, null, 7, null, 5, 3, null, 0],
+      lead: [12, null, 15, 17, null, 19, 17, null, 15, 12, null, 10, 12, null, 15, null],
+      chords: [0, 3, 10, 5],
+      stabs: [0, .65, 0, 0, .8, 0, .55, 0, 0, .7, 0, .5, 0, .8, 0, 0],
+      stabNotes: [0, 3, 7, 10],
+      kicks: [1, 0, 0, 0, .7, 0, 0, .8, 0, 0, 1, 0, 0, .6, 0, 0],
+      snares: [0, 0, 0, 0, 1, 0, 0, .35, 0, 0, 0, 0, 1, 0, 0, .4],
+      ghosts: [0, .2, 0, .25, 0, 0, .2, 0, 0, .25, 0, .2, 0, 0, .3, 0],
+      hats: [.7, .4, .5, .4, .65, .4, .5, .4, .7, .4, .5, .4, .65, .45, .55, .5],
+      bassWave: 'triangle', bassCutoff: 480, bassQ: 2.5,
+      pads: false, noLift: true
     },
     stage5: {
-      bpm: 120, root: 39, gain: 1.0,
-      bass: [0, 0, 3, null, 0, 0, 7, null, 5, null, 3, 2, 0, null, 10, 7],
-      lead: [12, null, 15, 18, 15, 12, null, 10, 12, 15, 18, 22, 21, 18, 15, 12],
-      chords: [0, -2, 5, 3],
-      hat: 0.8, snare: 0.92
+      bpm: 116, root: 45, gain: 0.98, swing: .12,
+      arrangement: ['A', 'B', 'A', 'B', 'C', 'A', 'B', 'A'],
+      bass: [0, null, 0, 12, null, 10, 7, null, 0, 3, null, 8, 7, null, 5, 0],
+      lead: [12, null, 15, 19, 17, null, 15, 12, 10, null, 12, 15, 17, 19, null, 15],
+      chords: [0, 3, 8, 10],
+      stabs: [.9, 0, .6, 0, 0, .8, 0, 0, .7, 0, .9, 0, 0, .6, 0, .8],
+      stabNotes: [0, 3, 7, 10],
+      kicks: [1, 0, 0, .8, 0, 0, 1, 0, 0, .6, 0, 0, 1, 0, .7, 0],
+      snares: [0, 0, 0, 0, 1, 0, 0, .4, 0, 0, 0, 0, 1, 0, 0, .5],
+      ghosts: [0, .25, 0, 0, .3, 0, 0, .2, 0, .25, 0, 0, .3, 0, .2, 0],
+      hats: [.85, .5, .65, .5, .8, .5, .65, .5, .85, .5, .65, .5, .8, .55, .7, .6],
+      bassWave: 'square', bassCutoff: 620, bassQ: 3.5,
+      pads: false, noLift: true
     },
-    bossHouse: {
-      bpm: 128, root: 43, gain: 0.98,
-      bass: [0, null, 0, 7, null, 3, 0, null, 10, null, 7, 5, 3, null, 0, null],
-      lead: [12, null, 15, 19, 22, null, 19, 15, 17, null, 22, 24, 22, 19, 15, 12],
-      chords: [0, 3, 5, 2],
-      hat: 0.7, snare: 0.6
+    stage6: {
+      bpm: 124, root: 36, gain: 1, swing: .05,
+      arrangement: ['A', 'A', 'B', 'C', 'A', 'B', 'A', 'C'],
+      bass: [0, null, 0, 1, null, 6, 0, null, 8, null, 6, 1, 0, 10, null, 6],
+      lead: [12, null, 13, 15, null, 18, 15, 13, 12, null, 10, 12, 15, 18, null, 13],
+      chords: [0, 6, 8, 1],
+      stabs: [.8, 0, 0, .6, 0, .9, 0, 0, .75, 0, 0, .9, 0, .6, 0, .85],
+      stabNotes: [0, 3, 6, 10],
+      kicks: [1, 0, .7, 0, 0, .8, 0, 0, 1, 0, .6, 0, 0, .9, 0, .5],
+      snares: [0, 0, 0, 0, 1, 0, 0, .45, 0, 0, 0, 0, 1, 0, .4, 0],
+      ghosts: [0, .25, .2, 0, .3, 0, 0, .25, 0, .25, 0, .2, .3, 0, 0, .3],
+      hats: [.9, .55, .7, .55, .85, .55, .7, .55, .9, .55, .7, .55, .85, .6, .75, .65],
+      bassWave: 'sawtooth', bassCutoff: 760, bassQ: 4,
+      pads: false, noLift: true
+    },
+
+    // ——— boss themes: same funk language, heavier and more aggressive ———
+    bossRazor: {
+      bpm: 128, root: 38, gain: 1.03, swing: .06,
+      arrangement: ['A', 'A', 'B', 'A', 'C', 'A', 'B', 'B'],
+      bass: [0, 0, null, 7, 0, null, 10, 0, 0, 12, 0, 3, 5, null, 7, 10],
+      lead: [19, null, 22, 24, null, 22, 19, 15, 19, 22, null, 24, 27, 24, 22, 19],
+      chords: [0, 3, 10, 5],
+      stabs: [.9, 0, .6, 0, 0, .8, 0, .7, 0, .9, 0, 0, .6, 0, .85, 0],
+      stabNotes: [0, 3, 7, 10],
+      kicks: [1, 0, 0, .8, 0, .6, 1, 0, 0, .8, 0, 0, 1, 0, .7, 0],
+      snares: [0, 0, 0, 0, 1, 0, 0, .5, 0, 0, 0, 0, 1, 0, .5, .6],
+      ghosts: [0, .3, 0, 0, .3, 0, 0, 0, .25, 0, .3, 0, 0, .35, 0, 0],
+      hats: [.95, .6, .7, .6, .9, .6, .7, .6, .95, .6, .7, .6, .9, .65, .8, .7],
+      bassWave: 'sawtooth', bassCutoff: 720, bassQ: 4,
+      pads: false, noLift: true
+    },
+    bossTitan: {
+      bpm: 108, root: 40, gain: 1.06, swing: .08,
+      arrangement: ['A', 'A', 'B', 'A', 'C', 'A', 'B', 'A'],
+      bass: [0, null, null, null, 0, null, 3, null, 0, null, 7, null, 5, null, 3, 2],
+      lead: [12, null, 15, null, 12, null, 7, null, 10, null, 12, 15, null, 17, 15, 12],
+      chords: [0, 3, 8, 10],
+      stabs: [.9, 0, 0, 0, .7, 0, 0, 0, .85, 0, 0, 0, .6, 0, 0, .8],
+      stabNotes: [0, 3, 7],
+      kicks: [1, 0, 0, 0, 0, 0, .8, 0, 0, 0, 1, 0, 0, 0, .7, 0],
+      snares: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, .6],
+      ghosts: [0, 0, 0, .3, 0, 0, 0, 0, 0, 0, 0, .35, 0, 0, 0, 0],
+      hats: [.7, 0, .4, 0, .65, 0, .45, 0, .7, 0, .4, 0, .65, 0, .5, .4],
+      bassWave: 'triangle', bassCutoff: 520, bassQ: 3,
+      pads: false, noLift: true
+    },
+    bossVector: {
+      bpm: 132, root: 42, gain: 1.02, swing: .04,
+      arrangement: ['A', 'B', 'A', 'B', 'C', 'A', 'B', 'B'],
+      bass: [0, 0, 7, 0, 3, 3, 10, 3, 0, 0, 7, 0, 5, 5, 12, 7],
+      lead: [19, 22, 24, 22, 27, 24, 22, 19, 24, 27, 31, 27, 24, 22, 19, 15],
+      chords: [0, 3, 7, 10],
+      stabs: [.85, 0, .6, 0, .9, 0, .65, 0, .8, 0, .6, 0, .9, 0, .7, 0],
+      stabNotes: [0, 3, 7, 10],
+      kicks: [1, 0, .7, 0, .8, 0, .6, 0, 1, 0, .7, 0, .8, 0, .6, 0],
+      snares: [0, 0, 0, 0, 1, 0, 0, .45, 0, 0, 0, 0, 1, 0, .4, .5],
+      ghosts: [0, .3, 0, .25, 0, .3, 0, .25, 0, .3, 0, .25, 0, .3, 0, .25],
+      hats: [.9, .55, .75, .55, .9, .55, .75, .55, .9, .55, .75, .55, .9, .6, .8, .65],
+      bassWave: 'square', bassCutoff: 820, bassQ: 4,
+      pads: false, noLift: true
     },
     twin: {
-      bpm: 142, root: 44, gain: 1.0,
+      bpm: 120, root: 43, gain: 1, swing: .1,
+      arrangement: ['A', 'B', 'A', 'B', 'C', 'A', 'B', 'A'],
       bass: [0, 0, 12, 0, 10, null, 7, 0, 0, 12, 0, 3, 5, 7, 10, 12],
       lead: [24, 22, 19, 22, 24, 27, 24, 22, 19, 17, 15, 17, 19, 22, 24, 27],
-      chords: [0, 3, -2, 5],
-      hat: 1, snare: 1
+      chords: [0, 3, 10, 5],
+      stabs: [.8, 0, .6, 0, 0, .9, 0, .5, 0, .8, 0, .6, 0, .9, 0, .5],
+      stabNotes: [0, 3, 7],
+      kicks: [1, 0, 0, .7, 0, 0, 1, 0, 0, .7, 0, 0, 1, 0, .6, 0],
+      snares: [0, 0, 0, 0, 1, 0, 0, .4, 0, 0, 0, 0, 1, 0, 0, .5],
+      ghosts: [0, .2, 0, .3, 0, .25, 0, 0, 0, .2, 0, .3, 0, .25, 0, 0],
+      hats: [.8, .45, .6, .45, .8, .45, .6, .45, .8, .45, .6, .45, .8, .5, .65, .55],
+      bassWave: 'sawtooth', bassCutoff: 680, bassQ: 3.5,
+      pads: false, noLift: true
+    },
+    bossHouse: {
+      bpm: 118, root: 45, gain: 1, swing: .13,
+      arrangement: ['A', 'A', 'B', 'A', 'C', 'B', 'A', 'B'],
+      bass: [0, null, 0, 7, null, 3, 0, null, 10, null, 7, 5, 3, null, 0, 12],
+      lead: [12, null, 15, 19, 22, null, 19, 15, 17, null, 22, 24, 22, 19, 15, 12],
+      chords: [0, 3, 8, 10],
+      stabs: [.9, 0, .65, 0, 0, .8, 0, .7, 0, .9, 0, .65, 0, .8, 0, .7],
+      stabNotes: [0, 3, 7, 10],
+      kicks: [1, 0, 0, .8, 0, 0, 1, 0, 0, .6, 0, 0, 1, 0, .7, 0],
+      snares: [0, 0, 0, 0, 1, 0, 0, .4, 0, 0, 0, 0, 1, 0, 0, .5],
+      ghosts: [0, .25, 0, 0, .3, 0, 0, .2, 0, .25, 0, 0, .3, 0, .2, 0],
+      hats: [.85, .5, .65, .5, .8, .5, .65, .5, .85, .5, .65, .5, .8, .55, .7, .6],
+      bassWave: 'square', bassCutoff: 640, bassQ: 3.5,
+      pads: false, noLift: true
     },
     final: {
-      bpm: 152, root: 35, gain: 1.0,
-      bass: [0, 0, 0, 1, 0, 0, 6, 0, 0, 0, 0, 1, 3, 5, 6, 10],
+      bpm: 132, root: 36, gain: 1, swing: .05,
+      arrangement: ['A', 'A', 'B', 'C', 'A', 'B', 'A', 'C'],
+      bass: [0, 0, 0, 1, 0, 0, 6, 0, 0, 0, 8, 0, 6, 5, 1, 0],
       lead: [24, null, 23, 24, 27, null, 31, 27, 24, 23, 19, 24, 27, 31, 34, 31],
-      chords: [0, 0, -1, 1],
-      hat: 1, snare: 1
+      chords: [0, 6, 8, 1],
+      stabs: [.95, 0, 0, .7, 0, .85, 0, 0, .9, 0, .65, 0, 0, .95, 0, .75],
+      stabNotes: [0, 3, 6, 10],
+      kicks: [1, 0, .7, 0, .8, 0, .6, 0, 1, 0, .7, 0, .8, 0, .6, 0],
+      snares: [0, 0, 0, 0, 1, 0, 0, .5, 0, 0, 0, 0, 1, 0, .5, .6],
+      ghosts: [0, .3, 0, .25, 0, .3, 0, .25, 0, .3, 0, .25, 0, .3, 0, .25],
+      hats: [.95, .55, .75, .55, .9, .55, .75, .55, .95, .55, .75, .55, .9, .6, .8, .65],
+      bassWave: 'sawtooth', bassCutoff: 850, bassQ: 4.5,
+      pads: false, noLift: true
     },
     boss: {
-      bpm: 146, root: 36, gain: 1.0,
+      bpm: 146, root: 36, gain: 1,
       bass: [0, 0, 12, 0, 0, 10, 0, 0, 0, 0, 12, 0, 3, 5, 7, 10],
       lead: [24, null, 22, null, 19, null, 22, 24, 27, null, 24, 22, 19, 17, 15, 12],
       chords: [0, 0, -2, -3],
       hat: 1, snare: 1
-    },
-    bossRazor: {
-      bpm: 152, root: 37, gain: 1.03,
-      bass: [0, null, 0, 7, 0, null, 10, null, 0, 7, null, 3, 5, null, 7, 10],
-      lead: [19, null, 22, 24, null, 22, 19, 15, 19, 22, null, 24, 27, 24, 22, 19],
-      chords: [0, -2, 3, 5],
-      hat: .95, snare: 1
-    },
-    bossTitan: {
-      bpm: 132, root: 32, gain: 1.08,
-      bass: [0, null, null, 0, null, null, 0, 3, 0, null, null, 0, 5, null, 3, 2],
-      lead: [12, null, 15, null, 12, null, 7, null, 10, null, 12, 15, null, 17, 15, 12],
-      chords: [0, -3, 0, -5],
-      hat: .7, snare: 1
-    },
-    bossVector: {
-      bpm: 158, root: 40, gain: 1.02,
-      bass: [0, 0, 7, 0, 3, 3, 10, 3, 0, 0, 7, 0, 5, 5, 12, 7],
-      lead: [19, 22, 24, 22, 27, 24, 22, 19, 24, 27, 31, 27, 24, 22, 19, 15],
-      chords: [0, 3, 7, 5],
-      hat: 1, snare: .95
     },
     clear: {
       bpm: 124, root: 48, gain: 0.9,
@@ -430,8 +537,9 @@
 
     playStep(step, when) {
       const t = this.track;
-      const sectionIndex = Math.floor(step / STEPS_PER_SECTION) % ARRANGEMENT.length;
-      const section = ARRANGEMENT[sectionIndex];
+      const arrangement = t.arrangement || ARRANGEMENT;
+      const sectionIndex = Math.floor(step / STEPS_PER_SECTION) % arrangement.length;
+      const section = arrangement[sectionIndex];
       const s = step % STEPS_PER_SECTION;
       const bar = Math.floor((step % 32) / STEPS_PER_SECTION);
       const chord = t.chords[Math.floor(step / 8) % t.chords.length];
@@ -440,19 +548,22 @@
       const intro = step < 8;
       const dp = this.musicPack.drumMul;
       const hp = this.musicPack.hatMul;
+      const swing = this.stepDur * (t.swing || 0);
+      const at = s % 2 ? when + swing : when;
+      const customDrums = !!(t.kicks || t.snares || t.hats || t.ghosts);
 
       // Bass: A/B alternate every other section, C drops to a half-time pulse.
       if (section !== 'C' || s % 8 === 0) {
         let bassOffset = t.bass[s];
         if (bassOffset !== null && bassOffset !== undefined) {
-          if (section === 'B' && s >= 8) bassOffset += 12;
+          if (!t.noLift && section === 'B' && s >= 8) bassOffset += 12;
           const bassGain = 0.09 * g * (section === 'B' ? 0.82 : 1);
-          this.bass(midi(root + bassOffset - 12), when, this.stepDur * (section === 'C' ? 2.4 : 1.35), bassGain);
+          this.bass(midi(root + bassOffset - 12), at, this.stepDur * (section === 'C' ? 2.4 : 1.35), bassGain);
         }
       }
 
       // Pad: C is a long breathing chord; A/B keep the original half-bar stabs.
-      if (s === 0 || (section !== 'C' && s === 8)) {
+      if (t.pads !== false && (s === 0 || (section !== 'C' && s === 8))) {
         const padNotes = section === 'C' ? [0, 7, 12] : [0, 3, 7];
         const padDur = this.stepDur * (section === 'C' ? 14 : 6.5);
         const padGain = 0.017 * g * (section === 'C' ? 1.25 : 1);
@@ -464,42 +575,58 @@
         const leadOffset = t.lead[s];
         if (leadOffset !== null && leadOffset !== undefined) {
           let octave = 0;
-          if (section === 'B' && s >= 8) octave = 12;
-          else if (section === 'A' && bar === 1 && s >= 12) octave = 12;
+          if (!t.noLift && section === 'B' && s >= 8) octave = 12;
+          else if (!t.noLift && section === 'A' && bar === 1 && s >= 12) octave = 12;
           const leadGain = 0.044 * g * (section === 'B' ? 0.9 : 1);
-          this.lead(midi(t.root + chord + leadOffset + octave), when, this.stepDur * 1.4, leadGain);
+          this.lead(midi(t.root + chord + leadOffset + octave), at, this.stepDur * 1.4, leadGain);
         }
       }
 
+      // Funk chord stabs: short brass/clav accents on offbeats.
+      if (t.stabs && t.stabs[s]) {
+        const stabNotes = t.stabNotes || [0, 3, 7];
+        this.stab(
+          stabNotes.map(n => midi(t.root + chord + n + 12)),
+          at,
+          this.stepDur * (t.stabDur || 0.5),
+          0.021 * g * t.stabs[s]
+        );
+      }
+
       // Drums.
-      if (section === 'C') {
-        if (s === 0 || s === 8) this.kick(when, 0.14 * g * dp);
-        if (s === 4) this.snare(when, 0.045 * g * dp, 0.9);
-        if (s % 4 === 0) this.hat(when, 0.018 * g * t.hat * hp);
+      if (customDrums) {
+        if (t.kicks && t.kicks[s]) this.kick(at, 0.17 * g * dp * t.kicks[s]);
+        if (t.snares && t.snares[s]) this.snare(at, 0.09 * g * dp * t.snares[s]);
+        if (t.ghosts && t.ghosts[s]) this.snare(at, 0.028 * g * dp * t.ghosts[s], 1.2);
+        if (t.hats && t.hats[s]) this.hat(at, 0.024 * g * hp * t.hats[s], 1 + (t.hats[s] > 0.8 ? 0.25 : 0));
+      } else if (section === 'C') {
+        if (s === 0 || s === 8) this.kick(at, 0.14 * g * dp);
+        if (s === 4) this.snare(at, 0.045 * g * dp, 0.9);
+        if (s % 4 === 0) this.hat(at, 0.018 * g * t.hat * hp);
       } else {
-        if (s === 0 || s === 4 || s === 8 || s === 12) this.kick(when, 0.17 * g * dp);
-        if (section === 'B' && (s === 10 || s === 14)) this.kick(when, 0.09 * g * dp);
-        if (s === 4 || s === 12) this.snare(when, 0.09 * g * dp);
-        if (s === 7 || s === 15) this.snare(when, 0.035 * g * dp, 1.3);
-        if (s % 2 === 0) this.hat(when, 0.024 * g * t.hat * hp);
-        if (s === 2 || s === 10) this.hat(when, 0.038 * g * t.hat * hp, 1.25);
-        if (section === 'B' && (s === 6 || s === 14)) this.hat(when, 0.03 * g * hp, 1.35);
-        if (bar === 1 && s === 15 && Math.random() < 0.6) this.hat(when, 0.025 * g * hp, 1.4);
+        if (s === 0 || s === 4 || s === 8 || s === 12) this.kick(at, 0.17 * g * dp);
+        if (section === 'B' && (s === 10 || s === 14)) this.kick(at, 0.09 * g * dp);
+        if (s === 4 || s === 12) this.snare(at, 0.09 * g * dp);
+        if (s === 7 || s === 15) this.snare(at, 0.035 * g * dp, 1.3);
+        if (s % 2 === 0) this.hat(at, 0.024 * g * t.hat * hp);
+        if (s === 2 || s === 10) this.hat(at, 0.038 * g * t.hat * hp, 1.25);
+        if (section === 'B' && (s === 6 || s === 14)) this.hat(at, 0.03 * g * hp, 1.35);
+        if (bar === 1 && s === 15 && Math.random() < 0.6) this.hat(at, 0.025 * g * hp, 1.4);
       }
 
       // A short tom/snare fill at the end of every other section (2-bar phrase).
-      if (sectionIndex % 2 === 1 && s >= 14) {
+      if (!customDrums && sectionIndex % 2 === 1 && s >= 14) {
         const power = (sectionIndex === 3 || sectionIndex === 7) ? 1 : 0.55;
-        this.snare(when, (s === 14 ? 0.03 : 0.05) * g * power, 1.05 + (s - 14) * 0.18);
-        if (s === 15) this.hat(when, 0.03 * g * power, 1.6);
+        this.snare(at, (s === 14 ? 0.03 : 0.05) * g * power, 1.05 + (s - 14) * 0.18);
+        if (s === 15) this.hat(at, 0.03 * g * power, 1.6);
       }
 
       // Boss phase layers: extra offbeat hats and a high arpeggio.
       if (this.intensity > 0.02 && section !== 'C') {
-        if (s % 2 === 0) this.hat(when, 0.012 * g * this.intensity, 1.8);
+        if (s % 2 === 0) this.hat(at, 0.012 * g * this.intensity, 1.8);
         if (s % 4 === 0) {
           const arpNote = root + 24 + (((s / 4) % 2) ? 7 : 0);
-          this.arp(midi(arpNote), when, this.stepDur * 0.7, 0.016 * g * this.intensity);
+          this.arp(midi(arpNote), at, this.stepDur * 0.7, 0.016 * g * this.intensity);
         }
       }
     }
@@ -510,12 +637,13 @@
       const o = c.createOscillator();
       const f = c.createBiquadFilter();
       const g = c.createGain();
-      o.type = this.musicPack.bassWave;
+      const track = this.track || {};
+      o.type = track.bassWave || this.musicPack.bassWave;
       o.frequency.setValueAtTime(freq, when);
       f.type = 'lowpass';
-      f.frequency.setValueAtTime(520 * this.musicPack.filterMul, when);
+      f.frequency.setValueAtTime((track.bassCutoff || 520) * this.musicPack.filterMul, when);
       f.frequency.exponentialRampToValueAtTime(160 * this.musicPack.filterMul, when + dur);
-      f.Q.value = 4;
+      f.Q.value = track.bassQ || 4;
       g.gain.setValueAtTime(0.0001, when);
       g.gain.exponentialRampToValueAtTime(gain, when + 0.012);
       g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
@@ -570,6 +698,28 @@
         f.type = 'lowpass'; f.frequency.value = 900 * this.musicPack.filterMul;
         o.connect(f); f.connect(g);
         o.start(when); o.stop(when + dur + 0.03);
+      });
+    }
+
+    stab(freqs, when, dur, gain) {
+      const c = this.ctx;
+      const g = c.createGain();
+      g.gain.setValueAtTime(0.0001, when);
+      g.gain.exponentialRampToValueAtTime(gain, when + 0.006);
+      g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+      g.connect(this.trackBus || this.musicBus);
+      if (this.delay) g.connect(this.delay);
+      freqs.forEach((freq, i) => {
+        const o = c.createOscillator();
+        const f = c.createBiquadFilter();
+        o.type = i % 2 ? 'square' : 'sawtooth';
+        o.frequency.setValueAtTime(freq, when);
+        o.detune.value = (i - 1) * 6;
+        f.type = 'bandpass';
+        f.frequency.value = 1300 + i * 280;
+        f.Q.value = 1.1;
+        o.connect(f); f.connect(g);
+        o.start(when); o.stop(when + dur + 0.02);
       });
     }
 
