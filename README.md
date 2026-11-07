@@ -4,7 +4,11 @@
 
 ## 直接开玩
 
-双击 `neon-rage.html`，或打开 `index.html`（源码版）。推荐 Chrome / Edge / Safari。
+**在线游玩**：<https://john-20260101.github.io/neon-rage/>
+
+**单文件下载**：<https://github.com/John-20260101/neon-rage/releases/latest/download/neon-rage.html>
+
+也可以双击 `neon-rage.html`，或打开 `index.html`（源码版）。推荐 Chrome / Edge / Safari。
 
 如果浏览器限制本地文件音频，可在目录里启动一个静态服务器：
 
