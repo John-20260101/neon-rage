@@ -232,9 +232,9 @@
   // different fundamental/formant pair so hits read as REX, LUNA or BRUNO
   // without turning into dialogue.
   const FIGHTER_SFX = {
-    rex: { air: [700, 1600], sub: 62, voice: [126, 74], formant: 720, voiceGain: 0.052 },
-    luna: { air: [1250, 2900], sub: 84, voice: [184, 112], formant: 1020, voiceGain: 0.045 },
-    bruno: { air: [430, 980], sub: 47, voice: [88, 54], formant: 580, voiceGain: 0.060 }
+    rex: { air: [700, 1600], sub: 62, voice: [126, 74], formant: 720, voiceGain: 0.052, cry: 0.075 },
+    luna: { air: [1250, 2900], sub: 84, voice: [184, 112], formant: 1020, voiceGain: 0.045, cry: 0.064 },
+    bruno: { air: [430, 980], sub: 47, voice: [88, 54], formant: 580, voiceGain: 0.060, cry: 0.086 }
   };
 
   const ENEMY_SFX = {
@@ -858,48 +858,74 @@
     }
 
     metal(when, gain, pitch) {
+      if (!this.ctx) return;
       const c = this.ctx;
       const t = when || c.currentTime;
       const p = pitch || 1;
-      this.noise(t, 0.055, gain, 'highpass', 3000 * p, 0.7, this.sfxBus, true);
-      [2200 * p, 3100 * p].forEach((freq, i) => {
+      // Bright stick noise + inharmonic ring + short low body thump reads as a
+      // struck pipe rather than a beep.
+      this.noise(t, 0.04, gain * .9, 'highpass', 3400 * p, 0.6, this.sfxBus, true);
+      [1860 * p, 2790 * p, 4180 * p].forEach((freq, i) => {
         const o = c.createOscillator();
         const g = c.createGain();
-        o.type = i ? 'triangle' : 'square';
+        o.type = i === 2 ? 'sine' : 'triangle';
         o.frequency.setValueAtTime(freq, t);
-        o.frequency.exponentialRampToValueAtTime(freq * .78, t + 0.1);
-        g.gain.setValueAtTime(gain * (i ? .7 : 1), t);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
+        o.frequency.exponentialRampToValueAtTime(freq * .82, t + 0.22);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(gain * (i === 0 ? .85 : i === 1 ? .5 : .28), t + 0.006);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.26 - i * 0.05);
         o.connect(g);
         g.connect(this.sfxBus);
         o.start(t);
-        o.stop(t + 0.15);
+        o.stop(t + 0.3);
       });
+      this.body(t, gain * .55, 190 * p, 120, 0.07);
     }
 
-    voice(when, profile, gain) {
+    voice(when, profile, gain, kind) {
+      if (!this.ctx) return;
       const c = this.ctx;
       const t = when || c.currentTime;
       const p = profile || FIGHTER_SFX.rex;
       const f0 = p.voice[0], f1 = p.voice[1];
+      const grunt = kind === 'grunt';
+      const dur = grunt ? 0.2 : 0.26;
+      const formant = grunt ? p.formant * .96 : p.formant * 1.05;
       const o = c.createOscillator();
       const f = c.createBiquadFilter();
       const g = c.createGain();
       o.type = 'sawtooth';
       o.frequency.setValueAtTime(f0, t);
-      o.frequency.exponentialRampToValueAtTime(f1, t + 0.14);
+      o.frequency.linearRampToValueAtTime(f0 * 1.03, t + dur * 0.18);
+      o.frequency.exponentialRampToValueAtTime(Math.max(40, f1 * (grunt ? .95 : 1)), t + dur);
       f.type = 'bandpass';
-      f.frequency.value = p.formant;
-      f.Q.value = 2.4;
+      f.frequency.value = formant;
+      f.Q.value = grunt ? 1.9 : 2.6;
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.linearRampToValueAtTime(gain, t + 0.015);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.17);
+      g.gain.linearRampToValueAtTime(gain, t + 0.018);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
       o.connect(f);
       f.connect(g);
       g.connect(this.sfxBus);
       o.start(t);
-      o.stop(t + 0.19);
-      this.noise(t, 0.1, gain * 0.65, 'bandpass', p.formant + 260, 1.3, this.sfxBus, true);
+      o.stop(t + dur + 0.02);
+      // Breath layer: air over the voice so it reads as a shout, not a synth beep.
+      this.noise(t, dur * .8, gain * (grunt ? .55 : .8), 'bandpass', formant + 320, 1.1, this.sfxBus, true);
+    }
+
+    // A short, non-verbal shout. Pipe swings call it on hit so the weapon has a
+    // "voice" of its own; the cry is deduped by a cooldown so mash-spam stays sane.
+    fightCry(charKey, weapon) {
+      if (!this.ensure() || !this.cooldown('fightCry', 520)) return;
+      if (!this.spendSfx(2)) return;
+      const f = fighterSfx(charKey);
+      const t = this.ctx.currentTime;
+      const gain = (f.cry || 0.07) + (weapon === 'pipe' ? 0.02 : 0);
+      this.voice(t + 0.01, f, gain, 'cry');
+      if (weapon === 'pipe') {
+        this.air(t + 0.02, 0.14, 0.05, f.air[0] * 1.1, f.air[1] * 1.3, 1.2, true);
+        this.noise(t + 0.04, 0.06, 0.03, 'highpass', 3600, 0.8, this.sfxBus, true);
+      }
     }
 
     attackWindup(profile) {
@@ -920,8 +946,11 @@
         return;
       }
       if (p.weapon === 'pipe') {
-        this.air(t, 0.15, 0.105, 480 * j, 1200 * j, 1.1, true);
-        this.body(t + 0.03, 0.05, 96, 48, 0.13);
+        // Metal swing-in: crystal squeak over a low, broad object whoosh.
+        this.tone(3800 * j, 0.05, 'triangle', 0.022, 2600, true);
+        this.air(t, 0.16, 0.115, 430 * j, 900 * j, 1.15, true);
+        this.body(t + 0.03, 0.055, 104, 46, 0.15);
+        this.noise(t, 0.05, 0.03, 'highpass', 2600, 0.8, this.sfxBus, true);
         return;
       }
       if (p.kind === 'dash') {
@@ -949,7 +978,14 @@
       this.noise(t, heavy ? 0.12 : 0.075, heavy ? 0.24 : 0.16, 'lowpass', (p.boss ? 700 : heavy ? 900 : 1500) * j, 0.8, this.sfxBus, true);
       this.body(t, heavy ? 0.15 : 0.1, (p.boss ? 95 : heavy ? 125 : 170) * j, 48, heavy ? 0.14 : 0.08);
       if (material === 'metal' || material === 'armor') {
-        this.metal(t + 0.005, (material === 'armor' ? 0.095 : 0.055) * (heavy ? 1.15 : 1), p.weapon === 'knife' ? 1.15 : 1);
+        if (p.weapon === 'pipe') {
+          this.metal(t + 0.004, (heavy ? 0.11 : 0.095), 1);
+          this.body(t + 0.03, 0.09, 150, 64, 0.1);
+        } else if (material === 'armor') {
+          this.metal(t + 0.005, 0.09 * (heavy ? 1.1 : 1), 0.92);
+        } else {
+          this.metal(t + 0.005, 0.06 * (heavy ? 1.15 : 1), p.weapon === 'knife' ? 1.2 : 1);
+        }
       }
       if (material === 'boss') {
         this.metal(t + 0.01, 0.05, 0.8);

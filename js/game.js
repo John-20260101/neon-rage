@@ -500,16 +500,18 @@
     }
   };
 
+  // Weapon swing profiles. `weapon: true` routes a hit through the weapon branch
+  // of performPlayerStrike; `swing` selects the per-weapon arc/sweep behaviour.
   const WEAPONS = {
     pipe: {
-      key: 'pipe', name: 'PIPE', cn: '钢管', type: 'melee',
+      key: 'pipe', name: 'PIPE', cn: '钢管', type: 'melee', weapon: true,
       startup: .14, active: .12, recovery: .27, damage: 10, range: 41,
-      kb: 85, knockdown: true, pose: 'punch2', dur: 12, step: 24
+      kb: 85, knockdown: true, pose: 'punch2', dur: 12, step: 24, swing: 'pipe'
     },
     knife: {
-      key: 'knife', name: 'KNIFE', cn: '小刀', type: 'melee',
+      key: 'knife', name: 'KNIFE', cn: '小刀', type: 'melee', weapon: true,
       startup: .06, active: .075, recovery: .14, damage: 7, range: 34,
-      kb: 24, knockdown: false, pose: 'punch1', dur: 10, step: 34, sound: 'knife'
+      kb: 24, knockdown: false, pose: 'punch1', dur: 10, step: 34, swing: 'knife'
     },
     pistol: {
       key: 'pistol', name: 'PISTOL', cn: '手枪', type: 'ranged',
@@ -950,6 +952,10 @@
     }
     dom.enemyUI.classList.add('mob');
     const def = target.def || ENEMY_DATA[target.type] || {};
+    if (dom.enemyUI.dataset.target !== target.type) {
+      dom.enemyUI.dataset.target = target.type;
+      dom.enemyUI.classList.toggle('enemy-ui--boss', !!target.boss);
+    }
     const ratio = clamp(target.hp / target.maxHp, 0, 1);
     const accent = (target.char && target.char.colors && target.char.colors.accent) || '#ff4b5e';
     dom.enemyName.textContent = `${def.name || String(target.type || '').toUpperCase()}${def.cn ? ` // ${def.cn}` : ''}`;
@@ -958,8 +964,11 @@
     dom.enemyFill.style.transform = `scaleX(${ratio})`;
     dom.enemyUI.style.setProperty('--enemy-accent', accent);
     if (dom.enemyPortrait) {
-      const key = ENEMY_PORTRAIT_KEYS.includes(target.type) ? target.type : 'punk';
-      dom.enemyPortrait.className = `enemy-portrait enemy-${key}`;
+      const portraitKey = ENEMY_PORTRAIT_KEYS.includes(target.type) ? target.type : 'punk';
+      if (dom.enemyPortrait.dataset.key !== portraitKey) {
+        dom.enemyPortrait.dataset.key = portraitKey;
+        dom.enemyPortrait.className = `enemy-portrait enemy-${portraitKey}`;
+      }
     }
     show(dom.enemyUI, true);
   }
@@ -1037,6 +1046,11 @@
     dom.hudPortrait.classList.remove('rex', 'luna', 'bruno');
     dom.hudPortrait.classList.add(portraitKey);
     dom.hudPortrait.setAttribute('aria-label', `${PLAYER_STATS[portraitKey].name} 头像`);
+    if (dom.enemyUI) {
+      dom.enemyUI.dataset.target = '';
+      dom.enemyUI.classList.remove('enemy-ui--boss');
+      show(dom.enemyUI, false);
+    }
     updateHud();
   }
 
@@ -1595,6 +1609,8 @@
       dead: false,
       deadTimer: 0,
       downTimer: 0,
+      downBy: null,
+      downCreditT: 0,
       bounced: false,
       thrown: false,
       thrownHitSet: null,
@@ -1819,9 +1835,9 @@
     if (target) p.facing = target.x >= p.x ? 1 : -1;
   }
 
-  function startPlayerAttack() {
+  function startPlayerAttack(opts) {
     const p = G.player;
-    autoFace(p.weapon === 'pistol' ? 220 : 64);
+    if (!(opts && opts.autoFace === false)) autoFace(p.weapon === 'pistol' ? 220 : 64);
     if (p.weapon && !WEAPONS[p.weapon]) { p.weapon = null; p.weaponDur = 0; p.ammo = 0; }
     if (p.weapon === 'pistol' && p.ammo <= 0) {
       p.weapon = null;
@@ -1831,18 +1847,21 @@
     }
     if (p.weapon) {
       const w = WEAPONS[p.weapon];
+      const data = scaleAttackData(w);
       p.state = 'attack';
       p.stateTime = 0;
       p.comboBuffer = 0;
       p.queuedAttack = false;
       p.attack = {
         timer: 0,
-        data: scaleAttackData(w),
+        data,
         index: 2,
         struck: false,
         weapon: true,
         weaponKey: p.weapon,
-        gun: p.weapon === 'pistol'
+        gun: p.weapon === 'pistol',
+        swing: w.swing || null,
+        weaponDur: p.weaponDur
       };
       Sound.attackWindup({ charKey: p.charKey, step: 2, weapon: p.weapon, kind: 'weapon' });
       return;
@@ -1884,12 +1903,25 @@
     const stepSpeed = a.weapon ? (d.step || 0) : a.index === 0 ? 38 : a.index === 1 ? 52 : 68;
     if (a.timer <= d.startup + d.active) p.x += p.facing * stepSpeed * dt;
     const strikeAt = d.startup;
+    const total = d.startup + d.active + d.recovery;
+    if (!a.gun && a.weapon && a.swing === 'pipe' && !a.swept && a.timer >= strikeAt * .55) {
+      a.swept = true;
+      sweepPipeStartup(p, d);
+    }
+    // Weapon swings can be re-tapped as soon as the active frames end instead of
+    // waiting out the whole recovery, which is what made the pipe feel dumb.
+    // Tapping again during recovery chains the next pipe swing instead of
+    // swallowing the input until the animation fully ends.
+    if (a.weapon && !a.gun && a.struck && a.timer >= d.startup + d.active && Input.attackQueue > 0 && p.weapon) {
+      Input.attackQueue--;
+      startPlayerAttack({ autoFace: false });
+      return;
+    }
     if (!a.struck && a.timer >= strikeAt) {
       a.struck = true;
       if (a.gun) firePlayerBullet(p);
       else performPlayerStrike(p, d, a.weapon);
     }
-    const total = d.startup + d.active + d.recovery;
     if (a.timer >= total) {
       if (a.gun && p.ammo <= 0) {
         p.weapon = null;
@@ -1907,6 +1939,9 @@
         Input.attackQueue--;
         startPlayerAttack();
         return;
+      } else if (!a.gun && a.weapon && p.weapon && a.weaponDur > p.weaponDur) {
+        // The swing broke the weapon on its last hit: it was discarded mid-swing.
+        discardBrokenWeapon(p);
       } else if (!a.gun && a.weapon && p.weapon && Input.attackQueue > 0) {
         Input.attackQueue--;
         startPlayerAttack();
@@ -1926,6 +1961,70 @@
     }
   }
 
+  function discardBrokenWeapon(p) {
+    const broken = WEAPONS[p.weapon] ? WEAPONS[p.weapon].cn : '武器';
+    const dir = p.facing;
+    p.weapon = null;
+    p.weaponDur = 0;
+    p.ammo = 0;
+    toast(`${broken}报废了。拳头还在。`, 1.6);
+    spawnBurst(p.x + dir * 24, p.y, 20, '#dbe6f4', 8, 40);
+    Sound.break();
+    updateHud();
+  }
+
+  // A pipe swing is read as a blunt arc, not a punch: it sweeps everything in
+  // front of the player, drags unarmored bodies toward the ground, and swats
+  // air-gap targets down before the actual strike connects.
+  function sweepPipeStartup(p, d) {
+    if (!G.enemies || !G.enemies.length) {
+      // Always show the arc so the move reads as a swing even when it whiffs.
+      G.effects.push({
+        x: p.x + p.facing * 18, y: p.y, radius: 9, maxRadius: d.range + 16,
+        life: .22, maxLife: .22, color: '#9fb6cc', width: 2
+      });
+      return;
+    }
+    const dir = p.facing;
+    let swatted = 0;
+    for (const e of G.enemies) {
+      // Swat everything in the arc, including bodies that were mid-air when the
+      // swing started (the old check skipped z > 2 and left them floating).
+      if (e.dead || e.state === 'grabbed' || (e.z || 0) > 24) continue;
+      const dx = (e.x - p.x) * dir;
+      if (dx < -7 || dx > d.range + (e.def.hitbox || 10)) continue;
+      if (Math.abs(e.y - p.y) > 17) continue;
+      const fwd = Math.max(1, dx);
+      e.z = Math.max(e.z, 2);
+      e.vz = 74 + Math.min(42, fwd * .8);
+      e.vx = dir * Math.max(36, d.kb);
+      e.downTimer = e.boss ? .72 : 1.0;
+      e.bounced = false;
+      e.invuln = 0;
+      e.state = 'down';
+      e.stateTime = 0;
+      e.pose = 'down';
+      e.attack = null;
+      e.attacking = false;
+      // Mark the knockdown as player-caused so the victim can't instantly
+      // reverse-grab while the pipe is still swinging.
+      e.downBy = 'player';
+      e.downCreditT = G.time;
+      swatted++;
+    }
+    const reach = d.range + 16;
+    G.effects.push({
+      x: p.x + dir * 18, y: p.y, radius: 9, maxRadius: reach,
+      life: .26, maxLife: .26, color: '#cfe4ff', width: 3
+    });
+    if (swatted) {
+      spawnBurst(p.x + dir * 26, p.y, 20, '#dfe9f6', 7, 46);
+      spawnDust(p.x + dir * 20, p.y, 4);
+      Sound.whoosh();
+      shake(2.4);
+    }
+  }
+
   function performPlayerStrike(p, d, isWeapon) {
     const dir = p.facing;
     const wKey = p.weapon;
@@ -1937,9 +2036,12 @@
       if (Math.abs(e.y - p.y) > 17) continue;
       if (Math.abs((e.z || 0) - (p.z || 0)) > 27) continue;
       const damage = d.damage * p.power;
+      // A pipe always knocks a normal body over; the old 35% roll made the
+      // weapon feel like it failed to connect.
       const ok = hitEnemy(e, damage, dir, {
         kb: d.kb,
-        knockdown: !!d.knockdown || (wKey === 'pipe' && Math.random() < .35),
+        knockdown: !!d.knockdown || wKey === 'pipe',
+        weapon: isWeapon ? wKey : null,
         color: wKey === 'knife' ? '#e9f5ff' : '#ffd23f',
         sfx: {
           charKey: p.charKey,
@@ -1948,7 +2050,10 @@
           move: isWeapon ? 'weapon' : (p.attack && p.attack.index === 2 ? 'finisher' : 'combo')
         }
       });
-      if (ok) hitAny = true;
+      if (ok) {
+        hitAny = true;
+        if (wKey === 'pipe' && !e.dead) e.vx = Math.max(e.vx, dir * d.kb * 1.05);
+      }
     }
     for (const c of G.crates) {
       if (c.dead) continue;
@@ -1960,15 +2065,10 @@
     }
     if (isWeapon && hitAny && p.weapon) {
       p.weaponDur--;
-      if (p.weaponDur <= 0) {
-        const name = WEAPONS[p.weapon] ? WEAPONS[p.weapon].cn : '武器';
-        p.weapon = null;
-        p.weaponDur = 0;
-        p.ammo = 0;
-        toast(`${name}报废了。拳头还在。`, 1.6);
-        spawnBurst(p.x + dir * 24, p.y, 20, '#dbe6f4', 8, 40);
-        Sound.break();
-      }
+      if (p.weaponDur <= 0) discardBrokenWeapon(p);
+    }
+    if (isWeapon && wKey === 'pipe' && p.attack && G.enemies.some(e => !e.dead && e.hp > 0 && Math.abs(e.x - p.x) < 150)) {
+      Sound.fightCry(p.charKey, wKey);
     }
     if (!hitAny) {
       // air swipe, tiny screen tremor
@@ -2356,7 +2456,10 @@
           if (dx < -6 || dx > 320) continue;
           if (Math.abs(e.y - p.y) > 20) continue;
           if ((e.z || 0) > 42) continue;
-          hitEnemy(e, st.special * p.power, dir, { kb: 130, knockdown: true, color: '#8ff6ff' });
+          hitEnemy(e, st.special * p.power, dir, {
+            kb: 130, knockdown: true, color: '#8ff6ff',
+            sfx: { charKey: p.charKey, step: 3, weapon: null, move: 'special' }
+          });
         }
         for (const c of G.crates) {
           if (c.dead) continue;
@@ -2377,7 +2480,10 @@
           if (e.dead) continue;
           if (Math.hypot(e.x - p.x, (e.y - p.y) * 1.15) > radius) continue;
           if ((e.z || 0) > 24) continue;
-          hitEnemy(e, st.special * p.power, e.x >= p.x ? 1 : -1, { kb: 190, knockdown: true, color: '#ffd34d' });
+          hitEnemy(e, st.special * p.power, e.x >= p.x ? 1 : -1, {
+            kb: 190, knockdown: true, color: '#ffd34d',
+            sfx: { charKey: p.charKey, step: 3, weapon: null, move: 'special' }
+          });
         }
         for (const c of G.crates) {
           if (!c.dead && Math.hypot(c.x - p.x, (c.y - p.y) * 1.1) < radius) damageCrate(c, 45);
@@ -2392,7 +2498,10 @@
           if (dx < -34 || dx > 118) continue;
           if (Math.abs(e.y - p.y) > 42) continue;
           if ((e.z || 0) > 54) continue;
-          hitEnemy(e, st.special * p.power, dir, { kb: 165, knockdown: true, color: '#ff7a1e' });
+          hitEnemy(e, st.special * p.power, dir, {
+            kb: 165, knockdown: true, color: '#ff7a1e',
+            sfx: { charKey: p.charKey, step: 3, weapon: null, move: 'special' }
+          });
         }
         for (const c of G.crates) {
           if (c.dead) continue;
@@ -3504,6 +3613,8 @@
   function enemyGrabPlayer(e, st) {
     const p = G.player;
     if (!p || p.state === 'dead' || p.state === 'down' || p.state === 'grabbed' || p.state === 'thrown') return false;
+    // A fresh pipe/club knockdown must not let the body instantly grab back.
+    if (e.downBy === 'player' && (G.time - (e.downCreditT || 0)) < 1.2) return false;
     if (p.invuln > 0 || p.z > 15) return false;
     const dx = (p.x - e.x) * e.facing;
     const depth = Math.abs(p.y - e.y);
@@ -3615,6 +3726,8 @@
       e.invuln = .55;
       e.cooldown = rand(.2, .55);
       e.bounced = false;
+      e.downBy = null;
+      e.downCreditT = 0;
     }
   }
 
@@ -3631,7 +3744,10 @@
         if (Math.abs(other.x - e.x) < 18 && Math.abs(other.y - e.y) < 14) {
           e.thrownHitSet.add(other);
           const dir = sign(other.x - e.x || e.facing);
-          hitEnemy(other, 9, dir, { kb: 120, knockdown: true, color: '#29e7ff' });
+          hitEnemy(other, 9, dir, {
+            kb: 120, knockdown: true, color: '#29e7ff',
+            sfx: { charKey: G.player ? G.player.charKey : null, step: 2, weapon: null, move: 'throw' }
+          });
           shake(3);
         }
       }
@@ -3794,7 +3910,8 @@
       material: e.boss ? 'boss' : e.def.armor ? 'armor' : sfx.weapon ? 'metal' : 'flesh',
       weight: dmg >= 7 || e.boss || (sfx.step || 0) >= 2 ? 'heavy' : 'light',
       charKey: sfx.charKey,
-      weapon: sfx.weapon,
+      weapon: sfx.weapon || o.weapon || null,
+      move: sfx.move || null,
       boss: !!e.boss,
       enemyType: e.hp > 0 ? (e.boss ? 'boss' : e.type) : null
     });
@@ -3807,6 +3924,8 @@
     const kb = o.kb == null ? 35 : o.kb;
     if (o.knockdown || (!e.def.armor && dmg >= 8)) {
       e.state = 'down';
+      e.downBy = 'player';
+      e.downCreditT = G.time;
       e.stateTime = 0;
       e.z = Math.max(e.z, 1);
       e.vz = Math.max(70, kb * .55);
@@ -4127,7 +4246,10 @@
           if (Math.abs(pr.x - e.x) > 10 + (e.def.hitbox || 10) * .3) continue;
           if (Math.abs(pr.y - e.y) > 12) continue;
           const dir = pr.dir || sign(pr.vx);
-          hitEnemy(e, pr.damage, dir, { kb: 42, knockdown: !!pr.knockdown, color: '#ffe27a' });
+          hitEnemy(e, pr.damage, dir, {
+            kb: 42, knockdown: !!pr.knockdown, color: '#ffe27a',
+            sfx: { charKey: G.player ? G.player.charKey : null, step: 2, weapon: 'pistol', move: 'gun' }
+          });
           spawnBurst(pr.x, pr.y, 18, '#ffe27a', 7, 45);
           pr.life = 0;
           break;
@@ -5139,6 +5261,9 @@
       char: e.char, pose: po.pose, ext: po.ext,
       anim: e.anim, flash, alpha,
       weapon: (e.kind === 'player' && e.state === 'dashattack') ? null : (e.weapon || null),
+      // The player's own melee props use the renderer's metal tool branch;
+      // enemy weapons keep their existing look.
+      tool: e.kind === 'player' && (e.weapon === 'pipe' || e.weapon === 'knife'),
       boss: e.boss, auraColor: e.def && e.def.aura,
       rim: e.kind === 'player' ? e.char.colors.accent : (e.boss ? e.char.colors.accent : null)
     });
@@ -6366,7 +6491,7 @@
   }
 
   // Read-only debug handle (useful for testing; harmless in play).
-  window.__NEON_RAGE__ = { G, Input, STAGES, PLAYER_STATS, ENEMY_DATA, DIFFICULTIES, BOSS_TALK, POST_BOSS_TALK, startStage, spawnEnemy, startRun, hurtPlayer, hitEnemy, killEnemy, clearBattle, showResult, showEnding, beginBossTalk, advanceBossTalk, endBossTalk, buildWaveSpawns, updateBossAdds, dismissBossAdds, damageCrate, Art };
+  window.__NEON_RAGE__ = { G, Input, STAGES, PLAYER_STATS, ENEMY_DATA, DIFFICULTIES, BOSS_TALK, POST_BOSS_TALK, startStage, spawnEnemy, startRun, hurtPlayer, hitEnemy, killEnemy, clearBattle, showResult, showEnding, beginBossTalk, advanceBossTalk, endBossTalk, buildWaveSpawns, updateBossAdds, dismissBossAdds, damageCrate, Art, startPlayerAttack, updatePlayerAttack, selectEnemyFocus, WEAPONS };
 
   boot();
 })();

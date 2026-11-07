@@ -187,7 +187,8 @@ button:focus-visible, [tabindex]:focus-visible {
 /* ————— HUD ————— */
 .hud {
   position: absolute; z-index: 15; inset: 0 0 auto 0;
-  display: grid; grid-template-columns: 1fr auto 1fr; align-items: start;
+  /* row: fighter block | stage | score/combo | the mob we're facing */
+  display: grid; grid-template-columns: 1fr auto 1fr auto; align-items: start;
   gap: 1.4cqw;
   padding: 1.25cqw 1.6cqw 2.4cqw;
   background: linear-gradient(to bottom, rgba(4,2,10,.86), rgba(4,2,10,.38) 65%, transparent);
@@ -255,6 +256,29 @@ button:focus-visible, [tabindex]:focus-visible {
   padding: .3cqw .45cqw;
   box-shadow: 0 0 16px rgba(255,46,99,.13);
 }
+/* The mob card now lives inside the HUD grid as its fifth cell, so it lines up
+   with the fighter block on the left instead of floating over the arena. */
+.enemy-ui--hud {
+  position: static; z-index: 21;
+  justify-self: end; align-self: start;
+  width: auto; max-width: min(30cqw, 420px); min-width: min-content;
+  padding: .26cqw .42cqw;
+  background: rgba(4,2,10,.72);
+  border-color: var(--enemy-accent, #ff4b5e);
+  box-shadow: 0 0 14px rgba(255,46,99,.12);
+}
+.enemy-ui--hud .enemy-ui-main { max-width: min(26cqw, 320px); }
+.enemy-ui--hud .enemy-meter { min-width: 5.2em; }
+.enemy-ui--hud .enemy-portrait {
+  width: 3.5cqw; height: 3.5cqw; min-width: 46px; min-height: 46px;
+  flex: 0 0 auto;
+  border: 2px solid var(--enemy-accent, #ff4b5e);
+  box-shadow: 0 0 calc(9px + .2cqw) rgba(255,46,99,.22);
+  background-color: #0b0710; background-repeat: no-repeat;
+  background-position: center; background-size: cover;
+}
+.enemy-ui--hud .enemy-ui-head b { font-size: max(10px, .78cqw); overflow: visible; text-overflow: clip; }
+.enemy-ui--hud .enemy-hp { font-size: max(9px, .62cqw); }
 .enemy-portrait {
   width: 3.2cqw; height: 3.2cqw; min-width: 42px; min-height: 42px;
   flex: 0 0 auto; display: block;
@@ -286,13 +310,11 @@ button:focus-visible, [tabindex]:focus-visible {
 }
 .enemy-hp.low { color: #ff8b9e; text-shadow: 0 0 8px rgba(255,46,99,.7); }
 
-/* Regular enemies get a compact name + bar; bosses keep the full #boss-ui. */
-.enemy-ui.mob .enemy-portrait,
-.enemy-ui.mob .enemy-ui-head span,
-.enemy-ui.mob .enemy-hp { display: none; }
-.enemy-ui.mob .enemy-ui-head { justify-content: flex-start; padding-bottom: .12cqw; }
+/* Regular enemies show portrait + name + bar + HP; bosses keep the full #boss-ui. */
+.enemy-ui.mob .enemy-ui-head span { display: none; }
+.enemy-ui.mob .enemy-ui-head { justify-content: flex-start; padding-bottom: .12cqw; min-height: 1.35em; }
 .enemy-ui.mob .enemy-ui-head b { text-align: left; }
-.enemy-ui.mob .enemy-bar-row { gap: 0; }
+.enemy-ui.mob .enemy-bar-row { gap: .3cqw; }
 
 .boss-ui {
   position: absolute; z-index: 15; top: max(38px, 5.6cqw); left: 50%; transform: translateX(-50%);
@@ -1354,15 +1376,21 @@ body.touch-mode .toast { bottom: 30%; }
 }
 
 @media (max-width: 760px) {
-  .enemy-ui { top: clamp(86px, 12.5cqw, 112px); left: auto; right: 3cqw; width: 42%; min-width: 0; }
   .enemy-ui-head span { display: none; }
   .enemy-ui-head b { text-align: left; }
-  .enemy-portrait { min-width: 38px; min-height: 38px; }
+  .enemy-ui--hud { max-width: min(30cqw, 290px); padding: .2cqw .32cqw; gap: .3cqw; }
+  .enemy-ui--hud .enemy-portrait { min-width: 38px; min-height: 38px; width: 5.8cqw; height: 5.8cqw; }
+  .enemy-ui--hud .enemy-ui-main { max-width: min(23cqw, 220px); }
+  .enemy-ui--hud .enemy-meter { min-width: 3.4em; }
+  .enemy-ui--hud .enemy-hp { min-width: 0; font-size: max(8px, .85cqw); }
+  .hud { gap: .8cqw; }
 }
 
 @media (max-width: 620px) {
   .boss-ui-head span { display: none; }
   .boss-ui-head b { text-align: left; }
+  .enemy-ui--hud .enemy-hp { display: none; }
+  .enemy-ui--hud .enemy-meter { min-width: 2.6em; }
 }
 
 @media (hover: none) and (pointer: coarse) {
@@ -1377,6 +1405,8 @@ body.touch-mode .toast { bottom: 30%; }
   .hud-combo b { font-size: max(11px, 1.4cqw); }
   .hud-vitals { min-width: 24cqw; }
   .hud-right { margin-right: 7.4cqw; }
+  .hud { grid-template-columns: 1fr auto 1fr auto; }
+  .enemy-ui--hud { margin-right: 7.4cqw; }
   .select-help { display: none !important; }
   body.touch-mode .select-footer { justify-content: flex-end; }
   .toast { font-size: max(10px, 1.3cqw); bottom: 27%; }

@@ -197,7 +197,8 @@ button:focus-visible, [tabindex]:focus-visible {
 /* ————— HUD ————— */
 .hud {
   position: absolute; z-index: 15; inset: 0 0 auto 0;
-  display: grid; grid-template-columns: 1fr auto 1fr; align-items: start;
+  /* row: fighter block | stage | score/combo | the mob we're facing */
+  display: grid; grid-template-columns: 1fr auto 1fr auto; align-items: start;
   gap: 1.4cqw;
   padding: 1.25cqw 1.6cqw 2.4cqw;
   background: linear-gradient(to bottom, rgba(4,2,10,.86), rgba(4,2,10,.38) 65%, transparent);
@@ -265,6 +266,29 @@ button:focus-visible, [tabindex]:focus-visible {
   padding: .3cqw .45cqw;
   box-shadow: 0 0 16px rgba(255,46,99,.13);
 }
+/* The mob card now lives inside the HUD grid as its fifth cell, so it lines up
+   with the fighter block on the left instead of floating over the arena. */
+.enemy-ui--hud {
+  position: static; z-index: 21;
+  justify-self: end; align-self: start;
+  width: auto; max-width: min(30cqw, 420px); min-width: min-content;
+  padding: .26cqw .42cqw;
+  background: rgba(4,2,10,.72);
+  border-color: var(--enemy-accent, #ff4b5e);
+  box-shadow: 0 0 14px rgba(255,46,99,.12);
+}
+.enemy-ui--hud .enemy-ui-main { max-width: min(26cqw, 320px); }
+.enemy-ui--hud .enemy-meter { min-width: 5.2em; }
+.enemy-ui--hud .enemy-portrait {
+  width: 3.5cqw; height: 3.5cqw; min-width: 46px; min-height: 46px;
+  flex: 0 0 auto;
+  border: 2px solid var(--enemy-accent, #ff4b5e);
+  box-shadow: 0 0 calc(9px + .2cqw) rgba(255,46,99,.22);
+  background-color: #0b0710; background-repeat: no-repeat;
+  background-position: center; background-size: cover;
+}
+.enemy-ui--hud .enemy-ui-head b { font-size: max(10px, .78cqw); overflow: visible; text-overflow: clip; }
+.enemy-ui--hud .enemy-hp { font-size: max(9px, .62cqw); }
 .enemy-portrait {
   width: 3.2cqw; height: 3.2cqw; min-width: 42px; min-height: 42px;
   flex: 0 0 auto; display: block;
@@ -296,13 +320,11 @@ button:focus-visible, [tabindex]:focus-visible {
 }
 .enemy-hp.low { color: #ff8b9e; text-shadow: 0 0 8px rgba(255,46,99,.7); }
 
-/* Regular enemies get a compact name + bar; bosses keep the full #boss-ui. */
-.enemy-ui.mob .enemy-portrait,
-.enemy-ui.mob .enemy-ui-head span,
-.enemy-ui.mob .enemy-hp { display: none; }
-.enemy-ui.mob .enemy-ui-head { justify-content: flex-start; padding-bottom: .12cqw; }
+/* Regular enemies show portrait + name + bar + HP; bosses keep the full #boss-ui. */
+.enemy-ui.mob .enemy-ui-head span { display: none; }
+.enemy-ui.mob .enemy-ui-head { justify-content: flex-start; padding-bottom: .12cqw; min-height: 1.35em; }
 .enemy-ui.mob .enemy-ui-head b { text-align: left; }
-.enemy-ui.mob .enemy-bar-row { gap: 0; }
+.enemy-ui.mob .enemy-bar-row { gap: .3cqw; }
 
 .boss-ui {
   position: absolute; z-index: 15; top: max(38px, 5.6cqw); left: 50%; transform: translateX(-50%);
@@ -1364,15 +1386,21 @@ body.touch-mode .toast { bottom: 30%; }
 }
 
 @media (max-width: 760px) {
-  .enemy-ui { top: clamp(86px, 12.5cqw, 112px); left: auto; right: 3cqw; width: 42%; min-width: 0; }
   .enemy-ui-head span { display: none; }
   .enemy-ui-head b { text-align: left; }
-  .enemy-portrait { min-width: 38px; min-height: 38px; }
+  .enemy-ui--hud { max-width: min(30cqw, 290px); padding: .2cqw .32cqw; gap: .3cqw; }
+  .enemy-ui--hud .enemy-portrait { min-width: 38px; min-height: 38px; width: 5.8cqw; height: 5.8cqw; }
+  .enemy-ui--hud .enemy-ui-main { max-width: min(23cqw, 220px); }
+  .enemy-ui--hud .enemy-meter { min-width: 3.4em; }
+  .enemy-ui--hud .enemy-hp { min-width: 0; font-size: max(8px, .85cqw); }
+  .hud { gap: .8cqw; }
 }
 
 @media (max-width: 620px) {
   .boss-ui-head span { display: none; }
   .boss-ui-head b { text-align: left; }
+  .enemy-ui--hud .enemy-hp { display: none; }
+  .enemy-ui--hud .enemy-meter { min-width: 2.6em; }
 }
 
 @media (hover: none) and (pointer: coarse) {
@@ -1387,6 +1415,8 @@ body.touch-mode .toast { bottom: 30%; }
   .hud-combo b { font-size: max(11px, 1.4cqw); }
   .hud-vitals { min-width: 24cqw; }
   .hud-right { margin-right: 7.4cqw; }
+  .hud { grid-template-columns: 1fr auto 1fr auto; }
+  .enemy-ui--hud { margin-right: 7.4cqw; }
   .select-help { display: none !important; }
   body.touch-mode .select-footer { justify-content: flex-end; }
   .toast { font-size: max(10px, 1.3cqw); bottom: 27%; }
@@ -1733,6 +1763,16 @@ body.touch-mode .toast { bottom: 30%; }
             <div class="hud-score"><span>SCORE</span><b id="hud-score">000000</b></div>
             <div class="hud-combo"><span>COMBO</span><b id="hud-combo">×0</b></div>
           </div>
+          <div id="enemy-ui" class="enemy-ui enemy-ui--hud is-hidden" aria-hidden="true">
+            <div id="enemy-portrait" class="enemy-portrait" aria-hidden="true"></div>
+            <div class="enemy-ui-main">
+              <div class="enemy-ui-head"><span>TARGET // 敌兵</span><b id="enemy-name">PUNK</b></div>
+              <div class="enemy-bar-row">
+                <div class="meter enemy-meter"><i id="enemy-fill"></i></div>
+                <span id="enemy-hp" class="enemy-hp">20 / 20</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div id="boss-talk" class="boss-talk is-hidden" aria-live="polite">
@@ -1748,17 +1788,6 @@ body.touch-mode .toast { bottom: 30%; }
               <span id="boss-talk-progress">1 / 1</span>
               <span class="boss-talk-hint">ENTER / 点击继续</span>
               <button id="boss-talk-skip" class="ghost-btn small" type="button">跳过</button>
-            </div>
-          </div>
-        </div>
-
-        <div id="enemy-ui" class="enemy-ui is-hidden" aria-hidden="true">
-          <div id="enemy-portrait" class="enemy-portrait" aria-hidden="true"></div>
-          <div class="enemy-ui-main">
-            <div class="enemy-ui-head"><span>TARGET // 敌兵</span><b id="enemy-name">PUNK</b></div>
-            <div class="enemy-bar-row">
-              <div class="meter enemy-meter"><i id="enemy-fill"></i></div>
-              <span id="enemy-hp" class="enemy-hp">20 / 20</span>
             </div>
           </div>
         </div>
@@ -1796,7 +1825,7 @@ body.touch-mode .toast { bottom: 30%; }
               <span class="logo-neon">NEON</span>
               <span class="logo-rage">RAGE</span>
             </h1>
-            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.32</span></div>
+            <div class="logo-cn">霓 虹 怒 火 <span class="cover-version">v0.2.33</span></div>
             <p class="title-copy">当法律沉睡，拳头就是黎明。<br>选择难度，今晚由你清街。</p>
             <div class="cover-actions">
               <button id="btn-start" class="arcade-btn" type="button">
@@ -2474,9 +2503,9 @@ body.touch-mode .toast { bottom: 30%; }
   // different fundamental/formant pair so hits read as REX, LUNA or BRUNO
   // without turning into dialogue.
   const FIGHTER_SFX = {
-    rex: { air: [700, 1600], sub: 62, voice: [126, 74], formant: 720, voiceGain: 0.052 },
-    luna: { air: [1250, 2900], sub: 84, voice: [184, 112], formant: 1020, voiceGain: 0.045 },
-    bruno: { air: [430, 980], sub: 47, voice: [88, 54], formant: 580, voiceGain: 0.060 }
+    rex: { air: [700, 1600], sub: 62, voice: [126, 74], formant: 720, voiceGain: 0.052, cry: 0.075 },
+    luna: { air: [1250, 2900], sub: 84, voice: [184, 112], formant: 1020, voiceGain: 0.045, cry: 0.064 },
+    bruno: { air: [430, 980], sub: 47, voice: [88, 54], formant: 580, voiceGain: 0.060, cry: 0.086 }
   };
 
   const ENEMY_SFX = {
@@ -3100,48 +3129,74 @@ body.touch-mode .toast { bottom: 30%; }
     }
 
     metal(when, gain, pitch) {
+      if (!this.ctx) return;
       const c = this.ctx;
       const t = when || c.currentTime;
       const p = pitch || 1;
-      this.noise(t, 0.055, gain, 'highpass', 3000 * p, 0.7, this.sfxBus, true);
-      [2200 * p, 3100 * p].forEach((freq, i) => {
+      // Bright stick noise + inharmonic ring + short low body thump reads as a
+      // struck pipe rather than a beep.
+      this.noise(t, 0.04, gain * .9, 'highpass', 3400 * p, 0.6, this.sfxBus, true);
+      [1860 * p, 2790 * p, 4180 * p].forEach((freq, i) => {
         const o = c.createOscillator();
         const g = c.createGain();
-        o.type = i ? 'triangle' : 'square';
+        o.type = i === 2 ? 'sine' : 'triangle';
         o.frequency.setValueAtTime(freq, t);
-        o.frequency.exponentialRampToValueAtTime(freq * .78, t + 0.1);
-        g.gain.setValueAtTime(gain * (i ? .7 : 1), t);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
+        o.frequency.exponentialRampToValueAtTime(freq * .82, t + 0.22);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(gain * (i === 0 ? .85 : i === 1 ? .5 : .28), t + 0.006);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.26 - i * 0.05);
         o.connect(g);
         g.connect(this.sfxBus);
         o.start(t);
-        o.stop(t + 0.15);
+        o.stop(t + 0.3);
       });
+      this.body(t, gain * .55, 190 * p, 120, 0.07);
     }
 
-    voice(when, profile, gain) {
+    voice(when, profile, gain, kind) {
+      if (!this.ctx) return;
       const c = this.ctx;
       const t = when || c.currentTime;
       const p = profile || FIGHTER_SFX.rex;
       const f0 = p.voice[0], f1 = p.voice[1];
+      const grunt = kind === 'grunt';
+      const dur = grunt ? 0.2 : 0.26;
+      const formant = grunt ? p.formant * .96 : p.formant * 1.05;
       const o = c.createOscillator();
       const f = c.createBiquadFilter();
       const g = c.createGain();
       o.type = 'sawtooth';
       o.frequency.setValueAtTime(f0, t);
-      o.frequency.exponentialRampToValueAtTime(f1, t + 0.14);
+      o.frequency.linearRampToValueAtTime(f0 * 1.03, t + dur * 0.18);
+      o.frequency.exponentialRampToValueAtTime(Math.max(40, f1 * (grunt ? .95 : 1)), t + dur);
       f.type = 'bandpass';
-      f.frequency.value = p.formant;
-      f.Q.value = 2.4;
+      f.frequency.value = formant;
+      f.Q.value = grunt ? 1.9 : 2.6;
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.linearRampToValueAtTime(gain, t + 0.015);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.17);
+      g.gain.linearRampToValueAtTime(gain, t + 0.018);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
       o.connect(f);
       f.connect(g);
       g.connect(this.sfxBus);
       o.start(t);
-      o.stop(t + 0.19);
-      this.noise(t, 0.1, gain * 0.65, 'bandpass', p.formant + 260, 1.3, this.sfxBus, true);
+      o.stop(t + dur + 0.02);
+      // Breath layer: air over the voice so it reads as a shout, not a synth beep.
+      this.noise(t, dur * .8, gain * (grunt ? .55 : .8), 'bandpass', formant + 320, 1.1, this.sfxBus, true);
+    }
+
+    // A short, non-verbal shout. Pipe swings call it on hit so the weapon has a
+    // "voice" of its own; the cry is deduped by a cooldown so mash-spam stays sane.
+    fightCry(charKey, weapon) {
+      if (!this.ensure() || !this.cooldown('fightCry', 520)) return;
+      if (!this.spendSfx(2)) return;
+      const f = fighterSfx(charKey);
+      const t = this.ctx.currentTime;
+      const gain = (f.cry || 0.07) + (weapon === 'pipe' ? 0.02 : 0);
+      this.voice(t + 0.01, f, gain, 'cry');
+      if (weapon === 'pipe') {
+        this.air(t + 0.02, 0.14, 0.05, f.air[0] * 1.1, f.air[1] * 1.3, 1.2, true);
+        this.noise(t + 0.04, 0.06, 0.03, 'highpass', 3600, 0.8, this.sfxBus, true);
+      }
     }
 
     attackWindup(profile) {
@@ -3162,8 +3217,11 @@ body.touch-mode .toast { bottom: 30%; }
         return;
       }
       if (p.weapon === 'pipe') {
-        this.air(t, 0.15, 0.105, 480 * j, 1200 * j, 1.1, true);
-        this.body(t + 0.03, 0.05, 96, 48, 0.13);
+        // Metal swing-in: crystal squeak over a low, broad object whoosh.
+        this.tone(3800 * j, 0.05, 'triangle', 0.022, 2600, true);
+        this.air(t, 0.16, 0.115, 430 * j, 900 * j, 1.15, true);
+        this.body(t + 0.03, 0.055, 104, 46, 0.15);
+        this.noise(t, 0.05, 0.03, 'highpass', 2600, 0.8, this.sfxBus, true);
         return;
       }
       if (p.kind === 'dash') {
@@ -3191,7 +3249,14 @@ body.touch-mode .toast { bottom: 30%; }
       this.noise(t, heavy ? 0.12 : 0.075, heavy ? 0.24 : 0.16, 'lowpass', (p.boss ? 700 : heavy ? 900 : 1500) * j, 0.8, this.sfxBus, true);
       this.body(t, heavy ? 0.15 : 0.1, (p.boss ? 95 : heavy ? 125 : 170) * j, 48, heavy ? 0.14 : 0.08);
       if (material === 'metal' || material === 'armor') {
-        this.metal(t + 0.005, (material === 'armor' ? 0.095 : 0.055) * (heavy ? 1.15 : 1), p.weapon === 'knife' ? 1.15 : 1);
+        if (p.weapon === 'pipe') {
+          this.metal(t + 0.004, (heavy ? 0.11 : 0.095), 1);
+          this.body(t + 0.03, 0.09, 150, 64, 0.1);
+        } else if (material === 'armor') {
+          this.metal(t + 0.005, 0.09 * (heavy ? 1.1 : 1), 0.92);
+        } else {
+          this.metal(t + 0.005, 0.06 * (heavy ? 1.15 : 1), p.weapon === 'knife' ? 1.2 : 1);
+        }
       }
       if (material === 'boss') {
         this.metal(t + 0.01, 0.05, 0.8);
@@ -4423,6 +4488,18 @@ body.touch-mode .toast { bottom: 30%; }
       pline(g, hand.hx, hand.hy, tx, ty, 5, INK);
       pline(g, hand.hx, hand.hy, tx, ty, 3, '#a86b3d');
       pline(g, hand.hx, hand.hy, tx - 2, ty - 2, 1, '#e1b478');
+    } else if (o.tool) {
+      // Player pipe: a long steel bar with a wrapped grip, readable at 480p.
+      const tipX = hand.hx + 13 + 12 * ext;
+      const tipY = hand.hy - 2 - 3 * ext;
+      pline(g, hand.hx - 4, hand.hy + 2, hand.hx + 1, hand.hy, 6, INK);
+      pline(g, hand.hx - 3, hand.hy + 2, hand.hx + 1, hand.hy, 4, '#5a3d2b');
+      pline(g, hand.hx, hand.hy, tipX, tipY, 6, INK);
+      pline(g, hand.hx, hand.hy, tipX, tipY, 3, C.metal);
+      pline(g, hand.hx, hand.hy - 1, tipX - 3, tipY - 1, 1, '#ffffff');
+      px(g, hand.hx + 1, hand.hy - 2, 3, 3, '#b58a45');
+      px(g, tipX - 2, tipY - 3, 3, 3, INK);
+      px(g, tipX - 1, tipY - 2, 2, 2, '#c9d4e0');
     } else {
       pline(g, hand.hx, hand.hy, tx, ty, 5, INK);
       pline(g, hand.hx, hand.hy, tx, ty, 2, C.metal);
@@ -6510,16 +6587,18 @@ body.touch-mode .toast { bottom: 30%; }
     }
   };
 
+  // Weapon swing profiles. `weapon: true` routes a hit through the weapon branch
+  // of performPlayerStrike; `swing` selects the per-weapon arc/sweep behaviour.
   const WEAPONS = {
     pipe: {
-      key: 'pipe', name: 'PIPE', cn: '钢管', type: 'melee',
+      key: 'pipe', name: 'PIPE', cn: '钢管', type: 'melee', weapon: true,
       startup: .14, active: .12, recovery: .27, damage: 10, range: 41,
-      kb: 85, knockdown: true, pose: 'punch2', dur: 12, step: 24
+      kb: 85, knockdown: true, pose: 'punch2', dur: 12, step: 24, swing: 'pipe'
     },
     knife: {
-      key: 'knife', name: 'KNIFE', cn: '小刀', type: 'melee',
+      key: 'knife', name: 'KNIFE', cn: '小刀', type: 'melee', weapon: true,
       startup: .06, active: .075, recovery: .14, damage: 7, range: 34,
-      kb: 24, knockdown: false, pose: 'punch1', dur: 10, step: 34, sound: 'knife'
+      kb: 24, knockdown: false, pose: 'punch1', dur: 10, step: 34, swing: 'knife'
     },
     pistol: {
       key: 'pistol', name: 'PISTOL', cn: '手枪', type: 'ranged',
@@ -6960,6 +7039,10 @@ body.touch-mode .toast { bottom: 30%; }
     }
     dom.enemyUI.classList.add('mob');
     const def = target.def || ENEMY_DATA[target.type] || {};
+    if (dom.enemyUI.dataset.target !== target.type) {
+      dom.enemyUI.dataset.target = target.type;
+      dom.enemyUI.classList.toggle('enemy-ui--boss', !!target.boss);
+    }
     const ratio = clamp(target.hp / target.maxHp, 0, 1);
     const accent = (target.char && target.char.colors && target.char.colors.accent) || '#ff4b5e';
     dom.enemyName.textContent = `${def.name || String(target.type || '').toUpperCase()}${def.cn ? ` // ${def.cn}` : ''}`;
@@ -6968,8 +7051,11 @@ body.touch-mode .toast { bottom: 30%; }
     dom.enemyFill.style.transform = `scaleX(${ratio})`;
     dom.enemyUI.style.setProperty('--enemy-accent', accent);
     if (dom.enemyPortrait) {
-      const key = ENEMY_PORTRAIT_KEYS.includes(target.type) ? target.type : 'punk';
-      dom.enemyPortrait.className = `enemy-portrait enemy-${key}`;
+      const portraitKey = ENEMY_PORTRAIT_KEYS.includes(target.type) ? target.type : 'punk';
+      if (dom.enemyPortrait.dataset.key !== portraitKey) {
+        dom.enemyPortrait.dataset.key = portraitKey;
+        dom.enemyPortrait.className = `enemy-portrait enemy-${portraitKey}`;
+      }
     }
     show(dom.enemyUI, true);
   }
@@ -7047,6 +7133,11 @@ body.touch-mode .toast { bottom: 30%; }
     dom.hudPortrait.classList.remove('rex', 'luna', 'bruno');
     dom.hudPortrait.classList.add(portraitKey);
     dom.hudPortrait.setAttribute('aria-label', `${PLAYER_STATS[portraitKey].name} 头像`);
+    if (dom.enemyUI) {
+      dom.enemyUI.dataset.target = '';
+      dom.enemyUI.classList.remove('enemy-ui--boss');
+      show(dom.enemyUI, false);
+    }
     updateHud();
   }
 
@@ -7605,6 +7696,8 @@ body.touch-mode .toast { bottom: 30%; }
       dead: false,
       deadTimer: 0,
       downTimer: 0,
+      downBy: null,
+      downCreditT: 0,
       bounced: false,
       thrown: false,
       thrownHitSet: null,
@@ -7829,9 +7922,9 @@ body.touch-mode .toast { bottom: 30%; }
     if (target) p.facing = target.x >= p.x ? 1 : -1;
   }
 
-  function startPlayerAttack() {
+  function startPlayerAttack(opts) {
     const p = G.player;
-    autoFace(p.weapon === 'pistol' ? 220 : 64);
+    if (!(opts && opts.autoFace === false)) autoFace(p.weapon === 'pistol' ? 220 : 64);
     if (p.weapon && !WEAPONS[p.weapon]) { p.weapon = null; p.weaponDur = 0; p.ammo = 0; }
     if (p.weapon === 'pistol' && p.ammo <= 0) {
       p.weapon = null;
@@ -7841,18 +7934,21 @@ body.touch-mode .toast { bottom: 30%; }
     }
     if (p.weapon) {
       const w = WEAPONS[p.weapon];
+      const data = scaleAttackData(w);
       p.state = 'attack';
       p.stateTime = 0;
       p.comboBuffer = 0;
       p.queuedAttack = false;
       p.attack = {
         timer: 0,
-        data: scaleAttackData(w),
+        data,
         index: 2,
         struck: false,
         weapon: true,
         weaponKey: p.weapon,
-        gun: p.weapon === 'pistol'
+        gun: p.weapon === 'pistol',
+        swing: w.swing || null,
+        weaponDur: p.weaponDur
       };
       Sound.attackWindup({ charKey: p.charKey, step: 2, weapon: p.weapon, kind: 'weapon' });
       return;
@@ -7894,12 +7990,25 @@ body.touch-mode .toast { bottom: 30%; }
     const stepSpeed = a.weapon ? (d.step || 0) : a.index === 0 ? 38 : a.index === 1 ? 52 : 68;
     if (a.timer <= d.startup + d.active) p.x += p.facing * stepSpeed * dt;
     const strikeAt = d.startup;
+    const total = d.startup + d.active + d.recovery;
+    if (!a.gun && a.weapon && a.swing === 'pipe' && !a.swept && a.timer >= strikeAt * .55) {
+      a.swept = true;
+      sweepPipeStartup(p, d);
+    }
+    // Weapon swings can be re-tapped as soon as the active frames end instead of
+    // waiting out the whole recovery, which is what made the pipe feel dumb.
+    // Tapping again during recovery chains the next pipe swing instead of
+    // swallowing the input until the animation fully ends.
+    if (a.weapon && !a.gun && a.struck && a.timer >= d.startup + d.active && Input.attackQueue > 0 && p.weapon) {
+      Input.attackQueue--;
+      startPlayerAttack({ autoFace: false });
+      return;
+    }
     if (!a.struck && a.timer >= strikeAt) {
       a.struck = true;
       if (a.gun) firePlayerBullet(p);
       else performPlayerStrike(p, d, a.weapon);
     }
-    const total = d.startup + d.active + d.recovery;
     if (a.timer >= total) {
       if (a.gun && p.ammo <= 0) {
         p.weapon = null;
@@ -7917,6 +8026,9 @@ body.touch-mode .toast { bottom: 30%; }
         Input.attackQueue--;
         startPlayerAttack();
         return;
+      } else if (!a.gun && a.weapon && p.weapon && a.weaponDur > p.weaponDur) {
+        // The swing broke the weapon on its last hit: it was discarded mid-swing.
+        discardBrokenWeapon(p);
       } else if (!a.gun && a.weapon && p.weapon && Input.attackQueue > 0) {
         Input.attackQueue--;
         startPlayerAttack();
@@ -7936,6 +8048,70 @@ body.touch-mode .toast { bottom: 30%; }
     }
   }
 
+  function discardBrokenWeapon(p) {
+    const broken = WEAPONS[p.weapon] ? WEAPONS[p.weapon].cn : '武器';
+    const dir = p.facing;
+    p.weapon = null;
+    p.weaponDur = 0;
+    p.ammo = 0;
+    toast(`${broken}报废了。拳头还在。`, 1.6);
+    spawnBurst(p.x + dir * 24, p.y, 20, '#dbe6f4', 8, 40);
+    Sound.break();
+    updateHud();
+  }
+
+  // A pipe swing is read as a blunt arc, not a punch: it sweeps everything in
+  // front of the player, drags unarmored bodies toward the ground, and swats
+  // air-gap targets down before the actual strike connects.
+  function sweepPipeStartup(p, d) {
+    if (!G.enemies || !G.enemies.length) {
+      // Always show the arc so the move reads as a swing even when it whiffs.
+      G.effects.push({
+        x: p.x + p.facing * 18, y: p.y, radius: 9, maxRadius: d.range + 16,
+        life: .22, maxLife: .22, color: '#9fb6cc', width: 2
+      });
+      return;
+    }
+    const dir = p.facing;
+    let swatted = 0;
+    for (const e of G.enemies) {
+      // Swat everything in the arc, including bodies that were mid-air when the
+      // swing started (the old check skipped z > 2 and left them floating).
+      if (e.dead || e.state === 'grabbed' || (e.z || 0) > 24) continue;
+      const dx = (e.x - p.x) * dir;
+      if (dx < -7 || dx > d.range + (e.def.hitbox || 10)) continue;
+      if (Math.abs(e.y - p.y) > 17) continue;
+      const fwd = Math.max(1, dx);
+      e.z = Math.max(e.z, 2);
+      e.vz = 74 + Math.min(42, fwd * .8);
+      e.vx = dir * Math.max(36, d.kb);
+      e.downTimer = e.boss ? .72 : 1.0;
+      e.bounced = false;
+      e.invuln = 0;
+      e.state = 'down';
+      e.stateTime = 0;
+      e.pose = 'down';
+      e.attack = null;
+      e.attacking = false;
+      // Mark the knockdown as player-caused so the victim can't instantly
+      // reverse-grab while the pipe is still swinging.
+      e.downBy = 'player';
+      e.downCreditT = G.time;
+      swatted++;
+    }
+    const reach = d.range + 16;
+    G.effects.push({
+      x: p.x + dir * 18, y: p.y, radius: 9, maxRadius: reach,
+      life: .26, maxLife: .26, color: '#cfe4ff', width: 3
+    });
+    if (swatted) {
+      spawnBurst(p.x + dir * 26, p.y, 20, '#dfe9f6', 7, 46);
+      spawnDust(p.x + dir * 20, p.y, 4);
+      Sound.whoosh();
+      shake(2.4);
+    }
+  }
+
   function performPlayerStrike(p, d, isWeapon) {
     const dir = p.facing;
     const wKey = p.weapon;
@@ -7947,9 +8123,12 @@ body.touch-mode .toast { bottom: 30%; }
       if (Math.abs(e.y - p.y) > 17) continue;
       if (Math.abs((e.z || 0) - (p.z || 0)) > 27) continue;
       const damage = d.damage * p.power;
+      // A pipe always knocks a normal body over; the old 35% roll made the
+      // weapon feel like it failed to connect.
       const ok = hitEnemy(e, damage, dir, {
         kb: d.kb,
-        knockdown: !!d.knockdown || (wKey === 'pipe' && Math.random() < .35),
+        knockdown: !!d.knockdown || wKey === 'pipe',
+        weapon: isWeapon ? wKey : null,
         color: wKey === 'knife' ? '#e9f5ff' : '#ffd23f',
         sfx: {
           charKey: p.charKey,
@@ -7958,7 +8137,10 @@ body.touch-mode .toast { bottom: 30%; }
           move: isWeapon ? 'weapon' : (p.attack && p.attack.index === 2 ? 'finisher' : 'combo')
         }
       });
-      if (ok) hitAny = true;
+      if (ok) {
+        hitAny = true;
+        if (wKey === 'pipe' && !e.dead) e.vx = Math.max(e.vx, dir * d.kb * 1.05);
+      }
     }
     for (const c of G.crates) {
       if (c.dead) continue;
@@ -7970,15 +8152,10 @@ body.touch-mode .toast { bottom: 30%; }
     }
     if (isWeapon && hitAny && p.weapon) {
       p.weaponDur--;
-      if (p.weaponDur <= 0) {
-        const name = WEAPONS[p.weapon] ? WEAPONS[p.weapon].cn : '武器';
-        p.weapon = null;
-        p.weaponDur = 0;
-        p.ammo = 0;
-        toast(`${name}报废了。拳头还在。`, 1.6);
-        spawnBurst(p.x + dir * 24, p.y, 20, '#dbe6f4', 8, 40);
-        Sound.break();
-      }
+      if (p.weaponDur <= 0) discardBrokenWeapon(p);
+    }
+    if (isWeapon && wKey === 'pipe' && p.attack && G.enemies.some(e => !e.dead && e.hp > 0 && Math.abs(e.x - p.x) < 150)) {
+      Sound.fightCry(p.charKey, wKey);
     }
     if (!hitAny) {
       // air swipe, tiny screen tremor
@@ -8366,7 +8543,10 @@ body.touch-mode .toast { bottom: 30%; }
           if (dx < -6 || dx > 320) continue;
           if (Math.abs(e.y - p.y) > 20) continue;
           if ((e.z || 0) > 42) continue;
-          hitEnemy(e, st.special * p.power, dir, { kb: 130, knockdown: true, color: '#8ff6ff' });
+          hitEnemy(e, st.special * p.power, dir, {
+            kb: 130, knockdown: true, color: '#8ff6ff',
+            sfx: { charKey: p.charKey, step: 3, weapon: null, move: 'special' }
+          });
         }
         for (const c of G.crates) {
           if (c.dead) continue;
@@ -8387,7 +8567,10 @@ body.touch-mode .toast { bottom: 30%; }
           if (e.dead) continue;
           if (Math.hypot(e.x - p.x, (e.y - p.y) * 1.15) > radius) continue;
           if ((e.z || 0) > 24) continue;
-          hitEnemy(e, st.special * p.power, e.x >= p.x ? 1 : -1, { kb: 190, knockdown: true, color: '#ffd34d' });
+          hitEnemy(e, st.special * p.power, e.x >= p.x ? 1 : -1, {
+            kb: 190, knockdown: true, color: '#ffd34d',
+            sfx: { charKey: p.charKey, step: 3, weapon: null, move: 'special' }
+          });
         }
         for (const c of G.crates) {
           if (!c.dead && Math.hypot(c.x - p.x, (c.y - p.y) * 1.1) < radius) damageCrate(c, 45);
@@ -8402,7 +8585,10 @@ body.touch-mode .toast { bottom: 30%; }
           if (dx < -34 || dx > 118) continue;
           if (Math.abs(e.y - p.y) > 42) continue;
           if ((e.z || 0) > 54) continue;
-          hitEnemy(e, st.special * p.power, dir, { kb: 165, knockdown: true, color: '#ff7a1e' });
+          hitEnemy(e, st.special * p.power, dir, {
+            kb: 165, knockdown: true, color: '#ff7a1e',
+            sfx: { charKey: p.charKey, step: 3, weapon: null, move: 'special' }
+          });
         }
         for (const c of G.crates) {
           if (c.dead) continue;
@@ -9514,6 +9700,8 @@ body.touch-mode .toast { bottom: 30%; }
   function enemyGrabPlayer(e, st) {
     const p = G.player;
     if (!p || p.state === 'dead' || p.state === 'down' || p.state === 'grabbed' || p.state === 'thrown') return false;
+    // A fresh pipe/club knockdown must not let the body instantly grab back.
+    if (e.downBy === 'player' && (G.time - (e.downCreditT || 0)) < 1.2) return false;
     if (p.invuln > 0 || p.z > 15) return false;
     const dx = (p.x - e.x) * e.facing;
     const depth = Math.abs(p.y - e.y);
@@ -9625,6 +9813,8 @@ body.touch-mode .toast { bottom: 30%; }
       e.invuln = .55;
       e.cooldown = rand(.2, .55);
       e.bounced = false;
+      e.downBy = null;
+      e.downCreditT = 0;
     }
   }
 
@@ -9641,7 +9831,10 @@ body.touch-mode .toast { bottom: 30%; }
         if (Math.abs(other.x - e.x) < 18 && Math.abs(other.y - e.y) < 14) {
           e.thrownHitSet.add(other);
           const dir = sign(other.x - e.x || e.facing);
-          hitEnemy(other, 9, dir, { kb: 120, knockdown: true, color: '#29e7ff' });
+          hitEnemy(other, 9, dir, {
+            kb: 120, knockdown: true, color: '#29e7ff',
+            sfx: { charKey: G.player ? G.player.charKey : null, step: 2, weapon: null, move: 'throw' }
+          });
           shake(3);
         }
       }
@@ -9804,7 +9997,8 @@ body.touch-mode .toast { bottom: 30%; }
       material: e.boss ? 'boss' : e.def.armor ? 'armor' : sfx.weapon ? 'metal' : 'flesh',
       weight: dmg >= 7 || e.boss || (sfx.step || 0) >= 2 ? 'heavy' : 'light',
       charKey: sfx.charKey,
-      weapon: sfx.weapon,
+      weapon: sfx.weapon || o.weapon || null,
+      move: sfx.move || null,
       boss: !!e.boss,
       enemyType: e.hp > 0 ? (e.boss ? 'boss' : e.type) : null
     });
@@ -9817,6 +10011,8 @@ body.touch-mode .toast { bottom: 30%; }
     const kb = o.kb == null ? 35 : o.kb;
     if (o.knockdown || (!e.def.armor && dmg >= 8)) {
       e.state = 'down';
+      e.downBy = 'player';
+      e.downCreditT = G.time;
       e.stateTime = 0;
       e.z = Math.max(e.z, 1);
       e.vz = Math.max(70, kb * .55);
@@ -10137,7 +10333,10 @@ body.touch-mode .toast { bottom: 30%; }
           if (Math.abs(pr.x - e.x) > 10 + (e.def.hitbox || 10) * .3) continue;
           if (Math.abs(pr.y - e.y) > 12) continue;
           const dir = pr.dir || sign(pr.vx);
-          hitEnemy(e, pr.damage, dir, { kb: 42, knockdown: !!pr.knockdown, color: '#ffe27a' });
+          hitEnemy(e, pr.damage, dir, {
+            kb: 42, knockdown: !!pr.knockdown, color: '#ffe27a',
+            sfx: { charKey: G.player ? G.player.charKey : null, step: 2, weapon: 'pistol', move: 'gun' }
+          });
           spawnBurst(pr.x, pr.y, 18, '#ffe27a', 7, 45);
           pr.life = 0;
           break;
@@ -11149,6 +11348,9 @@ body.touch-mode .toast { bottom: 30%; }
       char: e.char, pose: po.pose, ext: po.ext,
       anim: e.anim, flash, alpha,
       weapon: (e.kind === 'player' && e.state === 'dashattack') ? null : (e.weapon || null),
+      // The player's own melee props use the renderer's metal tool branch;
+      // enemy weapons keep their existing look.
+      tool: e.kind === 'player' && (e.weapon === 'pipe' || e.weapon === 'knife'),
       boss: e.boss, auraColor: e.def && e.def.aura,
       rim: e.kind === 'player' ? e.char.colors.accent : (e.boss ? e.char.colors.accent : null)
     });
@@ -12376,7 +12578,7 @@ body.touch-mode .toast { bottom: 30%; }
   }
 
   // Read-only debug handle (useful for testing; harmless in play).
-  window.__NEON_RAGE__ = { G, Input, STAGES, PLAYER_STATS, ENEMY_DATA, DIFFICULTIES, BOSS_TALK, POST_BOSS_TALK, startStage, spawnEnemy, startRun, hurtPlayer, hitEnemy, killEnemy, clearBattle, showResult, showEnding, beginBossTalk, advanceBossTalk, endBossTalk, buildWaveSpawns, updateBossAdds, dismissBossAdds, damageCrate, Art };
+  window.__NEON_RAGE__ = { G, Input, STAGES, PLAYER_STATS, ENEMY_DATA, DIFFICULTIES, BOSS_TALK, POST_BOSS_TALK, startStage, spawnEnemy, startRun, hurtPlayer, hitEnemy, killEnemy, clearBattle, showResult, showEnding, beginBossTalk, advanceBossTalk, endBossTalk, buildWaveSpawns, updateBossAdds, dismissBossAdds, damageCrate, Art, startPlayerAttack, updatePlayerAttack, selectEnemyFocus, WEAPONS };
 
   boot();
 })();

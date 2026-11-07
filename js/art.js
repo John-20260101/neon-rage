@@ -924,6 +924,18 @@
       pline(g, hand.hx, hand.hy, tx, ty, 5, INK);
       pline(g, hand.hx, hand.hy, tx, ty, 3, '#a86b3d');
       pline(g, hand.hx, hand.hy, tx - 2, ty - 2, 1, '#e1b478');
+    } else if (o.tool) {
+      // Player pipe: a long steel bar with a wrapped grip, readable at 480p.
+      const tipX = hand.hx + 13 + 12 * ext;
+      const tipY = hand.hy - 2 - 3 * ext;
+      pline(g, hand.hx - 4, hand.hy + 2, hand.hx + 1, hand.hy, 6, INK);
+      pline(g, hand.hx - 3, hand.hy + 2, hand.hx + 1, hand.hy, 4, '#5a3d2b');
+      pline(g, hand.hx, hand.hy, tipX, tipY, 6, INK);
+      pline(g, hand.hx, hand.hy, tipX, tipY, 3, C.metal);
+      pline(g, hand.hx, hand.hy - 1, tipX - 3, tipY - 1, 1, '#ffffff');
+      px(g, hand.hx + 1, hand.hy - 2, 3, 3, '#b58a45');
+      px(g, tipX - 2, tipY - 3, 3, 3, INK);
+      px(g, tipX - 1, tipY - 2, 2, 2, '#c9d4e0');
     } else {
       pline(g, hand.hx, hand.hy, tx, ty, 5, INK);
       pline(g, hand.hx, hand.hy, tx, ty, 2, C.metal);
